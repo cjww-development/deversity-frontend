@@ -18,7 +18,7 @@ class CountController @Inject() (counter: Counter) extends Controller {
   /**
    * Create an action that responds with the [[Counter]]'s current
    * count. The result is plain text. This `Action` is mapped to
-   * `GET /count` requests by an entry in the `routes` config file.
+   * `GET /count` requests by an entry in the `app.routes` config file.
    */
   def count = Action { Ok(counter.nextCount().toString) }
 

@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/cjww-deversity -Dhttp.port=${PORT}
+web: target/universal/stage/bin/deversity-frontend -Dhttp.port=${PORT}

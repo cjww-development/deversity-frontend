@@ -20,7 +20,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
   "HomeController" should {
 
     "render the index page" in {
-      val home = route(app, FakeRequest(GET, "/")).get
+      val home = route(app, FakeRequest(GET, "/deversity")).get
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/html")
@@ -32,9 +32,9 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
   "CountController" should {
 
     "return an increasing count" in {
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "0"
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "1"
-      contentAsString(route(app, FakeRequest(GET, "/count")).get) mustBe "2"
+      contentAsString(route(app, FakeRequest(GET, "/deversity/count")).get) mustBe "0"
+      contentAsString(route(app, FakeRequest(GET, "/deversity/count")).get) mustBe "1"
+      contentAsString(route(app, FakeRequest(GET, "/deversity/count")).get) mustBe "2"
     }
 
   }
