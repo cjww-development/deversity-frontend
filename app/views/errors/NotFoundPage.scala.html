@@ -1,0 +1,27 @@
+@()(implicit request: Request[_])
+
+@main_template(title = "There was a problem") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="responsive-container">
+                        <div class="dummy"></div>
+
+                        <div class="img-container">
+                            <img src="@routes.Assets.versioned("images/logo.png")" width="100%" alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 col-sm-8 col-xs-12" id="welcome">
+                    <div class="page-header">
+                        <h1 class="pageTitle">Oops...</h1>
+                    </div>
+
+                    <p>This page doesn't exist</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

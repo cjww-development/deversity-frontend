@@ -23,9 +23,9 @@ Deversity frontend aims to help teach programming languages along with tools tha
 
 Languages and tools such as: 
 
->HTML
->CSS/SASS
->JS
->Scala
->Git
+>HTML <br>
+>CSS/SASS <br>
+>JS <br>
+>Scala <br>
+>Git <br>
 >Unix commands
