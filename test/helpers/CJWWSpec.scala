@@ -44,8 +44,4 @@ trait CJWWSpec
   def await[T](future: Awaitable[T]): T = Await.result(future, 5.seconds)
 
   val mockHttp = mock[Http]
-
-  before {
-    reset(mockHttp)
-  }
 }
