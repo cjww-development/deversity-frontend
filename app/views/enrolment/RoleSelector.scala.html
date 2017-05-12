@@ -1,0 +1,52 @@
+@import models.forms.Role
+@(role: Form[Role], schoolDetails: SchoolDetails)(implicit request: Request[_])
+
+@import views.html.helpers.radioButton
+
+@main_template(title = "Are you a teacher or a student?") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-8">
+                    <h1>Are you a teacher or a student?</h1>
+
+                    <form action="@routes.EnrolmentController.confirmRole()" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="thumbnail">
+                                    <img src="@routes.Assets.versioned("images/teacher.png")" alt="...">
+                                    <br>
+                                    <div class="form-group text-center">
+                                        @radioButton(role("role"), "role", "role1", "Teacher", "teacher")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="thumbnail">
+                                    <img src="@routes.Assets.versioned("images/student.png")" alt="...">
+                                    <br>
+                                    <div class="form-group text-center">
+                                        @radioButton(role("role"), "role", "role2", "Student", "student")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info" role="alert">
+                            <strong>Heads up!</strong> you'll be confirmed as a teacher or a student by @{schoolDetails.orgName}, so choose carefully...
+                        </div>
+
+                        <div class="btn-group btn-group-lg" aria-label="...">
+                            <button type="submit" class="btn btn-primary btn-lg">Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </div>
+}

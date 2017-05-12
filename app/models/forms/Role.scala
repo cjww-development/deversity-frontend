@@ -13,28 +13,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package controllers
+package models.forms
 
-import javax.inject.{Inject, Singleton}
+import play.api.libs.json.Json
 
-import play.api.mvc.{Action, AnyContent}
-import com.cjwwdev.auth.actions.Actions
-import com.cjwwdev.auth.connectors.AuthConnector
-import services.EnrolmentService
-import utils.application.FrontendController
-import views.html.index
+case class Role(role: String)
 
-import scala.concurrent.Future
-
-@Singleton
-class HomeController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController with Actions {
-
-  val authConnector = authConnect
-  val enrolmentService = enrolmentsSrv
-
-  def showHome: Action[AnyContent] = unauthenticatedAction.async {
-    implicit user =>
-      implicit request =>
-        Future.successful(Ok(index()))
-  }
+object Role {
+  implicit val format = Json.format[Role]
 }

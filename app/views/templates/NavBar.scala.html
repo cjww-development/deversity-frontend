@@ -7,6 +7,13 @@
     @if(ConfigFactory.load().getString("cjww.dev-phase") == "live") {navbar-with-border} else {navbar}
 }
 
+@welcomeText() = @{
+    request.session("credentialType") match {
+        case "individual"       => s"Welcome, ${request.session("firstName")} ${request.session("lastName")}"
+        case "organisation"     => s"Welcome, ${request.session("orgName")}"
+    }
+}
+
 <nav class="@navBorder() navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -31,7 +38,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Register <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> As yourself</a>
+                            <a href="@routes.RedirectController.redirectToUserRegister()"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> As yourself</a>
                         </li>
                         <li role="separator" class="divider"></li>
                         <li>
@@ -39,24 +46,15 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Login <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> As yourself</a>
-                        </li>
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a href="/"><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> As an organisation</a>
-                        </li>
-                    </ul>
+                <li>
+                    <a href="@routes.RedirectController.redirectToUserLogin()"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Login</a>
                 </li>
             } else {
                 <li>
-                    <a href="/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Welcome, @{request.session("firstName")} @{request.session("lastName")}</a>
+                    <a href="@routes.RedirectController.redirectToUserDashboard()"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> @welcomeText()</a>
                 </li>
                 <li>
-                    <form class="navbar-form navbar-left" role="button" action="/">
+                    <form class="navbar-form navbar-left" role="button" action="@routes.RedirectController.redirectToSignOut()">
                         <div class="form-group">
                             <div class="input-group">
                                 <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Log out</button>

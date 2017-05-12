@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 the original author or authors.
+// Copyright (C) 2011-2012 the original author or authors.
 // See the LICENCE.txt file distributed with this work for additional
 // information regarding copyright ownership.
 //
@@ -13,28 +13,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package controllers
 
-import javax.inject.{Inject, Singleton}
+package mocks
 
-import play.api.mvc.{Action, AnyContent}
-import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
+import com.cjwwdev.http.verbs.Http
+import org.scalatest.mock.MockitoSugar
+import org.mockito.Mockito.reset
 import services.EnrolmentService
-import utils.application.FrontendController
-import views.html.index
 
-import scala.concurrent.Future
+trait ComponentMocks {
+  this: MockitoSugar =>
 
-@Singleton
-class HomeController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController with Actions {
+  val mockAuthConnector = mock[AuthConnector]
+  val mockHttp = mock[Http]
+  val mockEnrolmentsService = mock[EnrolmentService]
 
-  val authConnector = authConnect
-  val enrolmentService = enrolmentsSrv
-
-  def showHome: Action[AnyContent] = unauthenticatedAction.async {
-    implicit user =>
-      implicit request =>
-        Future.successful(Ok(index()))
+  def resetMocks() : Unit = {
+    reset(mockAuthConnector)
+    reset(mockHttp)
+    reset(mockEnrolmentsService)
   }
 }

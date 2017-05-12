@@ -1,0 +1,36 @@
+@import models.forms.SchoolName
+@(school: Form[SchoolName])(implicit request: Request[_])
+
+@import views.html.helpers.textInput
+
+@main_template(title = "What's your school?") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="@routes.Assets.versioned("images/school.png")" width="100%" alt="">
+                </div>
+
+                <div class="col-md-8" id="school-selector">
+                    <h1>What school do you belong to?</h1>
+                    <p>Please enter your school ID</p>
+
+                    <div class="alert alert-info" role="alert">
+                        <strong>Hey!</strong> you can get your school ID from your teacher.
+                    </div>
+
+                    <form action="@routes.EnrolmentController.validateSchool" method="post">
+
+                        @textInput(school("schoolName"), "schoolName", "School name", "Your school name", "text", "cjww-input-group-addon")
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <button type="submit" class="btn btn-primary btn-lg">Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

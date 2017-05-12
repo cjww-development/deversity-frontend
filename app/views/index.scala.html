@@ -1,20 +1,23 @@
-@*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
-@(message: String)
+@()(implicit request: Request[_])
 
-@*
- * Call the `main` template with two arguments. The first
- * argument is a `String` with the title of the page, the second
- * argument is an `Html` object containing the body of the page.
- *@
-@main("Welcome to Play") {
+@main_template(title = "CJWW Deversity - Welcome") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <div class="responsive-container">
+                        <div class="dummy"></div>
+                        <div class="img-container">
+                            <img src="@routes.Assets.versioned("images/Deversity_Black.png")" width="100%" alt="">
+                        </div>
+                    </div>
+                </div>
 
-    @*
-     * Get an `Html` object by calling the built-in Play welcome
-     * template and passing a `String` message.
-     *@
-    @play20.welcome(message, style = "Scala")
-
+                <div class="col-md-8" id="welcome">
+                    <h1>printf("Hello programmers!");</h1>
+                    <p>Welcome to Deversity. Here you will hopefully learn about some programming concepts that will help you in your journey to become a developer!</p>
+                </div>
+            </div>
+        </div>
+    </div>
 }

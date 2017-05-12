@@ -17,24 +17,41 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.mvc.{Action, AnyContent}
 import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
+import play.api.mvc.{Action, AnyContent}
 import services.EnrolmentService
 import utils.application.FrontendController
-import views.html.index
 
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController with Actions {
+class RedirectController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController with Actions {
 
   val authConnector = authConnect
   val enrolmentService = enrolmentsSrv
 
-  def showHome: Action[AnyContent] = unauthenticatedAction.async {
+  def redirectToUserRegister: Action[AnyContent] = unauthenticatedAction.async {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(index()))
+        Future.successful(Redirect(USER_REGISTER))
+  }
+
+  def redirectToUserLogin: Action[AnyContent] = unauthenticatedAction.async {
+    implicit user =>
+      implicit request =>
+        Future.successful(Redirect(USER_LOGIN))
+  }
+
+  def redirectToUserDashboard: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
+    implicit user =>
+      implicit request =>
+        Future.successful(Redirect(DASHBOARD))
+  }
+
+  def redirectToSignOut: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
+    implicit user =>
+      implicit request =>
+        Future.successful(Redirect(SIGN_OUT))
   }
 }

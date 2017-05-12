@@ -2,12 +2,36 @@
 # This file defines all application app.routes (Higher priority app.routes first)
 # ~~~~
 
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
+GET     /                           controllers.HomeController.showHome
+
+GET     /test                       controllers.EnrolmentController.testController
+
+#Enrolment journey
+GET     /welcome                    controllers.EnrolmentController.enrolmentWelcome
+
+GET     /select-school              controllers.EnrolmentController.selectSchool
+POST    /select-school              controllers.EnrolmentController.validateSchool
+
+GET     /confirm-school             controllers.EnrolmentController.confirmSchool
+
+GET     /role-selection             controllers.EnrolmentController.roleSelection
+POST    /role-selection             controllers.EnrolmentController.confirmRole
+
+GET     /teacher-details            controllers.EnrolmentController.confirmAsTeacher
+POST    /teacher-details            controllers.EnrolmentController.cacheTeacherDetails
+
+GET     /select-teacher             controllers.EnrolmentController.confirmAsStudent
+POST    /select-teacher             controllers.EnrolmentController.validateTeacher
+
+GET     /confirm-teacher            controllers.EnrolmentController.confirmTeacher
+
+GET     /confirmation               controllers.EnrolmentController.enrolmentConfirmation
+
+#External Routes
+GET     /login                      controllers.RedirectController.redirectToUserLogin
+GET     /register                   controllers.RedirectController.redirectToUserRegister
+GET     /dashboard                  controllers.RedirectController.redirectToUserDashboard
+GET     /sign-out                   controllers.RedirectController.redirectToSignOut
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

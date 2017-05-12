@@ -1,0 +1,65 @@
+
+@import models.forms.TeacherDetails
+@(details: Form[TeacherDetails])(implicit request: Request[_])
+
+@import views.html.helpers.textInput
+
+@colourSwitcher(random : Int) = {
+    @random match {
+        case 0 => {
+            #0A5A95
+        }
+        case 1 => {
+            #F08B16
+        }
+        case 2 => {
+            #9A090C
+        }
+        case 3 => {
+            #57920B
+        }
+        case _ => {
+            #0A5A95
+        }
+    }
+}
+
+@main_template(title = "Tell us some details") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <object>
+                        <svg viewBox="0 0 140 140" preserveAspectRatio="xMinYMin meet">
+                            <g>
+                                <circle fill="@colourSwitcher(scala.util.Random.nextInt(4))" r="50%" cx="50%" cy="50%" class="circle-back" />
+                                <text fill="#ffffff" font-size="45" font-family="Verdana" x="50%" y="60%">
+                                    <tspan text-anchor="middle">@request.session("firstName").head@request.session("lastName").head</tspan>
+                                </text>
+                            </g>
+                        </svg>
+                    </object>
+                </div>
+
+                <div class="col-md-8" id="school-selector">
+                    <h1>Tell us some basic details</h1>
+
+                    <div class="alert alert-info" role="alert">
+                        This will make it easier for your students to find you
+                    </div>
+
+                    <form action="@routes.EnrolmentController.cacheTeacherDetails()" method="post">
+                        @textInput(details("title"), "title", "Title", "Preferred teacher title; Professor etc", "text", "cjww-input-group-addon")
+                        @textInput(details("room"), "room", "Room", "The room you work out of", "text", "cjww-input-group-addon")
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <button type="submit" class="btn btn-primary btn-lg">Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

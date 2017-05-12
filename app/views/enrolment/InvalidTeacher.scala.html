@@ -1,0 +1,30 @@
+@()(implicit request: Request[_])
+
+@main_template(title = "We couldn't find your teacher") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="@routes.Assets.versioned("images/teacher.png")" width="100%" alt="">
+                </div>
+
+                <div class="col-md-8" id="school-selector">
+                    <h1>We couldn't find your teacher</h1>
+
+                    <p>Would you like to try again?</p>
+
+                    <div class="alert alert-danger" role="alert">
+                        You won't be able to use deversity until you have completed this setup.
+                    </div>
+
+                    <div class="form-group">
+                        <div class="btn-group btn-group-lg" role="group" aria-label="...">
+                            <a href="javascript:history.back()" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back</a>
+                            <a href="@routes.HomeController.showHome()" class="btn btn-danger btn-lg">Cancel <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

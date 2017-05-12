@@ -17,8 +17,34 @@
 package utils.application
 
 import com.cjwwdev.auth.models.AuthContext
-import play.api.mvc.Controller
+import config.ApplicationConfiguration
+import controllers.routes
+import play.api.mvc.{Controller, Request, Result}
+import services._
 
-trait FrontendController extends Controller {
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+trait FrontendController extends Controller with ApplicationConfiguration {
+
+  val enrolmentService: EnrolmentService
+
   implicit def optionUser(implicit user: AuthContext): Option[AuthContext] = Some(user)
+
+  def checkDeversityEnrolment(f: => Future[Result])(implicit authContext: AuthContext, request: Request[_]): Future[Result] = {
+    enrolmentService.validateCurrentEnrolments flatMap {
+      case ValidEnrolments => f
+      case InvalidEnrolments => validateDevId
+    }
+  }
+
+  private def validateDevId(implicit authContext: AuthContext, request: Request[_]): Future[Result] = {
+    request.session.get("devId") match {
+      case Some(_) => Future.successful(Redirect(routes.EnrolmentController.enrolmentWelcome()))
+      case None => enrolmentService.getOrGenerateDeversityId map {
+        case Some(id) => Redirect(routes.EnrolmentController.enrolmentWelcome()).withSession(request.session. +("devId" -> id))
+        case None => throw new DevIdGetOrGenerationException(s"There was a problem getting or generating a dev id for user ${authContext.user.userId}")
+      }
+    }
+  }
 }

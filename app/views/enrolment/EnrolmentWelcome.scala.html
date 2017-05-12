@@ -1,0 +1,31 @@
+@()(implicit request: Request[_])
+
+@main_template(title = "Welcome to deversity") {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <div class="responsive-container">
+                        <div class="dummy"></div>
+                        <div class="img-container">
+                            <img src="@routes.Assets.versioned("images/Deversity_Black.png")" width="100%" alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8" id="welcome">
+                    <h1>Welcome to Deversity</h1>
+                    <p>We have noticed this is your first time using Deversity.</p>
+                    <p>Lets set a few things up.</p>
+                    <form role="button" method="get" action="@routes.EnrolmentController.selectSchool">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <button type="submit" class="btn btn-primary btn-lg">Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
