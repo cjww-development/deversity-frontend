@@ -30,9 +30,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class SessionStoreConnector @Inject()(http : Http) extends ApplicationConfiguration{
+class SessionStoreConnector @Inject()(http : Http) extends ApplicationConfiguration {
   def getDataElement(key : String)(implicit request: Request[_]) : Future[String] = {
-    http.GET(s"$session_store_route/session/${request.session("cookieId")}/data/$key") map(resp => resp.body)
+    http.GET(s"$session_store_route/session/${request.session("cookieId")}/data/$key") map(_.body)
   }
 
   def updateSession(updateSet : SessionUpdateSet)(implicit format : Format[SessionUpdateSet], request: Request[_]) : Future[Int] = {

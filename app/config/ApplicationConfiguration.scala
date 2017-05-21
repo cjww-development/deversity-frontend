@@ -20,8 +20,8 @@ import play.api.mvc.Call
 
 trait ApplicationConfiguration extends BaseConfiguration {
 
-  val auth_service_route        = config.getString("routes.auth-service")
-  val session_store_route       = config.getString("routes.session-store")
+  val auth_service_route        = config.getString(s"$env.routes.auth-service")
+  val session_store_route       = config.getString(s"$env.routes.session-store")
 
   val USER_LOGIN                = s"$auth_service_route/login?redirect=deversity"
   val USER_REGISTER             = s"$auth_service_route/create-an-acount"
@@ -30,5 +30,5 @@ trait ApplicationConfiguration extends BaseConfiguration {
 
   val USER_LOGIN_CALL           = controllers.routes.RedirectController.redirectToUserLogin()
 
-  val account_service_route     = config.getString("routes.accounts-microservice")
+  val account_service_route     = config.getString(s"$env.routes.accounts-microservice")
 }
