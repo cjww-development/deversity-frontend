@@ -15,10 +15,16 @@
 // limitations under the License.
 package models
 
-import play.api.libs.json.Json
+import com.cjwwdev.security.encryption.DataSecurity
+import play.api.libs.json._
 
 case class SessionUpdateSet(key : String, data : String)
 
-object SessionUpdateSet {
-  implicit val format = Json.format[SessionUpdateSet]
+object SessionUpdateSet extends {
+  implicit val sessionUpdateSetWrites: OWrites[SessionUpdateSet] = new OWrites[SessionUpdateSet] {
+    override def writes(o: SessionUpdateSet): JsObject = Json.obj(
+      "key"   -> s"${o.key}",
+      "data"  -> s"${DataSecurity.encryptString(o.data).get}"
+    )
+  }
 }

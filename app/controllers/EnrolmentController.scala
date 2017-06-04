@@ -77,7 +77,7 @@ class EnrolmentController @Inject()(authConnect: AuthConnector,
     implicit user =>
       implicit request =>
         for {
-          schoolName            <- sessionStoreConnector.getDataElement("schoolName")
+          Some(schoolName)      <- sessionStoreConnector.getDataElement("schoolName")
           Some(schoolDetails)   <- schoolDetailsService.getSchoolDetails(schoolName)
         } yield Ok(ConfirmSchool(schoolDetails))
   }
@@ -86,7 +86,7 @@ class EnrolmentController @Inject()(authConnect: AuthConnector,
     implicit user =>
       implicit request =>
         for {
-          schoolName <- sessionStoreConnector.getDataElement("schoolName")
+          Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
           Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolName)
         } yield Ok(RoleSelector(RoleForm.form, schoolDetails))
   }
@@ -97,7 +97,7 @@ class EnrolmentController @Inject()(authConnect: AuthConnector,
         RoleForm.form.bindFromRequest.fold(
           errors => {
             for {
-              schoolName <- sessionStoreConnector.getDataElement("schoolName")
+              Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
               Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolName)
             } yield BadRequest(RoleSelector(errors, schoolDetails))
           },
@@ -151,8 +151,8 @@ class EnrolmentController @Inject()(authConnect: AuthConnector,
     implicit user =>
       implicit request =>
         for {
-          schoolName    <- sessionStoreConnector.getDataElement("schoolName")
-          Some(details) <- enrolmentService.getTeacherDetails
+          Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
+          Some(details)       <- enrolmentService.getTeacherDetails
         } yield Ok(ConfirmTeacher(details, schoolName))
   }
 
@@ -160,7 +160,7 @@ class EnrolmentController @Inject()(authConnect: AuthConnector,
     implicit user =>
       implicit request =>
         for {
-          role            <- sessionStoreConnector.getDataElement("role")
+          Some(role)      <- sessionStoreConnector.getDataElement("role")
           schoolDetails   <- role match {
             case "teacher" => enrolmentService.fetchAndSubmitTeacherEnrolment
             case "student" => enrolmentService.fetchAndSubmitStudentEnrolment

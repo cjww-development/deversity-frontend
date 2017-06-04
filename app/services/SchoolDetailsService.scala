@@ -17,14 +17,14 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{SchoolDetailsConnector, ValidOrg}
+import connectors.{AccountsMicroserviceConnector, ValidOrg}
 import models.SchoolDetails
 import play.api.mvc.Request
 
 import scala.concurrent.Future
 
 @Singleton
-class SchoolDetailsService @Inject()(schoolDetailsConnector: SchoolDetailsConnector) {
+class SchoolDetailsService @Inject()(schoolDetailsConnector: AccountsMicroserviceConnector) {
 
   def validateSchool(orgName: String)(implicit request: Request[_]): Future[ValidOrg] = {
     schoolDetailsConnector.validateSchoolName(orgName)

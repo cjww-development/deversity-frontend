@@ -16,19 +16,18 @@
 package config
 
 import com.cjwwdev.bootstrap.config.BaseConfiguration
-import play.api.mvc.Call
+import controllers.routes
 
 trait ApplicationConfiguration extends BaseConfiguration {
 
-  val auth_service_route        = config.getString(s"$env.routes.auth-service")
-  val session_store_route       = config.getString(s"$env.routes.session-store")
+  val authService               = config.getString(s"$env.routes.auth-service")
+  val sessionStore              = config.getString(s"$env.routes.session-store")
+  val accountMicroservice       = config.getString(s"$env.routes.accounts-microservice")
 
-  val USER_LOGIN                = s"$auth_service_route/login?redirect=deversity"
-  val USER_REGISTER             = s"$auth_service_route/create-an-acount"
-  val DASHBOARD                 = s"$auth_service_route/dashboard"
-  val SIGN_OUT                  = s"$auth_service_route/goodbye"
+  val USER_LOGIN                = s"$authService/login?redirect=deversity"
+  val USER_REGISTER             = s"$authService/create-an-acount"
+  val DASHBOARD                 = s"$authService/dashboard"
+  val SIGN_OUT                  = s"$authService/goodbye"
 
-  val USER_LOGIN_CALL           = controllers.routes.RedirectController.redirectToUserLogin()
-
-  val account_service_route     = config.getString(s"$env.routes.accounts-microservice")
+  val USER_LOGIN_CALL           = routes.RedirectController.redirectToUserLogin()
 }

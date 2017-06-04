@@ -13,13 +13,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package models.forms
 
-import com.cjwwdev.json.JsonFormats
-import play.api.libs.json._
+package enums
 
-case class Role(role: String)
+object SessionCache extends Enumeration {
+  val cached                      = Value
+  val cacheFailure                = Value
 
-object Role extends JsonFormats[Role] {
-  override implicit val standardFormat: OFormat[Role] = Json.format[Role]
+  val cacheUpdated                = Value
+  val cacheUpdateFailure          = Value
+
+  val cacheDestroyed              = Value
+  val cacheDestructionFailure     = Value
 }

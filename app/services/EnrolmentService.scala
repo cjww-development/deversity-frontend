@@ -18,7 +18,8 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import com.cjwwdev.auth.models.AuthContext
-import connectors.{EnrolmentConnector, SchoolDetailsConnector, SessionStoreConnector, ValidOrg}
+import connectors.{AccountsMicroserviceConnector, SessionStoreConnector, ValidOrg}
+import enums.SessionCache
 import models.{DeversityEnrolment, SchoolDetails, SessionUpdateSet}
 import models.forms.TeacherDetails
 import models.http.TeacherInformation
@@ -42,12 +43,11 @@ class ExistingDeversityIdException(msg: String) extends NoStackTrace
 class DevIdGetOrGenerationException(msg: String) extends NoStackTrace
 
 @Singleton
-class EnrolmentService @Inject()(schoolDetailsConnector: SchoolDetailsConnector,
-                                 enrolmentConnector: EnrolmentConnector,
+class EnrolmentService @Inject()(accountsConnector: AccountsMicroserviceConnector,
                                  sessionStoreConnector: SessionStoreConnector) {
 
   def validateCurrentEnrolments(implicit authContext: AuthContext, request: Request[_]): Future[DeversityCurrentEnrolmentResponse] = {
-    enrolmentConnector.getDeversityUserInfo map {
+    accountsConnector.getDeversityUserInfo map {
       case Some(_) => ValidEnrolments
       case None =>
         InvalidEnrolments
@@ -55,13 +55,13 @@ class EnrolmentService @Inject()(schoolDetailsConnector: SchoolDetailsConnector,
   }
 
   def getOrGenerateDeversityId(implicit authContext: AuthContext, request: Request[_]): Future[Option[String]] = {
-    enrolmentConnector.getEnrolments flatMap {
+    accountsConnector.getEnrolments flatMap {
       case Some(enrolments) => Future.successful(enrolments.deversityId)
-      case None => enrolmentConnector.createDeversityId
+      case None => accountsConnector.createDeversityId
     }
   }
 
-  def cacheTeacherDetails(teacherDetails: TeacherDetails)(implicit request: Request[_]): Future[Int] = {
+  def cacheTeacherDetails(teacherDetails: TeacherDetails)(implicit request: Request[_]): Future[SessionCache.Value] = {
     for {
       _           <- sessionStoreConnector.updateSession(SessionUpdateSet("title", teacherDetails.title))
       roomCache   <- sessionStoreConnector.updateSession(SessionUpdateSet("room", teacherDetails.room))
@@ -70,38 +70,38 @@ class EnrolmentService @Inject()(schoolDetailsConnector: SchoolDetailsConnector,
 
   def validateTeacher(userName: String)(implicit request: Request[_]): Future[ValidOrg] = {
     for {
-      schoolName            <- sessionStoreConnector.getDataElement("schoolName")
-      validationResponse    <- enrolmentConnector.validateTeacher(userName, schoolName)
+      Some(schoolName)      <- sessionStoreConnector.getDataElement("schoolName")
+      validationResponse    <- accountsConnector.validateTeacher(userName, schoolName)
     } yield validationResponse
   }
 
   def getTeacherDetails(implicit request: Request[_]): Future[Option[TeacherInformation]] = {
     for {
-      schoolName    <- sessionStoreConnector.getDataElement("schoolName")
-      teacherName   <- sessionStoreConnector.getDataElement("teacher")
-      details       <- enrolmentConnector.getTeacherDetails(teacherName, schoolName)
+      Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
+      Some(teacherName)   <- sessionStoreConnector.getDataElement("teacher")
+      details             <- accountsConnector.getTeacherDetails(teacherName, schoolName)
     } yield details
   }
 
   def fetchAndSubmitTeacherEnrolment(implicit authContext: AuthContext, request: Request[_]): Future[SchoolDetails] = {
     for {
-      schoolName            <- sessionStoreConnector.getDataElement("schoolName")
+      Some(schoolName)      <- sessionStoreConnector.getDataElement("schoolName")
       title                 <- sessionStoreConnector.getDataElement("title")
       room                  <- sessionStoreConnector.getDataElement("room")
-      Some(schoolDetails)   <- schoolDetailsConnector.getSchoolDetails(schoolName)
-      _                     <- enrolmentConnector.initialiseDeversityEnrolment(
-        DeversityEnrolment("pending", schoolName, "teacher", Some(title), Some(room), None)
+      Some(schoolDetails)   <- accountsConnector.getSchoolDetails(schoolName)
+      _                     <- accountsConnector.initialiseDeversityEnrolment(
+        DeversityEnrolment("pending", schoolName, "teacher", title, room, None)
       )
     } yield schoolDetails
   }
 
   def fetchAndSubmitStudentEnrolment(implicit authContext: AuthContext, request: Request[_]): Future[SchoolDetails] = {
     for {
-      schoolName            <- sessionStoreConnector.getDataElement("schoolName")
+      Some(schoolName)      <- sessionStoreConnector.getDataElement("schoolName")
       teacher               <- sessionStoreConnector.getDataElement("teacher")
-      Some(schoolDetails)   <- schoolDetailsConnector.getSchoolDetails(schoolName)
-      _                     <- enrolmentConnector.initialiseDeversityEnrolment(
-        DeversityEnrolment("pending", schoolName, "student", None, None, Some(teacher))
+      Some(schoolDetails)   <- accountsConnector.getSchoolDetails(schoolName)
+      _                     <- accountsConnector.initialiseDeversityEnrolment(
+        DeversityEnrolment("pending", schoolName, "student", None, None, teacher)
       )
     } yield schoolDetails
   }

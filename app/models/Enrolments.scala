@@ -15,12 +15,18 @@
 // limitations under the License.
 package models
 
-import play.api.libs.json.Json
+import com.cjwwdev.json.JsonFormats
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class Enrolments(hubId : Option[String],
                       diagId : Option[String],
                       deversityId : Option[String])
 
-object Enrolments {
-  implicit val format = Json.format[Enrolments]
+object Enrolments extends JsonFormats[Enrolments]{
+  override implicit val standardFormat: OFormat[Enrolments] = (
+    (__ \ "hubId").formatNullable[String] and
+    (__ \ "diagId").formatNullable[String] and
+    (__ \ "deversityId").formatNullable[String]
+  )(Enrolments.apply, unlift(Enrolments.unapply))
 }

@@ -15,10 +15,11 @@
 // limitations under the License.
 package models.forms
 
-import play.api.libs.json.Json
+import com.cjwwdev.json.JsonFormats
+import play.api.libs.json.{Json, OFormat}
 
 case class SchoolName(schoolName: String)
 
-object SchoolName {
-  implicit val format = Json.format[SchoolName]
+object SchoolName extends JsonFormats[SchoolName] {
+  override implicit val standardFormat: OFormat[SchoolName] = Json.format[SchoolName]
 }

@@ -16,26 +16,43 @@
 
 package connectors
 
+import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException, ServerErrorException}
+import com.cjwwdev.http.utils.SessionUtils
 import com.cjwwdev.http.verbs.Http
-import com.cjwwdev.logging.Logger
 import com.cjwwdev.security.encryption.DataSecurity
 import com.google.inject.{Inject, Singleton}
 import config.ApplicationConfiguration
+import enums.SessionCache
 import models.SessionUpdateSet
-import play.api.libs.json.Format
-import play.api.libs.ws.WSResponse
+import play.api.http.Status.OK
+import play.api.libs.json._
 import play.api.mvc.Request
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class SessionStoreConnector @Inject()(http : Http) extends ApplicationConfiguration {
-  def getDataElement(key : String)(implicit request: Request[_]) : Future[String] = {
-    http.GET(s"$session_store_route/session/${request.session("cookieId")}/data/$key") map(_.body)
+class SessionStoreConnector @Inject()(http : Http) extends ApplicationConfiguration with SessionUtils {
+  implicit val jsValueReads: Reads[JsValue] = new Reads[JsValue] {
+    override def reads(json: JsValue): JsResult[JsValue] = JsSuccess(json)
   }
 
-  def updateSession(updateSet : SessionUpdateSet)(implicit format : Format[SessionUpdateSet], request: Request[_]) : Future[Int] = {
-    http.PUT[SessionUpdateSet](s"$session_store_route/session/${request.session("cookieId")}", updateSet) map(_.status)
+  def getDataElement(key : String)(implicit request: Request[_]) : Future[Option[String]] = {
+    http.GET[JsValue](s"$sessionStore/session/$getCookieId/data/$key")(request, jsValueReads) map {
+      data => DataSecurity.decryptString((data \ "data").as[String])
+    } recover {
+      case _: NotFoundException   => None
+      case e: ForbiddenException  => throw e
+    }
+  }
+
+  def updateSession(updateSet : SessionUpdateSet)(implicit writes: OWrites[SessionUpdateSet], request: Request[_]) : Future[SessionCache.Value] = {
+    http.PUT[SessionUpdateSet](s"$sessionStore/session/$getCookieId", updateSet) map {
+      _.status match {
+        case OK => SessionCache.cacheUpdated
+      }
+    } recover {
+      case _: ServerErrorException => SessionCache.cacheUpdateFailure
+    }
   }
 }

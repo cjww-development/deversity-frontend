@@ -25,7 +25,7 @@ import com.cjwwdev.security.encryption.DataSecurity
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.{Args, BeforeAndAfterEach, Status, Suite}
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.ws.ahc.AhcWSClient
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
@@ -58,15 +58,12 @@ trait AuthMocks
 
     val encValue: String = {
       context match {
-        case Some(user) => DataSecurity.encryptData[AuthContext](user).get
+        case Some(user) => DataSecurity.encryptType[AuthContext](user).get
         case None       => ""
       }
     }
 
     val mockResponse = mockWSResponseWithBody(encValue)
-
-    when(mockHttp.GET(ArgumentMatchers.any())(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(mockResponse))
 
     when(mockAuthConnector.getContext(ArgumentMatchers.any()))
       .thenReturn(Future.successful(context))
@@ -83,15 +80,12 @@ trait AuthMocks
 
     val encValue: String = {
       context match {
-        case Some(user) => DataSecurity.encryptData[AuthContext](user).get
+        case Some(user) => DataSecurity.encryptType[AuthContext](user).get
         case None       => ""
       }
     }
 
     val mockResponse = mockWSResponseWithBody(encValue)
-
-    when(mockHttp.GET(ArgumentMatchers.any())(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(mockResponse))
 
     when(mockAuthConnector.getContext(ArgumentMatchers.any()))
       .thenReturn(Future.successful(context))

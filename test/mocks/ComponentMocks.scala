@@ -18,7 +18,7 @@ package mocks
 
 import com.cjwwdev.auth.connectors.AuthConnector
 import com.cjwwdev.http.verbs.Http
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito.reset
 import services.EnrolmentService
 

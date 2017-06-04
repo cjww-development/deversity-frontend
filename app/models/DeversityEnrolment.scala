@@ -16,7 +16,9 @@
 
 package models
 
-import play.api.libs.json.Json
+import com.cjwwdev.json.JsonFormats
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class DeversityEnrolment(statusConfirmed: String,
                               schoolName: String,
@@ -25,6 +27,13 @@ case class DeversityEnrolment(statusConfirmed: String,
                               room: Option[String],
                               teacher: Option[String])
 
-object DeversityEnrolment {
-  implicit val format = Json.format[DeversityEnrolment]
+object DeversityEnrolment extends JsonFormats[DeversityEnrolment] {
+  override implicit val standardFormat: OFormat[DeversityEnrolment] = (
+    (__ \ "statusConfirmed").format[String] and
+    (__ \ "schoolName").format[String] and
+    (__ \ "role").format[String] and
+    (__ \ "title").formatNullable[String] and
+    (__ \ "room").formatNullable[String] and
+    (__ \ "teacher").formatNullable[String]
+  )(DeversityEnrolment.apply, unlift(DeversityEnrolment.unapply))
 }
