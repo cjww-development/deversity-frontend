@@ -33,17 +33,17 @@ trait FrontendController extends Controller with ApplicationConfiguration {
 
   def checkDeversityEnrolment(f: => Future[Result])(implicit authContext: AuthContext, request: Request[_]): Future[Result] = {
     enrolmentService.validateCurrentEnrolments flatMap {
-      case ValidEnrolments => f
-      case InvalidEnrolments => validateDevId
+      case ValidEnrolments    => f
+      case InvalidEnrolments  => validateDevId
     }
   }
 
   private def validateDevId(implicit authContext: AuthContext, request: Request[_]): Future[Result] = {
     request.session.get("devId") match {
       case Some(_) => Future.successful(Redirect(routes.EnrolmentController.enrolmentWelcome()))
-      case None => enrolmentService.getOrGenerateDeversityId map {
+      case None    => enrolmentService.getOrGenerateDeversityId map {
         case Some(id) => Redirect(routes.EnrolmentController.enrolmentWelcome()).withSession(request.session. +("devId" -> id))
-        case None => throw new DevIdGetOrGenerationException(s"There was a problem getting or generating a dev id for user ${authContext.user.userId}")
+        case None     => throw new DevIdGetOrGenerationException(s"There was a problem getting or generating a dev id for user ${authContext.user.userId}")
       }
     }
   }

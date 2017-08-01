@@ -15,7 +15,7 @@
 // limitations under the License.
 package config
 
-import com.cjwwdev.bootstrap.config.BaseConfiguration
+import com.cjwwdev.config.BaseConfiguration
 import controllers.routes
 
 trait ApplicationConfiguration extends BaseConfiguration {

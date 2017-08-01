@@ -58,7 +58,7 @@ trait AuthMocks
 
     val encValue: String = {
       context match {
-        case Some(user) => DataSecurity.encryptType[AuthContext](user).get
+        case Some(user) => DataSecurity.encryptType[AuthContext](user)
         case None       => ""
       }
     }
@@ -80,7 +80,7 @@ trait AuthMocks
 
     val encValue: String = {
       context match {
-        case Some(user) => DataSecurity.encryptType[AuthContext](user).get
+        case Some(user) => DataSecurity.encryptType[AuthContext](user)
         case None       => ""
       }
     }

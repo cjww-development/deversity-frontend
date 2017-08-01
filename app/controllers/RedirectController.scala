@@ -31,14 +31,12 @@ class RedirectController @Inject()(authConnect: AuthConnector, enrolmentsSrv: En
   val authConnector = authConnect
   val enrolmentService = enrolmentsSrv
 
-  def redirectToUserRegister: Action[AnyContent] = unauthenticatedAction.async {
-    implicit user =>
+  def redirectToUserRegister: Action[AnyContent] = Action.async {
       implicit request =>
         Future.successful(Redirect(USER_REGISTER))
   }
 
-  def redirectToUserLogin: Action[AnyContent] = unauthenticatedAction.async {
-    implicit user =>
+  def redirectToUserLogin: Action[AnyContent] = Action.async {
       implicit request =>
         Future.successful(Redirect(USER_LOGIN))
   }

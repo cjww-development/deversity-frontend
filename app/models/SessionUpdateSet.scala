@@ -24,7 +24,7 @@ object SessionUpdateSet extends {
   implicit val sessionUpdateSetWrites: OWrites[SessionUpdateSet] = new OWrites[SessionUpdateSet] {
     override def writes(o: SessionUpdateSet): JsObject = Json.obj(
       "key"   -> s"${o.key}",
-      "data"  -> s"${DataSecurity.encryptString(o.data).get}"
+      "data"  -> s"${DataSecurity.encryptString(o.data)}"
     )
   }
 }
