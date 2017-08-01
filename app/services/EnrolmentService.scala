@@ -57,7 +57,11 @@ class EnrolmentService @Inject()(accountsConnector: AccountsMicroserviceConnecto
   def getOrGenerateDeversityId(implicit authContext: AuthContext, request: Request[_]): Future[Option[String]] = {
     accountsConnector.getEnrolments flatMap {
       case Some(enrolments) => Future.successful(enrolments.deversityId)
-      case None => accountsConnector.createDeversityId
+      case None => accountsConnector.createDeversityId map {
+        id => Some(id)
+      } recover {
+        case _ => None
+      }
     }
   }
 

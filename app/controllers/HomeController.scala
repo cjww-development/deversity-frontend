@@ -18,7 +18,6 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.{Action, AnyContent}
-import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
 import services.EnrolmentService
 import utils.application.FrontendController
@@ -27,13 +26,12 @@ import views.html.index
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController with Actions {
+class HomeController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController {
 
   val authConnector = authConnect
   val enrolmentService = enrolmentsSrv
 
-  def showHome: Action[AnyContent] = unauthenticatedAction.async {
-    implicit user =>
+  def showHome: Action[AnyContent] = Action.async {
       implicit request =>
         Future.successful(Ok(index()))
   }

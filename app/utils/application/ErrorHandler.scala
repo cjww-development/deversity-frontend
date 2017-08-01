@@ -17,11 +17,11 @@ package utils.application
 
 import javax.inject._
 
-import com.cjwwdev.logging.Logger
 import play.api.http.DefaultHttpErrorHandler
 import play.api.i18n.MessagesApi
 import play.api.mvc.{RequestHeader, Result}
 import play.api.routing.Router
+import play.api.Logger
 import play.api.{Configuration, Environment, OptionalSourceMapper}
 import play.api.http.Status.NOT_FOUND
 import play.api.mvc.Results.{Status, InternalServerError, NotFound}

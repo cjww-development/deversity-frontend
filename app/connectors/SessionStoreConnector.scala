@@ -39,7 +39,7 @@ class SessionStoreConnector @Inject()(http : Http) extends ApplicationConfigurat
 
   def getDataElement(key : String)(implicit request: Request[_]) : Future[Option[String]] = {
     http.GET[JsValue](s"$sessionStore/session/$getCookieId/data/$key")(request, jsValueReads) map {
-      data => DataSecurity.decryptString((data \ "data").as[String])
+      data => Some(DataSecurity.decryptString((data \ "data").as[String]))
     } recover {
       case _: NotFoundException   => None
       case e: ForbiddenException  => throw e
