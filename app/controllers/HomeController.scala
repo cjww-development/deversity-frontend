@@ -19,20 +19,23 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.{Action, AnyContent}
 import com.cjwwdev.auth.connectors.AuthConnector
-import services.EnrolmentService
+import com.kenshoo.play.metrics.MetricsDisabledException
+import services.{EnrolmentService, MetricsService}
 import utils.application.FrontendController
 import views.html.index
 
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController {
+class HomeController @Inject()(authConnect: AuthConnector,
+                               enrolmentsSrv: EnrolmentService,
+                               metricsService: MetricsService) extends FrontendController {
 
   val authConnector = authConnect
   val enrolmentService = enrolmentsSrv
 
   def showHome: Action[AnyContent] = Action.async {
-      implicit request =>
-        Future.successful(Ok(index()))
+    implicit request =>
+      Future.successful(Ok(index()))
   }
 }

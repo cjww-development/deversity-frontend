@@ -21,7 +21,7 @@ import play.api.test.Helpers._
 class HomeControllerSpec extends CJWWSpec {
 
   class Setup {
-    val testController = new HomeController(mockAuthConnector, mockEnrolmentsService)
+    val testController = new HomeController(mockAuthConnector, mockEnrolmentsService, mockMetricsService)
   }
 
   "showHome" should {

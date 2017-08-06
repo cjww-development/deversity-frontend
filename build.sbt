@@ -37,7 +37,12 @@ val cjwwDep: Seq[ModuleID] = Seq(
   "com.cjww-dev.libs" % "data-security_2.11"          % "2.5.0",
   "com.cjww-dev.libs" % "http-verbs_2.11"             % "2.1.0",
   "com.cjww-dev.libs" % "authorisation_2.11"          % "1.9.0",
-  "com.cjww-dev.libs" % "application-utilities_2.11"  % "1.2.0"
+  "com.cjww-dev.libs" % "application-utilities_2.11"  % "1.2.0",
+  "com.cjww-dev.libs" % "metrics-reporter_2.11"       % "0.1.0"
+)
+
+val codeDep: Seq[ModuleID] = Seq(
+  "com.kenshoo" % "metrics-play_2.10" % "2.4.0_0.4.0"
 )
 
 val testDep: Seq[ModuleID] = Seq(
@@ -46,9 +51,10 @@ val testDep: Seq[ModuleID] = Seq(
 )
 
 libraryDependencies ++= cjwwDep
+libraryDependencies ++= codeDep
 libraryDependencies ++= testDep
+libraryDependencies +=  filters
 
-routesGenerator := InjectedRoutesGenerator
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers += "cjww-dev" at "http://dl.bintray.com/cjww-development/releases"

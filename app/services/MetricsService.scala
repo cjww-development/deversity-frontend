@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 the original author or authors.
+// Copyright (C) 2016-2017 the original author or authors.
 // See the LICENCE.txt file distributed with this work for additional
 // information regarding copyright ownership.
 //
@@ -14,25 +14,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mocks
+package services
 
-import com.cjwwdev.auth.connectors.AuthConnector
-import com.cjwwdev.http.verbs.Http
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito.reset
-import services.{EnrolmentService, MetricsService}
+import javax.inject.{Inject, Singleton}
 
-trait ComponentMocks {
-  this: MockitoSugar =>
+import com.kenshoo.play.metrics.Metrics
 
-  val mockAuthConnector = mock[AuthConnector]
-  val mockHttp = mock[Http]
-  val mockEnrolmentsService = mock[EnrolmentService]
-  val mockMetricsService = mock[MetricsService]
-
-  def resetMocks() : Unit = {
-    reset(mockAuthConnector)
-    reset(mockHttp)
-    reset(mockEnrolmentsService)
-  }
+@Singleton
+class MetricsService @Inject()(metrics: Metrics) {
+  val homeHitCounter = metrics.defaultRegistry.counter("deversity-home-page-hit")
 }
