@@ -19,6 +19,7 @@ import javax.inject.{Inject, Singleton}
 
 import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
+import com.cjwwdev.config.ConfigurationLoader
 import connectors.{Invalid, SessionStoreConnector, Valid}
 import play.api.mvc.{Action, AnyContent}
 import services.{EnrolmentService, SchoolDetailsService}
@@ -34,7 +35,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class EnrolmentController @Inject()(authConnect: AuthConnector,
                                     enrolmentsSrv: EnrolmentService,
                                     schoolDetailsService: SchoolDetailsService,
-                                    sessionStoreConnector: SessionStoreConnector) extends FrontendController with Actions {
+                                    sessionStoreConnector: SessionStoreConnector,
+                                    val config: ConfigurationLoader) extends FrontendController with Actions {
 
   val authConnector = authConnect
   val enrolmentService = enrolmentsSrv

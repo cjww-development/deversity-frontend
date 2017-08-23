@@ -15,14 +15,16 @@
 // limitations under the License.
 package config
 
-import com.cjwwdev.config.BaseConfiguration
+import com.cjwwdev.config.ConfigurationLoader
 import controllers.routes
 
-trait ApplicationConfiguration extends BaseConfiguration {
+trait ApplicationConfiguration {
 
-  val authService               = config.getString(s"$env.routes.auth-service")
-  val sessionStore              = config.getString(s"$env.routes.session-store")
-  val accountMicroservice       = config.getString(s"$env.routes.accounts-microservice")
+  val config: ConfigurationLoader
+
+  val authService               = config.buildServiceUrl("auth-service")
+  val sessionStore              = config.buildServiceUrl("session-store")
+  val accountMicroservice       = config.buildServiceUrl("accounts-microservice")
 
   val USER_LOGIN                = s"$authService/login?redirect=deversity"
   val USER_REGISTER             = s"$authService/create-an-acount"

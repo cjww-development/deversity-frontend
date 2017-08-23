@@ -19,7 +19,7 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.{Action, AnyContent}
 import com.cjwwdev.auth.connectors.AuthConnector
-import com.kenshoo.play.metrics.MetricsDisabledException
+import com.cjwwdev.config.ConfigurationLoader
 import services.{EnrolmentService, MetricsService}
 import utils.application.FrontendController
 import views.html.index
@@ -27,12 +27,10 @@ import views.html.index
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(authConnect: AuthConnector,
-                               enrolmentsSrv: EnrolmentService,
-                               metricsService: MetricsService) extends FrontendController {
-
-  val authConnector = authConnect
-  val enrolmentService = enrolmentsSrv
+class HomeController @Inject()(val authConnector: AuthConnector,
+                               val enrolmentService: EnrolmentService,
+                               metricsService: MetricsService,
+                               val config: ConfigurationLoader) extends FrontendController {
 
   def showHome: Action[AnyContent] = Action.async {
     implicit request =>

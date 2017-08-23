@@ -19,6 +19,7 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import com.cjwwdev.auth.models.AuthContext
+import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.security.encryption.DataSecurity
@@ -38,7 +39,7 @@ case object Valid extends ValidOrg
 case object Invalid extends ValidOrg
 
 @Singleton
-class AccountsMicroserviceConnector @Inject()(http: Http) extends ApplicationConfiguration with DefaultFormat {
+class AccountsMicroserviceConnector @Inject()(http: Http, val config: ConfigurationLoader) extends ApplicationConfiguration with DefaultFormat {
   def validateSchoolName(orgName: String)(implicit request: Request[_]): Future[ValidOrg] = {
     val orgUserName = DataSecurity.encryptString(orgName)
     http.HEAD(s"$accountMicroservice/validate/school/$orgUserName") map {

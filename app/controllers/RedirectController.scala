@@ -19,6 +19,7 @@ import javax.inject.{Inject, Singleton}
 
 import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
+import com.cjwwdev.config.ConfigurationLoader
 import play.api.mvc.{Action, AnyContent}
 import services.EnrolmentService
 import utils.application.FrontendController
@@ -26,7 +27,9 @@ import utils.application.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class RedirectController @Inject()(authConnect: AuthConnector, enrolmentsSrv: EnrolmentService) extends FrontendController with Actions {
+class RedirectController @Inject()(authConnect: AuthConnector,
+                                   enrolmentsSrv: EnrolmentService,
+                                   val config: ConfigurationLoader) extends FrontendController with Actions {
 
   val authConnector = authConnect
   val enrolmentService = enrolmentsSrv

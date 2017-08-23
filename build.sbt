@@ -34,11 +34,11 @@ lazy val scoverageSettings = Seq(
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9986")
 
 val cjwwDep: Seq[ModuleID] = Seq(
-  "com.cjww-dev.libs" % "data-security_2.11"          % "2.5.0",
-  "com.cjww-dev.libs" % "http-verbs_2.11"             % "2.1.0",
-  "com.cjww-dev.libs" % "authorisation_2.11"          % "1.9.0",
-  "com.cjww-dev.libs" % "application-utilities_2.11"  % "1.2.0",
-  "com.cjww-dev.libs" % "metrics-reporter_2.11"       % "0.1.0"
+  "com.cjww-dev.libs" % "data-security_2.11"          % "2.6.1",
+  "com.cjww-dev.libs" % "http-verbs_2.11"             % "2.2.0",
+  "com.cjww-dev.libs" % "authorisation_2.11"          % "1.10.0",
+  "com.cjww-dev.libs" % "application-utilities_2.11"  % "2.0.1",
+  "com.cjww-dev.libs" % "metrics-reporter_2.11"       % "0.3.0"
 )
 
 val codeDep: Seq[ModuleID] = Seq(
@@ -46,8 +46,8 @@ val codeDep: Seq[ModuleID] = Seq(
 )
 
 val testDep: Seq[ModuleID] = Seq(
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test,
-  "org.mockito"             % "mockito-core"       % "2.8.9" % Test
+  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % Test,
+  "org.mockito"             % "mockito-core"       % "2.8.47" % Test
 )
 
 libraryDependencies ++= cjwwDep
