@@ -21,6 +21,6 @@ import javax.inject.{Inject, Singleton}
 import com.kenshoo.play.metrics.Metrics
 
 @Singleton
-class MetricsService @Inject()(/*metrics: Metrics*/) {
-  //val homeHitCounter = metrics.defaultRegistry.counter("deversity-home-page-hit")
+class MetricsService @Inject()(metrics: Metrics) {
+  val homeHitCounter = metrics.defaultRegistry.counter("deversity-home-page-hit")
 }

@@ -32,14 +32,11 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class EnrolmentController @Inject()(authConnect: AuthConnector,
-                                    enrolmentsSrv: EnrolmentService,
+class EnrolmentController @Inject()(val authConnector: AuthConnector,
                                     schoolDetailsService: SchoolDetailsService,
                                     sessionStoreConnector: SessionStoreConnector,
+                                    val enrolmentService: EnrolmentService,
                                     val config: ConfigurationLoader) extends FrontendController with Actions {
-
-  val authConnector = authConnect
-  val enrolmentService = enrolmentsSrv
 
   def testController: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>

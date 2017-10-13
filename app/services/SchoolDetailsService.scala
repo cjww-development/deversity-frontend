@@ -17,20 +17,21 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{AccountsMicroserviceConnector, ValidOrg}
+import com.cjwwdev.auth.models.AuthContext
+import connectors.{DeversityMicroserviceConnector, ValidOrg}
 import models.SchoolDetails
 import play.api.mvc.Request
 
 import scala.concurrent.Future
 
 @Singleton
-class SchoolDetailsService @Inject()(schoolDetailsConnector: AccountsMicroserviceConnector) {
+class SchoolDetailsService @Inject()(deversityConnector: DeversityMicroserviceConnector) {
 
   def validateSchool(orgName: String)(implicit request: Request[_]): Future[ValidOrg] = {
-    schoolDetailsConnector.validateSchoolName(orgName)
+    deversityConnector.validateSchoolName(orgName)
   }
 
-  def getSchoolDetails(orgName: String)(implicit request: Request[_]): Future[Option[SchoolDetails]] = {
-    schoolDetailsConnector.getSchoolDetails(orgName)
+  def getSchoolDetails(orgName: String)(implicit authContext: AuthContext, request: Request[_]): Future[Option[SchoolDetails]] = {
+    deversityConnector.getSchoolDetails(orgName)
   }
 }
