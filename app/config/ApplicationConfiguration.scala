@@ -19,6 +19,7 @@ import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 import controllers.routes
 import play.api.mvc.Call
+import play.api.mvc.RequestHeader
 
 trait ApplicationConfiguration {
 
@@ -38,21 +39,21 @@ trait ApplicationConfiguration {
 
   val USER_LOGIN_CALL           = Call("GET", USER_LOGIN)
 
-  implicit val serviceLinks: Seq[NavBarLinkBuilder] = Seq(
+  implicit def serviceLinks(implicit requestHeader: RequestHeader): Seq[NavBarLinkBuilder] = Seq(
     NavBarLinkBuilder("/", "glyphicon-home", "Home"),
     NavBarLinkBuilder("/", "glyphicon-wrench", "Diagnostics"),
-    NavBarLinkBuilder("/", "glyphicon-education", "Deversity"),
+    NavBarLinkBuilder("/deversity", "glyphicon-education", "Deversity"),
     NavBarLinkBuilder("/", "glyphicon-asterisk", "Hub")
   )
 
-  implicit val standardNavBarRoutes: Map[String, Call] = Map(
-    "navBarLogo"    -> Call("GET", "/deversity/assets/images/logo.png"),
-    "globalAssets"  -> Call("GET", "/deversity/assets/stylesheets/global-assets.css"),
-    "favicon"       -> Call("GET", "/deversity/assets/images/favicon.ico"),
-    "userRegister"  -> Call("GET", USER_REGISTER),
-    "orgRegister"   -> Call("GET", ORG_REGISTER),
-    "login"         -> Call("GET", USER_LOGIN),
-    "dashboard"     -> Call("GET", DASHBOARD),
-    "signOut"       -> Call("GET", SIGN_OUT)
+  implicit def standardNavBarRoutes(implicit requestHeader: RequestHeader): Map[String, Call] = Map(
+    "navBarLogo"    -> Call("GET", routes.Assets.versioned("images/logo.png").absoluteURL()),
+    "globalAssets"  -> Call("GET", routes.Assets.versioned("stylesheets/global-assets.css").absoluteURL()),
+    "favicon"       -> Call("GET", routes.Assets.versioned("images/favicon.ico").absoluteURL()),
+    "userRegister"  -> Call("GET", routes.RedirectController.redirectToUserRegister().absoluteURL()),
+    "orgRegister"   -> Call("GET", routes.RedirectController.redirectToOrgRegister().absoluteURL()),
+    "login"         -> Call("GET", routes.RedirectController.redirectToLogin().absoluteURL()),
+    "dashboard"     -> Call("GET", routes.RedirectController.redirectToUserDashboard().absoluteURL()),
+    "signOut"       -> Call("GET", routes.RedirectController.redirectToSignOut().absoluteURL())
   )
 }
