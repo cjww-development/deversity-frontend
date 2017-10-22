@@ -1,0 +1,81 @@
+#Common strings
+app.common.next                                     = Next
+app.common.back                                     = Back
+app.common.enrolment-warning                        = <strong>Please take note,</strong> you won''t be able to change this later!
+app.common.dashboard                                = Dashboard
+app.common.cancel                                   = Cancel
+
+#StandardErrorView
+errors.standard-error.message                       = There was a problem, please try again later
+
+#Index
+pages.index.title                                   = CJWW Deversity - Welcome
+pages.index.heading                                 = printf("Hello programmers!");
+pages.index.body                                    = Welcome to Deversity. Here you will hopefully learn about some programming concepts that will help you in your journey to become a developer!
+
+#ConfirmSchool
+pages.confirm-school.title                          = Confirm your school
+pages.confirm-school.heading                        = Is this your school?
+pages.confirm-school.name                           = Your school is {0}
+pages.confirm-school.location                       = Located in {0}
+
+#ConfirmTeacher
+pages.confirm-teacher.title                         = Confirm your teacher
+pages.confirm-teacher.heading                       = Is this your teacher?
+pages.confirm-teacher.teaching-location             = Teaching at {0} in room {1}
+
+#EnrolmentConfirmation
+pages.enrolment-confirmation.title                  = All done!
+pages.enrolment-confirmation.heading                = All done!
+pages.enrolment-confirmation.body                   = We have notified {0} you would like to be a {1}
+pages.enrolment-confirmation.alert                  = You can check whether you''ve been confirmed on your dashboard
+
+#EnrolmentWelcome
+pages.enrolment-welcome.title                       = Welcome to Deversity
+pages.enrolment-welcome.heading                     = Welcome to Deversity
+pages.enrolment-welcome.body.one                    = We have noticed that this is your first time using Deversity
+pages.enrolment-welcome.body.two                    = Let us set up a few things
+
+#InvalidSchool
+pages.invalid-school.title                          = We couldn''t find your school
+pages.invalid-school.heading                        = We couldn''t find your school
+pages.invalid-school.body                           = Would you like to try again?
+pages.invalid-school.alert                          = You won''t be able to use Deversity until you have completed this setup
+
+#InvalidTeacher
+pages.invalid-teacher.title                         = We couldn''t find your teacher
+pages.invalid-teacher.heading                       = We couldn''t find your teacher
+pages.invalid-teacher.body                          = Would you like to try again?
+pages.invalid-teacher.alert                         = You won''t be able to use Deversity until you have completed this setup
+
+#RoleSelector
+pages.role-selector.title                           = Are you a teacher or a student?
+pages.role-selector.heading                         = Are you a teacher or a student?
+pages.role-selector.radio.label.teacher             = Teacher
+pages.role-selector.radio.label.student             = Student
+pages.role-selector.alert                           = <strong>Heads up!</strong> you''l be confirmed as a teacher or a student by {0} so choose carefully...
+
+#SchoolSelector
+pages.school-selector.title                         = What school do you belong to?
+pages.school-selector.heading                       = What school do you belong to?
+pages.school-selector.body                          = Please enter your school ID
+pages.school-selector.alert                         = <strong>Hey!</strong> you can get your school ID from your teacher
+pages.school-selector.text-entry.label              = School ID
+pages.school-selector.text-entry.placeholder        = Your school ID
+
+#TeacherDetailsEntry
+pages.teacher-details.title                         = Tell us some basic details
+pages.teacher-details.heading                       = Tell us some basic details
+pages.teacher-details.alert                         = This will make it easier for your students to find you when they are registering
+pages.teacher-details.text-entry.title.label        = Title
+pages.teacher-details.text-entry.title.placeholder  = Your preferred teacher title; Professor etc.
+pages.teacher-details.text-entry.room.label         = Room
+pages.teacher-details.text-entry.room.placeholder   = The room you work out of
+
+#TeacherSelector
+pages.teacher-selector.title                        = Who is your teacher?
+pages.teacher-selector.heading                      = Who are you taught by?
+pages.teacher-selector.body                         = Please enter your teachers ID
+pages.teacher-selector.text-entry.label             = Teacher ID
+pages.teacher-selector.text-entry.placeholder       = Your teachers ID
+

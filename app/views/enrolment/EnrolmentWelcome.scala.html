@@ -1,6 +1,9 @@
-@()(implicit request: Request[_])
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.templates.MainTemplate
 
-@main_template(title = "Welcome to deversity") {
+@()(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
+@MainTemplate(title = messagesApi("pages.enrolment-welcome.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -14,13 +17,13 @@
                 </div>
 
                 <div class="col-md-8" id="welcome">
-                    <h1>Welcome to Deversity</h1>
-                    <p>We have noticed this is your first time using Deversity.</p>
-                    <p>Lets set a few things up.</p>
+                    <h1>@messagesApi("pages.enrolment-welcome.heading")</h1>
+                    <p>@messagesApi("pages.enrolment-welcome.body.one")</p>
+                    <p>@messagesApi("pages.enrolment-welcome.body.two")</p>
                     <form role="button" method="get" action="@routes.EnrolmentController.selectSchool">
                         <div class="form-group">
                             <div class="input-group">
-                                <button type="submit" class="btn btn-primary btn-lg">Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                                <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </form>

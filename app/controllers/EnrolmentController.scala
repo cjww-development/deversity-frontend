@@ -27,16 +27,18 @@ import utils.application.FrontendController
 import views.html.enrolment._
 import forms.{RoleForm, SchoolNameForm, TeacherDetailsForm, TeacherNameForm}
 import models.SessionUpdateSet
+import play.api.i18n.MessagesApi
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class EnrolmentController @Inject()(val authConnector: AuthConnector,
-                                    schoolDetailsService: SchoolDetailsService,
+class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
                                     sessionStoreConnector: SessionStoreConnector,
+                                    val authConnector: AuthConnector,
                                     val enrolmentService: EnrolmentService,
-                                    val config: ConfigurationLoader) extends FrontendController with Actions {
+                                    val config: ConfigurationLoader,
+                                    implicit val messagesApi: MessagesApi) extends FrontendController with Actions {
 
   def testController: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>

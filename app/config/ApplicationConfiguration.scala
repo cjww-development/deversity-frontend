@@ -16,7 +16,9 @@
 package config
 
 import com.cjwwdev.config.ConfigurationLoader
+import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 import controllers.routes
+import play.api.mvc.Call
 
 trait ApplicationConfiguration {
 
@@ -29,9 +31,28 @@ trait ApplicationConfiguration {
 
 
   val USER_LOGIN                = s"$authService/login?redirect=deversity"
-  val USER_REGISTER             = s"$authService/create-an-acount"
+  val USER_REGISTER             = s"$authService/create-an-account"
+  val ORG_REGISTER              = s"$authService/create-an-organisation-account"
   val DASHBOARD                 = s"$authService/dashboard"
   val SIGN_OUT                  = s"$authService/goodbye"
 
-  val USER_LOGIN_CALL           = routes.RedirectController.redirectToUserLogin()
+  val USER_LOGIN_CALL           = Call("GET", USER_LOGIN)
+
+  implicit val serviceLinks: Seq[NavBarLinkBuilder] = Seq(
+    NavBarLinkBuilder("/", "glyphicon-home", "Home"),
+    NavBarLinkBuilder("/", "glyphicon-wrench", "Diagnostics"),
+    NavBarLinkBuilder("/", "glyphicon-education", "Deversity"),
+    NavBarLinkBuilder("/", "glyphicon-asterisk", "Hub")
+  )
+
+  implicit val standardNavBarRoutes: Map[String, Call] = Map(
+    "navBarLogo"    -> Call("GET", "/deversity/assets/images/logo.png"),
+    "globalAssets"  -> Call("GET", "/deversity/assets/stylesheets/global-assets.css"),
+    "favicon"       -> Call("GET", "/deversity/assets/images/favicon.ico"),
+    "userRegister"  -> Call("GET", USER_REGISTER),
+    "orgRegister"   -> Call("GET", ORG_REGISTER),
+    "login"         -> Call("GET", USER_LOGIN),
+    "dashboard"     -> Call("GET", DASHBOARD),
+    "signOut"       -> Call("GET", SIGN_OUT)
+  )
 }

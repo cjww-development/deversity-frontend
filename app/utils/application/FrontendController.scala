@@ -19,17 +19,16 @@ package utils.application
 import com.cjwwdev.auth.models.AuthContext
 import config.ApplicationConfiguration
 import controllers.routes
+import play.api.i18n.{I18NSupportLowPriorityImplicits, I18nSupport, Lang, Messages}
 import play.api.mvc.{Controller, Request, Result}
 import services._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait FrontendController extends Controller with ApplicationConfiguration {
+trait FrontendController extends Controller with ApplicationConfiguration with I18NSupportLowPriorityImplicits with I18nSupport {
 
   val enrolmentService: EnrolmentService
-
-  implicit def optionUser(implicit user: AuthContext): Option[AuthContext] = Some(user)
 
   def checkDeversityEnrolment(f: => Future[Result])(implicit authContext: AuthContext, request: Request[_]): Future[Result] = {
     enrolmentService.validateCurrentEnrolments flatMap {

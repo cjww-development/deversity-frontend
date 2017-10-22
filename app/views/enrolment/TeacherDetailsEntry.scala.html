@@ -1,8 +1,10 @@
-
 @import models.forms.TeacherDetails
-@(details: Form[TeacherDetails])(implicit request: Request[_])
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.templates.MainTemplate
+@import com.cjwwdev.views.html.helpers.textInput
 
-@import views.html.helpers.textInput
+@(details: Form[TeacherDetails])(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
 
 @colourSwitcher(random : Int) = {
     @random match {
@@ -24,7 +26,7 @@
     }
 }
 
-@main_template(title = "Tell us some details") {
+@MainTemplate(title = messagesApi("pages.teacher-details.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -42,19 +44,36 @@
                 </div>
 
                 <div class="col-md-8" id="school-selector">
-                    <h1>Tell us some basic details</h1>
+                    <h1>@messagesApi("pages.teacher-details.heading")</h1>
 
                     <div class="alert alert-info" role="alert">
-                        This will make it easier for your students to find you
+                        @messagesApi("pages.teacher-details.alert")
                     </div>
 
                     <form action="@routes.EnrolmentController.cacheTeacherDetails()" method="post">
-                        @textInput(details("title"), "title", "Title", "Preferred teacher title; Professor etc", "text", "cjww-input-group-addon")
-                        @textInput(details("room"), "room", "Room", "The room you work out of", "text", "cjww-input-group-addon")
+                        @textInput(
+                            details("title"),
+                            false,
+                            '_sassClass   -> "cjww-input-group-addon",
+                            '_label       -> messagesApi("pages.teacher-details.text-entry.title.label"),
+                            '_inputType   -> "text",
+                            '_placeholder -> messagesApi("pages.teacher-details.text-entry.title.placeholder"),
+                            '_fieldName   -> "title"
+                        )
+
+                        @textInput(
+                            details("room"),
+                            false,
+                            '_sassClass   -> "cjww-input-group-addon",
+                            '_label       -> messagesApi("pages.teacher-details.text-entry.room.label"),
+                            '_inputType   -> "text",
+                            '_placeholder -> messagesApi("pages.teacher-details.text-entry.room.placeholder"),
+                            '_fieldName   -> "room"
+                        )
 
                         <div class="form-group">
                             <div class="input-group">
-                                <button type="submit" class="btn btn-primary btn-lg">Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                                <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </form>
