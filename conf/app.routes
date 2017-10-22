@@ -28,8 +28,9 @@ GET     /confirm-teacher            controllers.EnrolmentController.confirmTeach
 GET     /confirmation               controllers.EnrolmentController.enrolmentConfirmation
 
 #External Routes
-GET     /login                      controllers.RedirectController.redirectToUserLogin
+GET     /login                      controllers.RedirectController.redirectToLogin
 GET     /register                   controllers.RedirectController.redirectToUserRegister
+GET     /org-register               controllers.RedirectController.redirectToOrgRegister
 GET     /dashboard                  controllers.RedirectController.redirectToUserDashboard
 GET     /sign-out                   controllers.RedirectController.redirectToSignOut
 

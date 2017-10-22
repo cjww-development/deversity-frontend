@@ -21,20 +21,23 @@ import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.verbs.Http
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito.reset
+import play.api.i18n.MessagesApi
 import services.{EnrolmentService, MetricsService}
 
 trait ComponentMocks {
   this: MockitoSugar =>
 
-  val mockAuthConnector = mock[AuthConnector]
-  val mockHttp = mock[Http]
+  val mockAuthConnector     = mock[AuthConnector]
+  val mockHttp              = mock[Http]
   val mockEnrolmentsService = mock[EnrolmentService]
-  val mockMetricsService = mock[MetricsService]
-  val mockConfig = mock[ConfigurationLoader]
+  val mockMetricsService    = mock[MetricsService]
+  val mockConfig            = mock[ConfigurationLoader]
+  val mockMessagesApi       = mock[MessagesApi]
 
   def resetMocks() : Unit = {
     reset(mockAuthConnector)
     reset(mockHttp)
     reset(mockEnrolmentsService)
+    reset(mockMessagesApi)
   }
 }

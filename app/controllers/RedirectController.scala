@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
 import com.cjwwdev.config.ConfigurationLoader
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.EnrolmentService
 import utils.application.FrontendController
@@ -27,19 +28,22 @@ import utils.application.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class RedirectController @Inject()(authConnect: AuthConnector,
-                                   enrolmentsSrv: EnrolmentService,
-                                   val config: ConfigurationLoader) extends FrontendController with Actions {
-
-  val authConnector = authConnect
-  val enrolmentService = enrolmentsSrv
+class RedirectController @Inject()(val authConnector: AuthConnector,
+                                   val enrolmentService: EnrolmentService,
+                                   val config: ConfigurationLoader,
+                                   implicit val messagesApi: MessagesApi) extends FrontendController with Actions {
 
   def redirectToUserRegister: Action[AnyContent] = Action.async {
       implicit request =>
         Future.successful(Redirect(USER_REGISTER))
   }
 
-  def redirectToUserLogin: Action[AnyContent] = Action.async {
+  def redirectToOrgRegister: Action[AnyContent] = Action.async {
+    implicit request =>
+      Future.successful(Redirect(ORG_REGISTER))
+  }
+
+  def redirectToLogin: Action[AnyContent] = Action.async {
       implicit request =>
         Future.successful(Redirect(USER_LOGIN))
   }

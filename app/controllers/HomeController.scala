@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent}
 import com.cjwwdev.auth.connectors.AuthConnector
 import com.cjwwdev.config.ConfigurationLoader
+import play.api.i18n.MessagesApi
 import services.{EnrolmentService, MetricsService}
 import utils.application.FrontendController
 import views.html.index
@@ -27,10 +28,11 @@ import views.html.index
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(val authConnector: AuthConnector,
+class HomeController @Inject()(metricsService: MetricsService,
                                val enrolmentService: EnrolmentService,
-                               metricsService: MetricsService,
-                               val config: ConfigurationLoader) extends FrontendController {
+                               val authConnector: AuthConnector,
+                               val config: ConfigurationLoader,
+                               implicit val messagesApi: MessagesApi) extends FrontendController {
 
   def showHome: Action[AnyContent] = Action.async {
     implicit request =>

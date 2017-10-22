@@ -38,7 +38,8 @@ val cjwwDep: Seq[ModuleID] = Seq(
   "com.cjww-dev.libs" % "http-verbs_2.11"             % "2.5.0",
   "com.cjww-dev.libs" % "authorisation_2.11"          % "1.14.0",
   "com.cjww-dev.libs" % "application-utilities_2.11"  % "2.3.0",
-  "com.cjww-dev.libs" % "metrics-reporter_2.11"       % "0.5.0"
+  "com.cjww-dev.libs" % "metrics-reporter_2.11"       % "0.5.0",
+  "com.cjww-dev.libs" % "frontend-ui_2.11"            % "1.3.0"
 )
 
 val codeDep: Seq[ModuleID] = Seq(

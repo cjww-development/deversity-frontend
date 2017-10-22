@@ -17,6 +17,7 @@ package utils.application
 
 import javax.inject._
 
+import com.cjwwdev.config.ConfigurationLoader
 import play.api.http.DefaultHttpErrorHandler
 import play.api.i18n.MessagesApi
 import play.api.mvc.{RequestHeader, Result}
@@ -24,23 +25,26 @@ import play.api.routing.Router
 import play.api.Logger
 import play.api.{Configuration, Environment, OptionalSourceMapper}
 import play.api.http.Status.NOT_FOUND
-import play.api.mvc.Results.{Status, InternalServerError, NotFound}
-import views.html.errors.{NotFoundPage, ServerError}
-import views.html.error_template
+import play.api.mvc.Results.{InternalServerError, NotFound, Status}
+import com.cjwwdev.views.html.templates.errors.{NotFoundView, ServerErrorView, StandardErrorView}
+import config.ApplicationConfiguration
 
 import scala.concurrent.Future
 
 @Singleton
-class ErrorHandler @Inject()(env: Environment, config: Configuration,
-                             sm: OptionalSourceMapper, router: Provider[Router],
-                             mApi: MessagesApi) extends DefaultHttpErrorHandler(env, config, sm, router) with RequestBuilder {
+class ErrorHandler @Inject()(env: Environment,
+                             sm: OptionalSourceMapper,
+                             router: Provider[Router],
+                             val config: ConfigurationLoader,
+                             implicit val messagesApi: MessagesApi)
+  extends DefaultHttpErrorHandler(env, config.loadedConfig, sm, router) with RequestBuilder with ApplicationConfiguration {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     Logger.error(s"[ErrorHandler] - [onClientError] - Url: ${request.uri}, status code: $statusCode")
     implicit val req = buildNewRequest[String](request, "")
     statusCode match {
-      case NOT_FOUND  => Future.successful(NotFound(NotFoundPage()))
-      case _          => Future.successful(Status(statusCode)(error_template("There was a problem, please try again later!")))
+      case NOT_FOUND  => Future.successful(NotFound(NotFoundView()))
+      case _          => Future.successful(Status(statusCode)(StandardErrorView(messagesApi("errors.standard-error.message"))))
     }
   }
 
@@ -48,6 +52,6 @@ class ErrorHandler @Inject()(env: Environment, config: Configuration,
     Logger.error(s"[ErrorHandler] - [onServerError] - exception : $exception")
     exception.printStackTrace()
     implicit val req = buildNewRequest[String](request, "")
-    Future.successful(InternalServerError(ServerError()))
+    Future.successful(InternalServerError(ServerErrorView()))
   }
 }

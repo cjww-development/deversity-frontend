@@ -25,7 +25,6 @@ import scala.concurrent.{Await, Awaitable}
 import scala.concurrent.duration._
 
 trait CJWWSpec extends PlaySpec with GuiceOneAppPerSuite with AuthMocks with ComponentMocks {
-  override lazy val fakeApplication: Application = new GuiceApplicationBuilder().bindings().build()
 
   implicit val duration = 5.seconds
 
