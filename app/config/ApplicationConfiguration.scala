@@ -29,7 +29,7 @@ trait ApplicationConfiguration {
   val sessionStore              = config.buildServiceUrl("session-store")
   val accountMicroservice       = config.buildServiceUrl("accounts-microservice")
   val deversityMicroservice     = config.buildServiceUrl("deversity")
-  
+
   val USER_LOGIN                = s"$authService/login?redirect=deversity"
   val USER_REGISTER             = s"$authService/create-an-account"
   val ORG_REGISTER              = s"$authService/create-an-organisation-account"
