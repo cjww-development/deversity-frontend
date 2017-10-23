@@ -29,8 +29,7 @@ trait ApplicationConfiguration {
   val sessionStore              = config.buildServiceUrl("session-store")
   val accountMicroservice       = config.buildServiceUrl("accounts-microservice")
   val deversityMicroservice     = config.buildServiceUrl("deversity")
-
-
+  
   val USER_LOGIN                = s"$authService/login?redirect=deversity"
   val USER_REGISTER             = s"$authService/create-an-account"
   val ORG_REGISTER              = s"$authService/create-an-organisation-account"
@@ -47,9 +46,9 @@ trait ApplicationConfiguration {
   )
 
   implicit def standardNavBarRoutes(implicit requestHeader: RequestHeader): Map[String, Call] = Map(
-    "navBarLogo"    -> Call("GET", routes.Assets.versioned("images/logo.png").absoluteURL()),
-    "globalAssets"  -> Call("GET", routes.Assets.versioned("stylesheets/global-assets.css").absoluteURL()),
-    "favicon"       -> Call("GET", routes.Assets.versioned("images/favicon.ico").absoluteURL()),
+    "navBarLogo"    -> routes.Assets.versioned("images/logo.png"),
+    "globalAssets"  -> routes.Assets.versioned("stylesheets/global-assets.css"),
+    "favicon"       -> routes.Assets.versioned("images/favicon.ico"),
     "userRegister"  -> Call("GET", routes.RedirectController.redirectToUserRegister().absoluteURL()),
     "orgRegister"   -> Call("GET", routes.RedirectController.redirectToOrgRegister().absoluteURL()),
     "login"         -> Call("GET", routes.RedirectController.redirectToLogin().absoluteURL()),
