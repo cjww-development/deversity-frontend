@@ -21,4 +21,5 @@ import javax.inject.Inject
 import play.api.http.DefaultHttpFilters
 import com.kenshoo.play.metrics.MetricsFilter
 
-class Filters @Inject()(metricsFilter: MetricsFilter) extends DefaultHttpFilters(metricsFilter)
+class Filters @Inject()(metricsFilter: MetricsFilter, iPWhitelistFilter: IPWhitelistFilter)
+  extends DefaultHttpFilters(metricsFilter, iPWhitelistFilter)

@@ -4,6 +4,8 @@
 
 GET     /                           controllers.HomeController.showHome
 
+GET     /please-return-later        controllers.RedirectController.redirectToServiceOutage
+
 GET     /test                       controllers.EnrolmentController.testController
 
 #Enrolment journey

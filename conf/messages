@@ -8,6 +8,11 @@ app.common.cancel                                   = Cancel
 #StandardErrorView
 errors.standard-error.message                       = There was a problem, please try again later
 
+#Service outage
+misc.unavailable.title                              = This service is unavailable
+misc.unavailable.heading                            = This service is currently not available
+misc.unavailable.body                               = Please try again later
+
 #Index
 pages.index.title                                   = CJWW Deversity - Welcome
 pages.index.heading                                 = printf("Hello programmers!");

@@ -43,8 +43,8 @@ class ErrorHandler @Inject()(env: Environment,
     Logger.error(s"[ErrorHandler] - [onClientError] - Url: ${request.uri}, status code: $statusCode")
     implicit val req = buildNewRequest[String](request, "")
     statusCode match {
-      case NOT_FOUND  => Future.successful(NotFound(NotFoundView()))
-      case _          => Future.successful(Status(statusCode)(StandardErrorView(messagesApi("errors.standard-error.message"))))
+      case NOT_FOUND => Future.successful(NotFound(NotFoundView()))
+      case _ => Future.successful(Status(statusCode)(StandardErrorView(messagesApi("errors.standard-error.message"))))
     }
   }
 

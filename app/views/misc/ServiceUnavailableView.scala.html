@@ -1,0 +1,23 @@
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.templates.MainTemplate
+
+@()(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
+@MainTemplate(title = messagesApi("misc.unavailable.title"), links, navBarRoutes) {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="">
+                        <img src="@routes.Assets.versioned("images/construction.png")" width="100%" alt="">
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <h1>@messagesApi("misc.unavailable.heading")</h1>
+                    <p>@messagesApi("misc.unavailable.body")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
