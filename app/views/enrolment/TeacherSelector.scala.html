@@ -1,9 +1,9 @@
-@import models.forms.TeacherName
+@import models.forms.TeacherRegCode
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 @import com.cjwwdev.views.html.helpers.textInput
 
-@(teacher: Form[TeacherName])(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(teacher: Form[TeacherRegCode])(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @MainTemplate(title = messagesApi("pages.teacher-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">
@@ -26,7 +26,8 @@
                             '_label       -> messagesApi("pages.teacher-selector.text-entry.label"),
                             '_inputType   -> "text",
                             '_placeholder -> messagesApi("pages.teacher-selector.text-entry.placeholder"),
-                            '_fieldName   -> "userName"
+                            '_fieldName   -> "regCode",
+                            '_spanId      -> "user-name-span"
                         )
 
                         <div class="form-group">

@@ -15,25 +15,28 @@
 // limitations under the License.
 package connectors
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
 import com.cjwwdev.auth.models.AuthContext
-import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.security.encryption.DataSecurity
-import config.ApplicationConfiguration
-import models.{DeversityEnrolment, SchoolDetails}
+import common.ApplicationConfiguration
 import models.http.TeacherInformation
-import play.api.http.Status.OK
+import models.{DeversityEnrolment, SchoolDetails}
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.Request
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-@Singleton
-class DeversityMicroserviceConnector @Inject()(http: Http, val config: ConfigurationLoader) extends ApplicationConfiguration {
+class DeversityMicroserviceConnectorImpl @Inject()(val http: Http) extends DeversityMicroserviceConnector with ApplicationConfiguration
+
+trait DeversityMicroserviceConnector {
+  val http: Http
+
+  val deversityMicroservice: String
+
   def getDeversityUserInfo(implicit authContext: AuthContext, request: Request[_]): Future[Option[DeversityEnrolment]] = {
     http.GET[DeversityEnrolment](s"$deversityMicroservice/enrolment/${authContext.user.id}/deversity") map {
       deversityEnrolment => Some(deversityEnrolment)
@@ -42,10 +45,11 @@ class DeversityMicroserviceConnector @Inject()(http: Http, val config: Configura
     }
   }
 
-  def getTeacherDetails(userName: String, schoolName: String)(implicit authContext: AuthContext, request: Request[_]): Future[Option[TeacherInformation]] = {
-    val un = DataSecurity.encryptString(userName)
-    val sn = DataSecurity.encryptString(schoolName)
-    http.GET[TeacherInformation](s"$deversityMicroservice/user/${authContext.user.id}/teacher/$un/school/$sn/details") map {
+  def getTeacherDetails(teacherDevId: String, schoolDevId: String)
+                       (implicit authContext: AuthContext, request: Request[_]): Future[Option[TeacherInformation]] = {
+    val tDiD = DataSecurity.encryptString(teacherDevId)
+    val sDiD = DataSecurity.encryptString(schoolDevId)
+    http.GET[TeacherInformation](s"$deversityMicroservice/user/${authContext.user.id}/teacher/$tDiD/school/$sDiD/details") map {
       teacherInfo => Some(teacherInfo)
     } recover {
       case _: NotFoundException => None
@@ -63,35 +67,27 @@ class DeversityMicroserviceConnector @Inject()(http: Http, val config: Configura
     http.PATCH[DeversityEnrolment](s"$deversityMicroservice/enrolment/${authContext.user.id}/deversity", deversityEnrolment) map(_.status)
   }
 
-  def validateSchoolName(orgName: String)(implicit request: Request[_]): Future[ValidOrg] = {
-    val orgUserName = DataSecurity.encryptString(orgName)
-    http.HEAD(s"$deversityMicroservice/validate/school/$orgUserName") map {
-      _.status match {
-        case OK => Valid
-      }
-    } recover {
-      case _: NotFoundException => Invalid
-    }
+  def validateSchool(regCode: String)(implicit request: Request[_]): Future[String] = {
+    val orgRegCode = DataSecurity.encryptString(regCode)
+    http.GET[String](s"$deversityMicroservice/validate/school/$orgRegCode")
   }
 
-  def validateTeacher(userName: String, schoolName: String)(implicit request: Request[_]): Future[ValidOrg] = {
-    val un = DataSecurity.encryptString(userName)
-    val sn = DataSecurity.encryptString(schoolName)
-    http.HEAD(s"$deversityMicroservice/validate/teacher/$un/school/$sn") map {
-      _.status match {
-        case OK => Valid
-      }
-    } recover {
-      case _: NotFoundException => Invalid
-    }
+  def validateTeacher(regCode: String, schoolDevId: String)(implicit request: Request[_]): Future[String] = {
+    val rc   = DataSecurity.encryptString(regCode)
+    val sDId = DataSecurity.encryptString(schoolDevId)
+    http.GET[String](s"$deversityMicroservice/validate/teacher/$rc/school/$sDId")
   }
 
-  def getSchoolDetails(orgName: String)(implicit authContext: AuthContext, request: Request[_]): Future[Option[SchoolDetails]] = {
-    val orgUserName = DataSecurity.encryptString(orgName)
-    http.GET[SchoolDetails](s"$deversityMicroservice/user/${authContext.user.id}/school/$orgUserName/details") map {
+  def getSchoolDetails(orgDevId: String)(implicit authContext: AuthContext, request: Request[_]): Future[Option[SchoolDetails]] = {
+    val encOrgDevId = DataSecurity.encryptString(orgDevId)
+    http.GET[SchoolDetails](s"$deversityMicroservice/user/${authContext.user.id}/school/$encOrgDevId/details") map {
       schoolDeets => Some(schoolDeets)
     } recover {
       case _: NotFoundException => None
     }
+  }
+
+  def lookupRegistrationCode(regCode: String)(implicit authContext: AuthContext, request: Request[_]): Future[String] = {
+    http.GET[String](s"$deversityMicroservice/user/${authContext.user.id}/lookup/$regCode/lookup-reg-code")
   }
 }

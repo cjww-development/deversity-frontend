@@ -16,12 +16,16 @@
 package controllers
 
 import mocks.CJWWSpec
+import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 
 class HomeControllerSpec extends CJWWSpec {
 
   class Setup {
-    val testController = new HomeController(mockMetricsService, mockEnrolmentsService, mockAuthConnector, mockConfig, mockMessagesApi)
+    val testController = new HomeController {
+      override implicit val messagesApi: MessagesApi = mockMessagesApi
+      override val enrolmentService = mockEnrolmentsService
+    }
   }
 
   "showHome" should {

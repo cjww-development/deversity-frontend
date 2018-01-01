@@ -15,20 +15,22 @@
 // limitations under the License.
 package services
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
 import com.cjwwdev.auth.models.AuthContext
-import connectors.{DeversityMicroserviceConnector, ValidOrg}
+import connectors.DeversityMicroserviceConnector
 import models.SchoolDetails
 import play.api.mvc.Request
 
 import scala.concurrent.Future
 
-@Singleton
-class SchoolDetailsService @Inject()(deversityConnector: DeversityMicroserviceConnector) {
+class SchoolDetailsServiceImpl @Inject()(val deversityConnector: DeversityMicroserviceConnector) extends SchoolDetailsService
 
-  def validateSchool(orgName: String)(implicit request: Request[_]): Future[ValidOrg] = {
-    deversityConnector.validateSchoolName(orgName)
+trait SchoolDetailsService{
+  val deversityConnector: DeversityMicroserviceConnector
+
+  def validateSchool(regCode: String)(implicit request: Request[_]): Future[String] = {
+    deversityConnector.validateSchool(regCode)
   }
 
   def getSchoolDetails(orgName: String)(implicit authContext: AuthContext, request: Request[_]): Future[Option[SchoolDetails]] = {

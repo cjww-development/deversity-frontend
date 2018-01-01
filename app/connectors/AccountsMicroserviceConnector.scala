@@ -16,32 +16,31 @@
 
 package connectors
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
 import com.cjwwdev.auth.models.AuthContext
-import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.verbs.Http
-import com.cjwwdev.security.encryption.DataSecurity
-import config.ApplicationConfiguration
-import models.http.TeacherInformation
-import models.{DeversityEnrolment, Enrolments, SchoolDetails}
-import play.api.Logger
-import play.api.http.Status.OK
+import common.ApplicationConfiguration
+import models.Enrolments
 import play.api.libs.json._
 import play.api.mvc.Request
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 sealed trait ValidOrg
 case object Valid extends ValidOrg
 case object Invalid extends ValidOrg
 
-@Singleton
-class AccountsMicroserviceConnector @Inject()(http: Http, val config: ConfigurationLoader) extends ApplicationConfiguration with DefaultFormat {
+class AccountsMicroserviceConnectorImpl @Inject()(val http: Http) extends AccountsMicroserviceConnector with ApplicationConfiguration
+
+trait AccountsMicroserviceConnector extends DefaultFormat {
+  val http: Http
+  val accountsMicroservice: String
+
   def getEnrolments(implicit authContext: AuthContext, request: Request[_]): Future[Option[Enrolments]] = {
-    http.GET[Enrolments](s"$accountMicroservice${authContext.enrolmentsUri}") map {
+    http.GET[Enrolments](s"$accountsMicroservice${authContext.enrolmentsUri}") map {
       enrolments => Some(enrolments)
     } recover {
       case _: NotFoundException => None

@@ -15,28 +15,26 @@
 // limitations under the License.
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
 import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
-import com.cjwwdev.config.ConfigurationLoader
+import common.FrontendController
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.EnrolmentService
-import utils.application.FrontendController
 import views.html.misc.ServiceUnavailableView
 
 import scala.concurrent.Future
 
-@Singleton
-class RedirectController @Inject()(val authConnector: AuthConnector,
-                                   val enrolmentService: EnrolmentService,
-                                   val config: ConfigurationLoader,
-                                   implicit val messagesApi: MessagesApi) extends FrontendController with Actions {
+class RedirectControllerImpl @Inject()(val authConnector: AuthConnector,
+                                       val enrolmentService: EnrolmentService,
+                                       implicit val messagesApi: MessagesApi) extends RedirectController
 
+trait RedirectController extends FrontendController with Actions {
   def redirectToUserRegister: Action[AnyContent] = Action.async {
-      implicit request =>
-        Future.successful(Redirect(USER_REGISTER))
+    implicit request =>
+      Future.successful(Redirect(USER_REGISTER))
   }
 
   def redirectToOrgRegister: Action[AnyContent] = Action.async {
@@ -45,8 +43,8 @@ class RedirectController @Inject()(val authConnector: AuthConnector,
   }
 
   def redirectToLogin: Action[AnyContent] = Action.async {
-      implicit request =>
-        Future.successful(Redirect(USER_LOGIN))
+    implicit request =>
+      Future.successful(Redirect(USER_LOGIN))
   }
 
   def redirectToUserDashboard: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
@@ -59,6 +57,21 @@ class RedirectController @Inject()(val authConnector: AuthConnector,
     implicit user =>
       implicit request =>
         Future.successful(Redirect(SIGN_OUT))
+  }
+
+  def redirectToDeversity: Action[AnyContent] = Action.async {
+    implicit request =>
+      Future.successful(Redirect(deversityFrontend))
+  }
+
+  def redirectToDiagnostics: Action[AnyContent] = Action.async {
+    implicit request =>
+      Future.successful(Redirect(diagnosticsFrontend))
+  }
+
+  def redirectToHub: Action[AnyContent] = Action.async {
+    implicit request =>
+      Future.successful(Redirect(hubFrontend))
   }
 
   def redirectToServiceOutage: Action[AnyContent] = Action.async {

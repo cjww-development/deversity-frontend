@@ -19,7 +19,7 @@ package helpers
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.cjwwdev.http.verbs.Http
-import config.ApplicationConfiguration
+import common.ApplicationConfiguration
 import org.scalatest.{BeforeAndAfter, TestSuite}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec

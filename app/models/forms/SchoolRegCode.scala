@@ -13,14 +13,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package models.forms
 
-package services
+import com.cjwwdev.json.JsonFormats
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+case class SchoolRegCode(regCode: String)
 
-import com.kenshoo.play.metrics.Metrics
-
-@Singleton
-class MetricsService @Inject()(metrics: Metrics) {
-  val homeHitCounter = metrics.defaultRegistry.counter("deversity-home-page-hit")
+object SchoolRegCode extends JsonFormats[SchoolRegCode] {
+  override implicit val standardFormat: OFormat[SchoolRegCode] = Json.format[SchoolRegCode]
 }

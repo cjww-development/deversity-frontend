@@ -13,13 +13,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package models.forms
+package forms
 
-import com.cjwwdev.json.JsonFormats
-import play.api.libs.json.{Json, OFormat}
+import models.forms.TeacherRegCode
+import play.api.data.Form
+import play.api.data.Forms._
 
-case class SchoolName(schoolName: String)
-
-object SchoolName extends JsonFormats[SchoolName] {
-  override implicit val standardFormat: OFormat[SchoolName] = Json.format[SchoolName]
+object TeacherRegCodeForm {
+  val form = Form(
+    mapping(
+      "regCode" -> nonEmptyText
+    )(TeacherRegCode.apply)(TeacherRegCode.unapply)
+  )
 }

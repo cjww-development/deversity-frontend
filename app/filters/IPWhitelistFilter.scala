@@ -13,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package filters
 
 import java.util.Base64
@@ -28,23 +27,23 @@ import play.api.mvc.{Call, Filter, RequestHeader, Result}
 
 import scala.concurrent.Future
 
-class IPWhitelistFilter @Inject()(implicit val mat: Materializer, val config: ConfigurationLoader) extends Filter {
+class IPWhitelistFilter @Inject()(implicit val mat: Materializer) extends Filter with ConfigurationLoader {
 
   private val headerKey = "X-Forwarded-For"
 
-  private def decodeIntoList(encodedString: Option[String]): Seq[String] = encodedString match {
-    case Some(list) => Some(new String(Base64.getDecoder.decode(list), "UTF-8")).map(_.split(",")).getOrElse(Array.empty).toSeq
-    case None       => Seq.empty
+  private def decodeIntoList(encodedString: String): Seq[String] = {
+    Some(new String(Base64.getDecoder.decode(encodedString), "UTF-8")).map(_.split(",")).getOrElse(Array.empty).toSeq
   }
-  private val whitelistSeq = decodeIntoList(config.loadedConfig.getString("whitelist.ip"))
 
-  private val excludedPathSeq: Seq[Call] = decodeIntoList(config.loadedConfig.getString("whitelist.excluded")) map(Call("GET", _))
+  private lazy val whitelistSeq = decodeIntoList(loadedConfig.getString("whitelist.ip"))
 
-  private def uriIsWhitelisted(rh: RequestHeader): Boolean  = excludedPathSeq contains Call(rh.method, rh.uri)
-  private def isAssetRoute(rh: RequestHeader): Boolean      = rh.uri contains "/deversity/assets/"
+  private lazy val excludedPathSeq: Seq[Call] = decodeIntoList(loadedConfig.getString("whitelist.excluded")) map(Call("GET", _))
+
+  private def uriIsWhitelisted(rh: RequestHeader): Boolean = excludedPathSeq contains Call(rh.method, rh.uri)
+  private def isAssetRoute(rh: RequestHeader): Boolean     = rh.uri contains "/account-services/assets/"
 
   def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
-    if(config.loadedConfig.getBoolean("whitelist.enabled").getOrElse(true)) {
+    if(loadedConfig.getBoolean("whitelist.enabled")) {
       if(uriIsWhitelisted(rh) | isAssetRoute(rh)) {
         f(rh)
       } else {

@@ -15,25 +15,22 @@
 // limitations under the License.
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
-import play.api.mvc.{Action, AnyContent}
 import com.cjwwdev.auth.connectors.AuthConnector
-import com.cjwwdev.config.ConfigurationLoader
+import common.FrontendController
 import play.api.i18n.MessagesApi
-import services.{EnrolmentService, MetricsService}
-import utils.application.FrontendController
+import play.api.mvc.{Action, AnyContent}
+import services.EnrolmentService
 import views.html.index
 
 import scala.concurrent.Future
 
-@Singleton
-class HomeController @Inject()(metricsService: MetricsService,
-                               val enrolmentService: EnrolmentService,
-                               val authConnector: AuthConnector,
-                               val config: ConfigurationLoader,
-                               implicit val messagesApi: MessagesApi) extends FrontendController {
+class HomeControllerImpl @Inject()(val enrolmentService: EnrolmentService,
+                                   val authConnector: AuthConnector,
+                                   implicit val messagesApi: MessagesApi) extends HomeController
 
+trait HomeController extends FrontendController {
   def showHome: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Ok(index()))

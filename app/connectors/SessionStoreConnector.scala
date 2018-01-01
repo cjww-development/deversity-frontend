@@ -16,13 +16,12 @@
 
 package connectors
 
-import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException, ServerErrorException}
 import com.cjwwdev.http.utils.SessionUtils
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.security.encryption.DataSecurity
-import com.google.inject.{Inject, Singleton}
-import config.ApplicationConfiguration
+import com.google.inject.Inject
+import common.ApplicationConfiguration
 import enums.SessionCache
 import models.SessionUpdateSet
 import play.api.http.Status.OK
@@ -32,8 +31,13 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-@Singleton
-class SessionStoreConnector @Inject()(http : Http, val config: ConfigurationLoader) extends ApplicationConfiguration with SessionUtils {
+class SessionStoreConnectorImpl @Inject()(val http : Http) extends SessionStoreConnector with ApplicationConfiguration
+
+trait SessionStoreConnector extends SessionUtils {
+  val http: Http
+
+  val sessionStore: String
+
   implicit val jsValueReads: Reads[JsValue] = new Reads[JsValue] {
     override def reads(json: JsValue): JsResult[JsValue] = JsSuccess(json)
   }

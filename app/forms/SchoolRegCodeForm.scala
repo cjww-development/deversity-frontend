@@ -13,13 +13,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package forms
 
-package filters
+import models.forms.SchoolRegCode
+import play.api.data.Form
+import play.api.data.Forms._
 
-import javax.inject.Inject
-
-import play.api.http.DefaultHttpFilters
-import com.kenshoo.play.metrics.MetricsFilter
-
-class Filters @Inject()(metricsFilter: MetricsFilter, iPWhitelistFilter: IPWhitelistFilter)
-  extends DefaultHttpFilters(metricsFilter, iPWhitelistFilter)
+object SchoolRegCodeForm {
+  val form = Form(
+    mapping(
+      "regCode" -> nonEmptyText
+    )(SchoolRegCode.apply)(SchoolRegCode.unapply)
+  )
+}

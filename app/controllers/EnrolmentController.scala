@@ -15,30 +15,32 @@
 // limitations under the License.
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
 import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
-import com.cjwwdev.config.ConfigurationLoader
-import connectors.{Invalid, SessionStoreConnector, Valid}
+import common.FrontendController
+import connectors.SessionStoreConnector
+import forms._
+import models.SessionUpdateSet
+import play.api.Logger
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.{EnrolmentService, SchoolDetailsService}
-import utils.application.FrontendController
 import views.html.enrolment._
-import forms.{RoleForm, SchoolNameForm, TeacherDetailsForm, TeacherNameForm}
-import models.SessionUpdateSet
-import play.api.i18n.MessagesApi
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-@Singleton
-class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
-                                    sessionStoreConnector: SessionStoreConnector,
-                                    val authConnector: AuthConnector,
-                                    val enrolmentService: EnrolmentService,
-                                    val config: ConfigurationLoader,
-                                    implicit val messagesApi: MessagesApi) extends FrontendController with Actions {
+class EnrolmentControllerImpl @Inject()(val schoolDetailsService: SchoolDetailsService,
+                                        val sessionStoreConnector: SessionStoreConnector,
+                                        val authConnector: AuthConnector,
+                                        val enrolmentService: EnrolmentService,
+                                        implicit val messagesApi: MessagesApi) extends EnrolmentController
+
+trait EnrolmentController extends FrontendController with Actions {
+  val schoolDetailsService: SchoolDetailsService
+  val sessionStoreConnector: SessionStoreConnector
 
   def testController: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>
@@ -57,19 +59,21 @@ class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
   def selectSchool: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(SchoolSelector(SchoolNameForm.form)))
+        Logger.info(s"SELECT SCHOOOOOOOOOOL")
+        Future.successful(Ok(SchoolSelector(SchoolRegCodeForm.form)))
   }
 
   def validateSchool: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>
       implicit request =>
-        SchoolNameForm.form.bindFromRequest.fold(
+        SchoolRegCodeForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(SchoolSelector(errors))),
-          valid => schoolDetailsService.validateSchool(valid.schoolName) flatMap  {
-            case Valid => sessionStoreConnector.updateSession(SessionUpdateSet("schoolName", valid.schoolName)) map {
+          valid => schoolDetailsService.validateSchool(valid.regCode) flatMap { schoolDevId =>
+            sessionStoreConnector.updateSession(SessionUpdateSet("schoolDevId", schoolDevId)) map {
               _ => Redirect(routes.EnrolmentController.confirmSchool())
             }
-            case Invalid => Future.successful(Ok(InvalidSchool()))
+          } recover {
+            case _ => Ok(InvalidSchool())
           }
         )
   }
@@ -78,8 +82,8 @@ class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
     implicit user =>
       implicit request =>
         for {
-          Some(schoolName)      <- sessionStoreConnector.getDataElement("schoolName")
-          Some(schoolDetails)   <- schoolDetailsService.getSchoolDetails(schoolName)
+          Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
+          Some(schoolDetails)   <- schoolDetailsService.getSchoolDetails(schoolDevId)
         } yield Ok(ConfirmSchool(schoolDetails))
   }
 
@@ -87,8 +91,8 @@ class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
     implicit user =>
       implicit request =>
         for {
-          Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
-          Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolName)
+          Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
+          Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
         } yield Ok(RoleSelector(RoleForm.form, schoolDetails))
   }
 
@@ -98,8 +102,8 @@ class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
         RoleForm.form.bindFromRequest.fold(
           errors => {
             for {
-              Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
-              Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolName)
+              Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
+              Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
             } yield BadRequest(RoleSelector(errors, schoolDetails))
           },
           valid => sessionStoreConnector.updateSession(SessionUpdateSet("role", valid.role)) map {
@@ -131,19 +135,20 @@ class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
   def confirmAsStudent: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(TeacherSelector(TeacherNameForm.form)))
+        Future.successful(Ok(TeacherSelector(TeacherRegCodeForm.form)))
   }
 
   def validateTeacher: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
     implicit user =>
       implicit request =>
-        TeacherNameForm.form.bindFromRequest.fold(
+        TeacherRegCodeForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(TeacherSelector(errors))),
-          valid => enrolmentService.validateTeacher(valid.userName) flatMap {
-            case Valid => sessionStoreConnector.updateSession(SessionUpdateSet("teacher", valid.userName)) map {
+          valid => enrolmentService.validateTeacher(valid.regCode) flatMap { teacherDevId =>
+            sessionStoreConnector.updateSession(SessionUpdateSet("teacherDevId", teacherDevId)) map {
               _ => Redirect(routes.EnrolmentController.confirmTeacher())
             }
-            case Invalid => Future.successful(Ok(InvalidTeacher()))
+          } recover {
+            case _ => Ok(InvalidTeacher())
           }
         )
   }
@@ -152,9 +157,10 @@ class EnrolmentController @Inject()(schoolDetailsService: SchoolDetailsService,
     implicit user =>
       implicit request =>
         for {
-          Some(schoolName)    <- sessionStoreConnector.getDataElement("schoolName")
+          Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
           Some(details)       <- enrolmentService.getTeacherDetails
-        } yield Ok(ConfirmTeacher(details, schoolName))
+          Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
+        } yield Ok(ConfirmTeacher(details, schoolDetails.orgName))
   }
 
   def enrolmentConfirmation: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {

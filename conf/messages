@@ -63,10 +63,10 @@ pages.role-selector.alert                           = <strong>Heads up!</strong>
 #SchoolSelector
 pages.school-selector.title                         = What school do you belong to?
 pages.school-selector.heading                       = What school do you belong to?
-pages.school-selector.body                          = Please enter your school ID
-pages.school-selector.alert                         = <strong>Hey!</strong> you can get your school ID from your teacher
-pages.school-selector.text-entry.label              = School ID
-pages.school-selector.text-entry.placeholder        = Your school ID
+pages.school-selector.body                          = Please enter your schools registration code
+pages.school-selector.alert                         = <strong>Hey!</strong> you can get your schools registration code from your teacher
+pages.school-selector.text-entry.label              = Code
+pages.school-selector.text-entry.placeholder        = Your schools registration code
 
 #TeacherDetailsEntry
 pages.teacher-details.title                         = Tell us some basic details

@@ -28,11 +28,8 @@ object TeacherDetails extends JsonFormats[TeacherDetails] {
   )(TeacherDetails.apply, unlift(TeacherDetails.unapply))
 }
 
-case class TeacherName(userName: String, schoolName: Option[String] = None)
+case class TeacherRegCode(regCode: String)
 
-object TeacherName extends JsonFormats[TeacherName] {
-  override implicit val standardFormat: OFormat[TeacherName] = (
-    (__ \ "userName").format[String] and
-    (__ \ "schoolName").formatNullable[String]
-  )(TeacherName.apply, unlift(TeacherName.unapply))
+object TeacherRegCode extends JsonFormats[TeacherRegCode] {
+  override implicit val standardFormat: OFormat[TeacherRegCode] = Json.format[TeacherRegCode]
 }

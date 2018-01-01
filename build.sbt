@@ -1,28 +1,29 @@
+// Copyright (C) 2016-2017 the original author or authors.
+// See the LICENCE.txt file distributed with this work for additional
+// information regarding copyright ownership.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import com.typesafe.config.ConfigFactory
 import scoverage.ScoverageKeys
 import scala.util.{Try, Success, Failure}
+
+val appName = "deversity-frontend"
 
 val btVersion: String = Try(ConfigFactory.load.getString("version")) match {
   case Success(ver) => ver
   case Failure(_)   => "0.1.0"
 }
-
-name          := """deversity-frontend"""
-version       := btVersion
-scalaVersion  := "2.11.11"
-organization  := "com.cjww-dev.frontends"
-
-lazy val playSettings : Seq[Setting[_]] = Seq.empty
-
-lazy val root = (project in file("."))
-  .enablePlugins(PlayScala)
-  .settings(playSettings ++ scoverageSettings : _*)
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "it")),
-    parallelExecution in IntegrationTest := false)
 
 lazy val scoverageSettings = Seq(
   ScoverageKeys.coverageExcludedPackages  := "<empty>;Reverse.*;models/.data/..*;views.*;models.*;config.*;.*(AuthService|BuildInfo|Routes).*",
@@ -31,38 +32,27 @@ lazy val scoverageSettings = Seq(
   ScoverageKeys.coverageHighlighting      := true
 )
 
-PlayKeys.devSettings := Seq("play.server.http.port" -> "9986")
-
-val cjwwDep: Seq[ModuleID] = Seq(
-  "com.cjww-dev.libs" % "data-security_2.11"          % "2.8.0",
-  "com.cjww-dev.libs" % "http-verbs_2.11"             % "2.5.0",
-  "com.cjww-dev.libs" % "authorisation_2.11"          % "1.14.0",
-  "com.cjww-dev.libs" % "application-utilities_2.11"  % "2.3.0",
-  "com.cjww-dev.libs" % "metrics-reporter_2.11"       % "0.5.0",
-  "com.cjww-dev.libs" % "frontend-ui_2.11"            % "1.3.0"
-)
-
-val codeDep: Seq[ModuleID] = Seq(
-  "com.kenshoo" % "metrics-play_2.10" % "2.4.0_0.4.0"
-)
-
-val testDep: Seq[ModuleID] = Seq(
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1"  % Test,
-  "org.mockito"             % "mockito-core"       % "2.10.0" % Test
-)
-
-libraryDependencies ++= cjwwDep
-libraryDependencies ++= codeDep
-libraryDependencies ++= testDep
-libraryDependencies +=  filters
-
-
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
-resolvers += "cjww-dev" at "http://dl.bintray.com/cjww-development/releases"
-
-herokuAppName in Compile := "cjww-deversity"
-
-bintrayOrganization                   := Some("cjww-development")
-bintrayReleaseOnPublish in ThisBuild  := true
-bintrayRepository                     := "releases"
-bintrayOmitLicense                    := true
+lazy val microservice = Project(appName, file("."))
+  .enablePlugins(PlayScala)
+  .settings(scoverageSettings)
+  .configs(IntegrationTest)
+  .settings(PlayKeys.playDefaultPort := 9986)
+  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(
+    version                                       :=  btVersion,
+    scalaVersion                                  :=  "2.11.12",
+    organization                                  :=  "com.cjww-dev.frontends",
+    resolvers                                     ++= Seq(
+      "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+      "cjww-dev"       at "http://dl.bintray.com/cjww-development/releases"
+    ),
+    libraryDependencies                           ++= AppDependencies(),
+    herokuAppName in Compile                      :=  "cjww-deversity",
+    bintrayOrganization                           :=  Some("cjww-development"),
+    bintrayReleaseOnPublish in ThisBuild          :=  true,
+    bintrayRepository                             :=  "releases",
+    bintrayOmitLicense                            :=  true,
+    Keys.fork in IntegrationTest                  :=  false,
+    unmanagedSourceDirectories in IntegrationTest :=  (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
+    parallelExecution in IntegrationTest          :=  false
+  )
