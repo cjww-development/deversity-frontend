@@ -23,9 +23,9 @@ object AppDependencies {
 
 private object CompileDependencies {
   private val dataSecurityVersion  = "2.11.0"
-  private val httpVerbsVersion     = "2.12.0"
-  private val authorisationVersion = "1.20.0"
-  private val appUtilsVersion      = "2.10.0"
+  private val httpVerbsVersion     = "2.13.0"
+  private val authorisationVersion = "1.21.0"
+  private val appUtilsVersion      = "2.11.0"
   private val frontendUIVersion    = "1.5.0"
   private val metricsVersion       = "0.7.0"
 

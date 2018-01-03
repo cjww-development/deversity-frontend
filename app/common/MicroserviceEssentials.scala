@@ -24,6 +24,7 @@ import com.cjwwdev.filters.RequestLoggingFilter
 import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 import com.cjwwdev.views.html.templates.errors.{NotFoundView, ServerErrorView, StandardErrorView}
 import com.kenshoo.play.metrics.MetricsFilter
+import com.typesafe.config.ConfigFactory
 import controllers.routes
 import filters.IPWhitelistFilter
 import org.slf4j.{Logger, LoggerFactory}
@@ -40,7 +41,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.control.NoStackTrace
 
-trait ApplicationConfiguration extends ConfigurationLoader {
+trait ApplicationConfiguration {
+  def buildServiceUrl(service: String): String = ConfigFactory.load.getString(s"microservice.external-services.$service.domain")
+
   val authService               = buildServiceUrl("auth-service")
   val accountsMicroservice      = buildServiceUrl("accounts-microservice")
   val authMicroservice          = buildServiceUrl("auth-microservice")

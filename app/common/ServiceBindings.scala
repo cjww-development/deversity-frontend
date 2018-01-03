@@ -15,14 +15,15 @@
 // limitations under the License.
 package common
 
+import com.cjwwdev.config.{ConfigurationLoader, ConfigurationLoaderImpl}
 import com.google.inject.AbstractModule
-
 import connectors._
-import services._
 import controllers._
+import services._
 
 class ServiceBindings extends AbstractModule {
   override def configure(): Unit = {
+    bindOther()
     bindConnectors()
     bindServices()
     bindControllers()
@@ -43,5 +44,9 @@ class ServiceBindings extends AbstractModule {
     bind(classOf[EnrolmentController]).to(classOf[EnrolmentControllerImpl]).asEagerSingleton()
     bind(classOf[HomeController]).to(classOf[HomeControllerImpl]).asEagerSingleton()
     bind(classOf[RedirectController]).to(classOf[RedirectControllerImpl]).asEagerSingleton()
+  }
+
+  private def bindOther(): Unit = {
+    bind(classOf[ConfigurationLoader]).to(classOf[ConfigurationLoaderImpl]).asEagerSingleton()
   }
 }
