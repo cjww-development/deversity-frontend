@@ -1,0 +1,2 @@
+GET         /build-deversity-session/:sessionId                        controllers.internal.SessionController.buildSession(sessionId)
+GET         /validate-session/:sessionId                               controllers.internal.SessionController.validateSession(sessionId)

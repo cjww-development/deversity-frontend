@@ -19,6 +19,7 @@ import com.cjwwdev.config.{ConfigurationLoader, ConfigurationLoaderImpl}
 import com.google.inject.AbstractModule
 import connectors._
 import controllers._
+import controllers.internal._
 import services._
 
 class ServiceBindings extends AbstractModule {
@@ -38,12 +39,14 @@ class ServiceBindings extends AbstractModule {
   private def bindServices(): Unit = {
     bind(classOf[EnrolmentService]).to(classOf[EnrolmentServiceImpl]).asEagerSingleton()
     bind(classOf[SchoolDetailsService]).to(classOf[SchoolDetailsServiceImpl]).asEagerSingleton()
+    bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
   }
 
   private def bindControllers(): Unit = {
     bind(classOf[EnrolmentController]).to(classOf[EnrolmentControllerImpl]).asEagerSingleton()
     bind(classOf[HomeController]).to(classOf[HomeControllerImpl]).asEagerSingleton()
     bind(classOf[RedirectController]).to(classOf[RedirectControllerImpl]).asEagerSingleton()
+    bind(classOf[SessionController]).to(classOf[SessionControllerImpl]).asEagerSingleton()
   }
 
   private def bindOther(): Unit = {

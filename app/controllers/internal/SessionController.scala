@@ -15,6 +15,36 @@
  */
 package controllers.internal
 
-trait SessionController {
+import javax.inject.Inject
 
+import common.{ApplicationConfiguration, Logging}
+import play.api.mvc._
+import services.SessionService
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class SessionControllerImpl @Inject()(val sessionService: SessionService) extends SessionController
+
+trait SessionController extends Controller with Logging with ApplicationConfiguration {
+  val sessionService: SessionService
+
+  def buildSession(sessionId: String): Action[AnyContent] = Action.async { implicit request =>
+    logger.info(s"[buildSession] - request was sent from ${request.headers("Referer")}")
+    sessionService.fetchAuthContext(sessionId) map {
+      _.fold(forbiddenResponse(sessionId))({ context =>
+        val session = Session(sessionService.sessionMap(sessionId, context))
+        Redirect(routes.SessionController.validateSession(sessionId)).withSession(session)
+      })
+    }
+  }
+
+  def validateSession(sessionId: String): Action[AnyContent] = Action { implicit request =>
+    logger.info(s"[validateSession] - request was sent from ${request.headers("Referer")}")
+    if(request.session("cookieId").equals(sessionId)) Redirect(SERVICE_DIRECTOR) else InternalServerError
+  }
+
+  private def forbiddenResponse(sessionId: String): Result = {
+    logger.warn(s"[buildSession] - No AuthContext found matching sessionId $sessionId")
+    Forbidden
+  }
 }

@@ -19,7 +19,6 @@ import java.security.cert.X509Certificate
 import javax.inject.{Inject, Provider, Singleton}
 
 import com.cjwwdev.auth.models.AuthContext
-import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.filters.RequestLoggingFilter
 import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 import com.cjwwdev.views.html.templates.errors.{NotFoundView, ServerErrorView, StandardErrorView}
@@ -54,6 +53,7 @@ trait ApplicationConfiguration {
   val hubFrontend               = buildServiceUrl("hub-frontend")
 
   val USER_LOGIN                = s"$authService/login?redirect=deversity"
+  val SERVICE_DIRECTOR          = s"$authService/where-do-you-want-to-go"
   val USER_REGISTER             = s"$authService/create-an-account"
   val ORG_REGISTER              = s"$authService/create-an-organisation-account"
   val DASHBOARD                 = s"$authService/dashboard"
