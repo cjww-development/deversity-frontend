@@ -1,26 +1,26 @@
-// Copyright (C) 2016-2017 the original author or authors.
-// See the LICENCE.txt file distributed with this work for additional
-// information regarding copyright ownership.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright 2018 CJWW Development
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package services
 
-import javax.inject.Inject
-
-import com.cjwwdev.auth.models.AuthContext
+import com.cjwwdev.auth.models.CurrentUser
 import common.{DeversityCurrentEnrolmentResponse, InvalidEnrolments, ValidEnrolments}
 import connectors.{AccountsMicroserviceConnector, DeversityMicroserviceConnector, SessionStoreConnector}
 import enums.SessionCache
+import javax.inject.Inject
 import models.forms.TeacherDetails
 import models.http.TeacherInformation
 import models.{DeversityEnrolment, SchoolDetails, SessionUpdateSet}
@@ -38,17 +38,17 @@ trait EnrolmentService {
   val deversityConnector: DeversityMicroserviceConnector
   val sessionStoreConnector: SessionStoreConnector
 
-  def validateCurrentEnrolments(implicit authContext: AuthContext, request: Request[_]): Future[DeversityCurrentEnrolmentResponse] = {
+  def validateCurrentEnrolments(implicit user: CurrentUser, request: Request[_]): Future[DeversityCurrentEnrolmentResponse] = {
     deversityConnector.getDeversityUserInfo map {
       _.fold[DeversityCurrentEnrolmentResponse](InvalidEnrolments)(_ => ValidEnrolments)
     }
   }
 
-  def getOrGenerateDeversityId(implicit authContext: AuthContext, request: Request[_]): Future[Option[String]] = {
+  def getOrGenerateDeversityId(implicit user: CurrentUser, request: Request[_]): Future[Option[String]] = {
     accountsConnector.getEnrolments flatMap {
       case Some(enrolments) => Future.successful(enrolments.deversityId)
       case None => deversityConnector.createDeversityId map {
-        id => Some(id)
+        Some(_)
       } recover {
         case _ => None
       }
@@ -69,7 +69,7 @@ trait EnrolmentService {
     } yield validationResponse
   }
 
-  def getTeacherDetails(implicit authContext: AuthContext, request: Request[_]): Future[Option[TeacherInformation]] = {
+  def getTeacherDetails(implicit user: CurrentUser, request: Request[_]): Future[Option[TeacherInformation]] = {
     for {
       Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
       Some(teacherDevId)  <- sessionStoreConnector.getDataElement("teacherDevId")
@@ -77,7 +77,7 @@ trait EnrolmentService {
     } yield details
   }
 
-  def fetchAndSubmitTeacherEnrolment(implicit authContext: AuthContext, request: Request[_]): Future[SchoolDetails] = {
+  def fetchAndSubmitTeacherEnrolment(implicit user: CurrentUser, request: Request[_]): Future[SchoolDetails] = {
     for {
       Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
       title                 <- sessionStoreConnector.getDataElement("title")
@@ -89,7 +89,7 @@ trait EnrolmentService {
     } yield schoolDetails
   }
 
-  def fetchAndSubmitStudentEnrolment(implicit authContext: AuthContext, request: Request[_]): Future[SchoolDetails] = {
+  def fetchAndSubmitStudentEnrolment(implicit user: CurrentUser, request: Request[_]): Future[SchoolDetails] = {
     for {
       Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
       Some(teacherdevId)    <- sessionStoreConnector.getDataElement("teacherDevId")

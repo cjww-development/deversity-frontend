@@ -1,18 +1,18 @@
-// Copyright (C) 2016-2017 the original author or authors.
-// See the LICENCE.txt file distributed with this work for additional
-// information regarding copyright ownership.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright 2018 CJWW Development
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import sbt._
 import play.sbt.PlayImport._
@@ -22,10 +22,9 @@ object AppDependencies {
 }
 
 private object CompileDependencies {
-  private val dataSecurityVersion  = "2.11.0"
-  private val httpVerbsVersion     = "2.13.0"
-  private val authorisationVersion = "1.21.0"
-  private val appUtilsVersion      = "2.11.0"
+  private val httpVerbsVersion     = "2.16.0"
+  private val authorisationVersion = "3.2.0"
+  private val appUtilsVersion      = "3.0.0"
   private val frontendUIVersion    = "1.5.0"
   private val metricsVersion       = "0.7.0"
 
@@ -34,7 +33,6 @@ private object CompileDependencies {
   )
 
   private val compileDependencies: Seq[ModuleID] = Seq(
-    "com.cjww-dev.libs" % "data-security_2.11"         % dataSecurityVersion,
     "com.cjww-dev.libs" % "http-verbs_2.11"            % httpVerbsVersion,
     "com.cjww-dev.libs" % "authorisation_2.11"         % authorisationVersion,
     "com.cjww-dev.libs" % "application-utilities_2.11" % appUtilsVersion,

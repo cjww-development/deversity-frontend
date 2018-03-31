@@ -2,11 +2,11 @@
 # This file defines all application app.routes (Higher priority app.routes first)
 # ~~~~
 
-GET     /                           controllers.HomeController.showHome
+GET     /                           controllers.HomeController.showHome()
 
-GET     /please-return-later        controllers.RedirectController.redirectToServiceOutage
+GET     /please-return-later        controllers.RedirectController.redirectToServiceOutage()
 
-GET     /test                       controllers.EnrolmentController.testController
+GET     /test                       controllers.EnrolmentController.testController()
 
 #Enrolment journey
 GET     /welcome                    controllers.EnrolmentController.enrolmentWelcome
