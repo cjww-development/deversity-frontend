@@ -16,7 +16,6 @@
 
 package mocks
 
-import com.cjwwdev.auth.connectors.AuthConnector
 import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.verbs.Http
 import org.mockito.Mockito.reset
@@ -27,14 +26,12 @@ import services.EnrolmentService
 trait ComponentMocks {
   this: MockitoSugar =>
 
-  val mockAuthConnector     = mock[AuthConnector]
   val mockHttp              = mock[Http]
   val mockEnrolmentsService = mock[EnrolmentService]
   val mockConfig            = mock[ConfigurationLoader]
   val mockMessagesApi       = mock[MessagesApi]
 
   def resetMocks() : Unit = {
-    reset(mockAuthConnector)
     reset(mockHttp)
     reset(mockEnrolmentsService)
     reset(mockMessagesApi)

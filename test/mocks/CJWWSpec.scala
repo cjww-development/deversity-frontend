@@ -24,7 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.{Await, Awaitable}
 import scala.concurrent.duration._
 
-trait CJWWSpec extends PlaySpec with GuiceOneAppPerSuite with AuthMocks with ComponentMocks {
+trait CJWWSpec extends PlaySpec with GuiceOneAppPerSuite with AuthBuilder with ComponentMocks {
 
   implicit val duration = 5.seconds
 
