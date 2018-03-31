@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package controllers.internal
 
 import javax.inject.Inject
@@ -30,6 +31,7 @@ trait SessionController extends Controller with Logging with ApplicationConfigur
 
   def buildSession(sessionId: String): Action[AnyContent] = Action.async { implicit request =>
     logger.info(s"[buildSession] - request was sent from ${request.headers("Referer")}")
+    logger.info(s"[buildSession] - attempting to build session")
     sessionService.fetchAuthContext(sessionId) map {
       _.fold(forbiddenResponse(sessionId))({ context =>
         val session = Session(sessionService.sessionMap(sessionId, context))

@@ -3,7 +3,7 @@
   <conversionRule conversionWord="coloredLevel" converterClass="com.cjwwdev.logging.converters.ColouredLoggerLevel" />
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>${application.home:-.}/logs/application.log</file>
+    <file>${application.home:-.}/logs/deversity-frontend.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <pattern>%level timestamp=[%date{ISO8601}] thread=[%thread] logger=[%logger] %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
     </encoder>
@@ -15,14 +15,6 @@
     </encoder>
   </appender>
 
-  <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="FILE" />
-  </appender>
-
-  <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="STDOUT" />
-  </appender>
-
   <logger name="play"           level="INFO" />
   <logger name="application"    level="INFO" />
   <logger name="repositories"   level="INFO" />
@@ -31,14 +23,14 @@
   <logger name="reactivemongo.api.MongoDriver" level="OFF" />
 
   <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
-  <logger name="com.avaje.ebean.common.PropertyMapLoader" level="OFF" />
+  <logger name="com.avaje.ebean.common.PropertyMapLoader"            level="OFF" />
   <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" />
   <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" />
   <logger name="com.gargoylesoftware.htmlunit.javascript"            level="OFF" />
 
   <root level="INFO">
-    <appender-ref ref="ASYNCFILE"   />
-    <appender-ref ref="ASYNCSTDOUT" />
+    <appender-ref ref="FILE"   />
+    <appender-ref ref="STDOUT" />
   </root>
 
 </configuration>

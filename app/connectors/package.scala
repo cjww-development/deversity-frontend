@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package forms
 
-import models.forms.TeacherRegCode
-import play.api.data.Form
-import play.api.data.Forms._
+import play.api.libs.json.Writes
 
-object TeacherRegCodeForm {
-  val form = Form(
-    mapping(
-      "regCode" -> nonEmptyText
-    )(TeacherRegCode.apply)(TeacherRegCode.unapply)
-  )
+package object connectors {
+  val stringWrites = Writes.StringWrites
 }

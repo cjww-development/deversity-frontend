@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package forms
+package models
 
-import models.forms.TeacherRegCode
-import play.api.data.Form
-import play.api.data.Forms._
+import play.api.libs.json.{Json, OFormat}
 
-object TeacherRegCodeForm {
-  val form = Form(
-    mapping(
-      "regCode" -> nonEmptyText
-    )(TeacherRegCode.apply)(TeacherRegCode.unapply)
-  )
+case class ClassRoom(classId: String,
+                     schoolDevId: String,
+                     teacherDevId: String,
+                     name: String)
+
+object ClassRoom {
+  implicit val format: OFormat[ClassRoom] = Json.format[ClassRoom]
 }

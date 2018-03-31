@@ -1,23 +1,22 @@
-// Copyright (C) 2016-2017 the original author or authors.
-// See the LICENCE.txt file distributed with this work for additional
-// information regarding copyright ownership.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright 2018 CJWW Development
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package controllers
 
 import javax.inject.Inject
 
-import com.cjwwdev.auth.actions.Actions
 import com.cjwwdev.auth.connectors.AuthConnector
 import common.FrontendController
 import connectors.SessionStoreConnector
@@ -38,37 +37,36 @@ class EnrolmentControllerImpl @Inject()(val schoolDetailsService: SchoolDetailsS
                                         val enrolmentService: EnrolmentService,
                                         implicit val messagesApi: MessagesApi) extends EnrolmentController
 
-trait EnrolmentController extends FrontendController with Actions {
+trait EnrolmentController extends FrontendController {
   val schoolDetailsService: SchoolDetailsService
   val sessionStoreConnector: SessionStoreConnector
 
-  def testController: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def testController: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         checkDeversityEnrolment {
           Future.successful(Ok("TEST ROUTE"))
         }
   }
 
-  def enrolmentWelcome: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def enrolmentWelcome: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         Future.successful(Ok(EnrolmentWelcome()))
   }
 
-  def selectSchool: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
-        Logger.info(s"SELECT SCHOOOOOOOOOOL")
+  def selectSchool: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         Future.successful(Ok(SchoolSelector(SchoolRegCodeForm.form)))
   }
 
-  def validateSchool: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def validateSchool: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         SchoolRegCodeForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(SchoolSelector(errors))),
-          valid => schoolDetailsService.validateSchool(valid.regCode) flatMap { schoolDevId =>
+          valid  => schoolDetailsService.validateSchool(valid.regCode) flatMap { schoolDevId =>
             sessionStoreConnector.updateSession(SessionUpdateSet("schoolDevId", schoolDevId)) map {
               _ => Redirect(routes.EnrolmentController.confirmSchool())
             }
@@ -78,27 +76,27 @@ trait EnrolmentController extends FrontendController with Actions {
         )
   }
 
-  def confirmSchool: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def confirmSchool: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         for {
           Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
           Some(schoolDetails)   <- schoolDetailsService.getSchoolDetails(schoolDevId)
         } yield Ok(ConfirmSchool(schoolDetails))
   }
 
-  def roleSelection: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def roleSelection: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         for {
           Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
           Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
         } yield Ok(RoleSelector(RoleForm.form, schoolDetails))
   }
 
-  def confirmRole: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def confirmRole: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         RoleForm.form.bindFromRequest.fold(
           errors => {
             for {
@@ -115,15 +113,15 @@ trait EnrolmentController extends FrontendController with Actions {
         )
   }
 
-  def confirmAsTeacher: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def confirmAsTeacher: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         Future.successful(Ok(TeacherDetailsEntry(TeacherDetailsForm.form)))
   }
 
-  def cacheTeacherDetails: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def cacheTeacherDetails: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         TeacherDetailsForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(TeacherDetailsEntry(errors))),
           valid => enrolmentService.cacheTeacherDetails(valid) map {
@@ -132,30 +130,32 @@ trait EnrolmentController extends FrontendController with Actions {
         )
   }
 
-  def confirmAsStudent: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def confirmAsStudent: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         Future.successful(Ok(TeacherSelector(TeacherRegCodeForm.form)))
   }
 
-  def validateTeacher: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def validateTeacher: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         TeacherRegCodeForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(TeacherSelector(errors))),
-          valid => enrolmentService.validateTeacher(valid.regCode) flatMap { teacherDevId =>
+          valid  => enrolmentService.validateTeacher(valid.regCode) flatMap { teacherDevId =>
             sessionStoreConnector.updateSession(SessionUpdateSet("teacherDevId", teacherDevId)) map {
               _ => Redirect(routes.EnrolmentController.confirmTeacher())
             }
           } recover {
-            case _ => Ok(InvalidTeacher())
+            case e =>
+              e.printStackTrace()
+              Ok(InvalidTeacher())
           }
         )
   }
 
-  def confirmTeacher: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def confirmTeacher: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         for {
           Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
           Some(details)       <- enrolmentService.getTeacherDetails
@@ -163,9 +163,9 @@ trait EnrolmentController extends FrontendController with Actions {
         } yield Ok(ConfirmTeacher(details, schoolDetails.orgName))
   }
 
-  def enrolmentConfirmation: Action[AnyContent] = authorisedFor(USER_LOGIN_CALL).async {
-    implicit user =>
-      implicit request =>
+  def enrolmentConfirmation: Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
         for {
           Some(role)      <- sessionStoreConnector.getDataElement("role")
           schoolDetails   <- role match {
