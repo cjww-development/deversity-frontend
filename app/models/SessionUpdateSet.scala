@@ -23,8 +23,7 @@ case class SessionUpdateSet(key : String, data : String)
 object SessionUpdateSet extends {
   implicit val sessionUpdateSetWrites: OWrites[SessionUpdateSet] = new OWrites[SessionUpdateSet] {
     override def writes(o: SessionUpdateSet): JsObject = Json.obj(
-      "key"   -> s"${o.key}",
-      "data"  -> s"${DataSecurity.encryptString(o.data)}"
+      s"${o.key}" -> s"${DataSecurity.encryptString(o.data)}"
     )
   }
 

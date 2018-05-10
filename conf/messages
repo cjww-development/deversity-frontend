@@ -58,7 +58,7 @@ pages.role-selector.title                           = Are you a teacher or a stu
 pages.role-selector.heading                         = Are you a teacher or a student?
 pages.role-selector.radio.label.teacher             = Teacher
 pages.role-selector.radio.label.student             = Student
-pages.role-selector.alert                           = <strong>Heads up!</strong> you''l be confirmed as a teacher or a student by {0} so choose carefully...
+pages.role-selector.alert                           = <strong>Heads up!</strong> you''ll be confirmed as a teacher or a student by {0} so choose carefully...
 
 #SchoolSelector
 pages.school-selector.title                         = What school do you belong to?

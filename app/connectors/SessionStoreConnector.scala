@@ -51,7 +51,7 @@ trait SessionStoreConnector extends SessionUtils with WsResponseHelpers {
   }
 
   def updateSession(updateSet : SessionUpdateSet)(implicit format: OFormat[SessionUpdateSet], request: Request[_]) : Future[SessionCache.Value] = {
-    http.patch[SessionUpdateSet](s"$sessionStore/session/$getCookieId", updateSet) map {
+    http.patch[SessionUpdateSet](s"$sessionStore/session/$getCookieId", updateSet, secure = false) map {
       _ => SessionCache.cacheUpdated
     } recover {
       case _: ServerErrorException => SessionCache.cacheUpdateFailure

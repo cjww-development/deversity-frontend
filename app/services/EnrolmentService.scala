@@ -92,9 +92,9 @@ trait EnrolmentService {
   def fetchAndSubmitStudentEnrolment(implicit user: CurrentUser, request: Request[_]): Future[SchoolDetails] = {
     for {
       Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
-      Some(teacherdevId)    <- sessionStoreConnector.getDataElement("teacherDevId")
+      Some(teacherDevId)    <- sessionStoreConnector.getDataElement("teacherDevId")
       Some(schoolDetails)   <- deversityConnector.getSchoolDetails(schoolDevId)
-      Some(teacherDetails)  <- deversityConnector.getTeacherDetails(teacherdevId, schoolDevId)
+      Some(teacherDetails)  <- deversityConnector.getTeacherDetails(teacherDevId, schoolDevId)
       _                     <- deversityConnector.initialiseDeversityEnrolment(
         DeversityEnrolment("pending", schoolDevId, "student", None, None, Some(s"${teacherDetails.title} ${teacherDetails.lastName}"))
       )
