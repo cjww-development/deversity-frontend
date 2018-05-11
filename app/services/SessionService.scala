@@ -19,10 +19,9 @@ package services
 import com.cjwwdev.auth.models.CurrentUser
 import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.{ClientErrorException, NotFoundException}
+import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.verbs.Http
-import com.cjwwdev.implicits.ImplicitHandlers
 import javax.inject.Inject
-import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Request
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,7 +32,7 @@ class SessionServiceImpl @Inject()(val http: Http, configurationLoader: Configur
   override val authMicroservice = configurationLoader.buildServiceUrl("auth-microservice")
 }
 
-trait SessionService extends ImplicitHandlers {
+trait SessionService extends WsResponseHelpers {
   val http: Http
 
   val sessionStore: String
@@ -62,14 +61,14 @@ trait SessionService extends ImplicitHandlers {
   } yield context
 
   private def getContextId(sessionId: String)(implicit request: Request[_]): Future[String] = {
-    http.get(s"$sessionStore/session/$sessionId/context") map {
-      _.body.decryptType[JsValue].\("contextId").as[String]
+    http.get(s"$sessionStore/session/$sessionId/data?key=contextId") map {
+      _.toResponseString(needsDecrypt = true)
     }
   }
 
   private def getAuthContext(contextId: String)(implicit request: Request[_]): Future[Option[CurrentUser]] = {
     http.get(s"$authMicroservice/get-current-user/$contextId") map { resp =>
-      Some(resp.body.decryptType[CurrentUser])
+      Some(resp.toDataType[CurrentUser](needsDecrypt = true))
     } recover {
       case _: NotFoundException    => None
       case _: ClientErrorException => None

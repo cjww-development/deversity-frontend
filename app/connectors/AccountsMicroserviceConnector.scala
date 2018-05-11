@@ -19,8 +19,8 @@ package connectors
 import com.cjwwdev.auth.models.CurrentUser
 import javax.inject.Inject
 import com.cjwwdev.http.exceptions.NotFoundException
+import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.verbs.Http
-import com.cjwwdev.implicits.ImplicitHandlers
 import common.ApplicationConfiguration
 import models.Enrolments
 import play.api.libs.json._
@@ -35,13 +35,13 @@ case object Invalid extends ValidOrg
 
 class AccountsMicroserviceConnectorImpl @Inject()(val http: Http) extends AccountsMicroserviceConnector with ApplicationConfiguration
 
-trait AccountsMicroserviceConnector extends DefaultFormat with ImplicitHandlers {
+trait AccountsMicroserviceConnector extends DefaultFormat with WsResponseHelpers {
   val http: Http
   val accountsMicroservice: String
 
   def getEnrolments(implicit user: CurrentUser, request: Request[_]): Future[Option[Enrolments]] = {
     http.get(s"$accountsMicroservice/account/${user.id}/enrolments") map { resp =>
-      Some(resp.body.decryptType[Enrolments])
+      Some(resp.toDataType[Enrolments](needsDecrypt = true))
     } recover {
       case _: NotFoundException => None
     }

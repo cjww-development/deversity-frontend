@@ -17,11 +17,9 @@
 package mocks
 
 import com.cjwwdev.auth.models.CurrentUser
-import com.cjwwdev.implicits.ImplicitHandlers
-import org.joda.time.DateTime
 import play.api.libs.json.Json
 
-trait Fixtures extends TestDataGenerator with ImplicitHandlers {
+trait Fixtures extends TestDataGenerator {
   val testOrgDevId = generateTestSystemId(DEVERSITY)
 
   val testOrgCurrentUser = CurrentUser(

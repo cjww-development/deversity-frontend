@@ -17,9 +17,9 @@
 package connectors
 
 import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException, ServerErrorException}
+import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.session.SessionUtils
 import com.cjwwdev.http.verbs.Http
-import com.cjwwdev.implicits.ImplicitHandlers
 import com.google.inject.Inject
 import common.ApplicationConfiguration
 import enums.SessionCache
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class SessionStoreConnectorImpl @Inject()(val http : Http) extends SessionStoreConnector with ApplicationConfiguration
 
-trait SessionStoreConnector extends SessionUtils with ImplicitHandlers {
+trait SessionStoreConnector extends SessionUtils with WsResponseHelpers {
   val http: Http
 
   val sessionStore: String
@@ -42,8 +42,8 @@ trait SessionStoreConnector extends SessionUtils with ImplicitHandlers {
   }
 
   def getDataElement(key : String)(implicit request: Request[_]) : Future[Option[String]] = {
-    http.get(s"$sessionStore/session/$getCookieId/data/$key") map { resp =>
-      Some(resp.body.decrypt)
+    http.get(s"$sessionStore/session/$getCookieId/data?key=$key") map { resp =>
+      Some(resp.toResponseString(needsDecrypt = true))
     } recover {
       case _: NotFoundException   => None
       case e: ForbiddenException  => throw e
@@ -51,7 +51,7 @@ trait SessionStoreConnector extends SessionUtils with ImplicitHandlers {
   }
 
   def updateSession(updateSet : SessionUpdateSet)(implicit format: OFormat[SessionUpdateSet], request: Request[_]) : Future[SessionCache.Value] = {
-    http.put[SessionUpdateSet](s"$sessionStore/session/$getCookieId", updateSet) map {
+    http.patch[SessionUpdateSet](s"$sessionStore/session/$getCookieId", updateSet, secure = false) map {
       _ => SessionCache.cacheUpdated
     } recover {
       case _: ServerErrorException => SessionCache.cacheUpdateFailure

@@ -19,13 +19,13 @@ package filters
 import akka.stream.Materializer
 import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.headers.HeaderPackage
-import com.cjwwdev.implicits.ImplicitHandlers
+import com.cjwwdev.implicits.ImplicitDataSecurity._
 import javax.inject.Inject
 import play.api.mvc.{Filter, RequestHeader, Result}
 
 import scala.concurrent.Future
 
-class HeadersFilter @Inject()(implicit val mat: Materializer, configLoader: ConfigurationLoader) extends Filter with ImplicitHandlers {
+class HeadersFilter @Inject()(implicit val mat: Materializer, configLoader: ConfigurationLoader) extends Filter {
   def initialiseHeaderPackage(rh: RequestHeader): (String, String) = {
     "cjww-headers" -> HeaderPackage(
       configLoader.getApplicationId("auth-service"),
