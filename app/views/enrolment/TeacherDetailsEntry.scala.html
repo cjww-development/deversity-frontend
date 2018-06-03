@@ -2,8 +2,9 @@
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 @import com.cjwwdev.views.html.helpers.textInput
+@import helper._
 
-@(details: Form[TeacherDetails])(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(details: Form[TeacherDetails])(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 
 @colourSwitcher(random : Int) = {
@@ -26,7 +27,7 @@
     }
 }
 
-@MainTemplate(title = messagesApi("pages.teacher-details.title"), links, navBarRoutes) {
+@MainTemplate(title = messages("pages.teacher-details.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -44,20 +45,22 @@
                 </div>
 
                 <div class="col-md-8" id="school-selector">
-                    <h1>@messagesApi("pages.teacher-details.heading")</h1>
+                    <h1>@messages("pages.teacher-details.heading")</h1>
 
                     <div class="alert alert-info" role="alert">
-                        @messagesApi("pages.teacher-details.alert")
+                        @messages("pages.teacher-details.alert")
                     </div>
 
                     <form action="@routes.EnrolmentController.cacheTeacherDetails()" method="post">
+                        @CSRF.formField
+
                         @textInput(
                             details("title"),
                             false,
                             '_sassClass   -> "cjww-input-group-addon",
-                            '_label       -> messagesApi("pages.teacher-details.text-entry.title.label"),
+                            '_label       -> messages("pages.teacher-details.text-entry.title.label"),
                             '_inputType   -> "text",
-                            '_placeholder -> messagesApi("pages.teacher-details.text-entry.title.placeholder"),
+                            '_placeholder -> messages("pages.teacher-details.text-entry.title.placeholder"),
                             '_fieldName   -> "title",
                             '_spanId      -> "title-span"
                         )
@@ -66,16 +69,16 @@
                             details("room"),
                             false,
                             '_sassClass   -> "cjww-input-group-addon",
-                            '_label       -> messagesApi("pages.teacher-details.text-entry.room.label"),
+                            '_label       -> messages("pages.teacher-details.text-entry.room.label"),
                             '_inputType   -> "text",
-                            '_placeholder -> messagesApi("pages.teacher-details.text-entry.room.placeholder"),
+                            '_placeholder -> messages("pages.teacher-details.text-entry.room.placeholder"),
                             '_fieldName   -> "room",
                             '_spanId      -> "room-span"
                         )
 
                         <div class="form-group">
                             <div class="input-group">
-                                <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                                <button type="submit" class="btn btn-primary btn-lg">@messages("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </form>

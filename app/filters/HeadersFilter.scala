@@ -21,7 +21,7 @@ import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.headers.HeaderPackage
 import com.cjwwdev.implicits.ImplicitDataSecurity._
 import javax.inject.Inject
-import play.api.mvc.{Filter, RequestHeader, Result}
+import play.api.mvc.{Filter, Headers, RequestHeader, Result}
 
 import scala.concurrent.Future
 
@@ -33,7 +33,6 @@ class HeadersFilter @Inject()(implicit val mat: Materializer, configLoader: Conf
   }
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
-    val appliedHeaders = rh.copy(headers = rh.headers.add(initialiseHeaderPackage(rh)))
-    f(appliedHeaders)
+    f(rh.withHeaders(rh.headers.add(initialiseHeaderPackage(rh))))
   }
 }

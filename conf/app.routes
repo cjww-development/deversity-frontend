@@ -40,5 +40,5 @@ GET     /go-to-deversity            controllers.RedirectController.redirectToDev
 GET     /go-to-diagnostics          controllers.RedirectController.redirectToDiagnostics
 GET     /go-to-hub                  controllers.RedirectController.redirectToHub
 
-# Map static resources from the /public folder to the /assets URL path
+# Map static resources from the /public folderto the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

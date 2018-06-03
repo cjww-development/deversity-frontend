@@ -1,9 +1,9 @@
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 
-@()(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@()(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
-@MainTemplate(title = messagesApi("pages.invalid-school.title"), links, navBarRoutes) {
+@MainTemplate(title = messages("pages.invalid-school.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -12,18 +12,18 @@
                 </div>
 
                 <div class="col-md-8" id="school-selector">
-                    <h1>@messagesApi("pages.invalid-school.heading")</h1>
+                    <h1>@messages("pages.invalid-school.heading")</h1>
 
-                    <p>@messagesApi("pages.invalid-school.body")</p>
+                    <p>@messages("pages.invalid-school.body")</p>
 
                     <div class="alert alert-danger" role="alert">
-                        @messagesApi("pages.invalid-school.alert")
+                        @messages("pages.invalid-school.alert")
                     </div>
 
                     <div class="form-group">
                         <div class="btn-group btn-group-lg" role="group" aria-label="...">
-                            <a href="javascript:history.back()" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> @messagesApi("app.common.back")</a>
-                            <a href="@routes.HomeController.showHome()" class="btn btn-danger btn-lg">@messagesApi("app.common.cancel") <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                            <a href="javascript:history.back()" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> @messages("app.common.back")</a>
+                            <a href="@routes.HomeController.showHome()" class="btn btn-danger btn-lg">@messages("app.common.cancel") <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                         </div>
                     </div>
                 </div>

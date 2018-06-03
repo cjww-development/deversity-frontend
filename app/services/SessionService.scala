@@ -27,7 +27,7 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SessionServiceImpl @Inject()(val http: Http, configurationLoader: ConfigurationLoader) extends SessionService {
+class DefaultSessionService @Inject()(val http: Http, configurationLoader: ConfigurationLoader) extends SessionService {
   override val sessionStore     = configurationLoader.buildServiceUrl("session-store")
   override val authMicroservice = configurationLoader.buildServiceUrl("auth-microservice")
 }

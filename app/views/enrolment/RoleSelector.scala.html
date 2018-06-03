@@ -2,19 +2,22 @@
 @import com.cjwwdev.views.html.templates.MainTemplate
 @import com.cjwwdev.views.html.helpers.radioButton
 @import models.forms.Role
+@import helper._
 
-@(role: Form[Role], schoolDetails: SchoolDetails)(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(role: Form[Role], schoolDetails: SchoolDetails)(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
-@MainTemplate(title = messagesApi("pages.role-selector.title"), links, navBarRoutes) {
+@MainTemplate(title = messages("pages.role-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
                 <div class="col-md-2"></div>
 
                 <div class="col-md-8">
-                    <h1>@messagesApi("pages.role-selector.heading")</h1>
+                    <h1>@messages("pages.role-selector.heading")</h1>
 
                     <form action="@routes.EnrolmentController.confirmRole()" method="post">
+                        @CSRF.formField
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="thumbnail">
@@ -26,7 +29,7 @@
                                             "teacher",
                                             '_name  -> "role",
                                             '_id    -> "role1",
-                                            '_label -> messagesApi("pages.role-selector.radio.label.teacher")
+                                            '_label -> messages("pages.role-selector.radio.label.teacher")
                                         )
                                     </div>
                                 </div>
@@ -42,7 +45,7 @@
                                             "student",
                                             '_name  -> "role",
                                             '_id    -> "role2",
-                                            '_label -> messagesApi("pages.role-selector.radio.label.student")
+                                            '_label -> messages("pages.role-selector.radio.label.student")
                                         )
                                     </div>
                                 </div>
@@ -50,11 +53,11 @@
                         </div>
 
                         <div class="alert alert-info" role="alert">
-                            @Html(messagesApi("pages.role-selector.alert", schoolDetails.orgName))
+                            @Html(messages("pages.role-selector.alert", schoolDetails.orgName))
                         </div>
 
                         <div class="btn-group btn-group-lg" aria-label="...">
-                            <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                            <button type="submit" class="btn btn-primary btn-lg">@messages("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                         </div>
                     </form>
                 </div>

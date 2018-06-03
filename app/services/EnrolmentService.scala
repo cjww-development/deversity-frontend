@@ -29,9 +29,9 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EnrolmentServiceImpl @Inject()(val accountsConnector: AccountsMicroserviceConnector,
-                                     val deversityConnector: DeversityMicroserviceConnector,
-                                     val sessionStoreConnector: SessionStoreConnector) extends EnrolmentService
+class DefaultEnrolmentService @Inject()(val accountsConnector: AccountsMicroserviceConnector,
+                                        val deversityConnector: DeversityMicroserviceConnector,
+                                        val sessionStoreConnector: SessionStoreConnector) extends EnrolmentService
 
 trait EnrolmentService {
   val accountsConnector: AccountsMicroserviceConnector

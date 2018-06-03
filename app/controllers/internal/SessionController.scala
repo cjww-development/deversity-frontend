@@ -24,12 +24,15 @@ import services.SessionService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SessionControllerImpl @Inject()(val sessionService: SessionService) extends SessionController
+class DefaultSessionController @Inject()(val sessionService: SessionService,
+                                         val controllerComponents: ControllerComponents) extends SessionController
 
-trait SessionController extends Controller with Logging with ApplicationConfiguration {
+trait SessionController extends BaseController with Logging with ApplicationConfiguration {
   val sessionService: SessionService
 
-  def buildSession(sessionId: String): Action[AnyContent] = Action.async { implicit request =>
+  private val action: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
+
+  def buildSession(sessionId: String): Action[AnyContent] = action.async { implicit request =>
     logger.info(s"[buildSession] - request was sent from ${request.headers("Referer")}")
     logger.info(s"[buildSession] - attempting to build session")
     sessionService.fetchAuthContext(sessionId) map {
@@ -40,7 +43,7 @@ trait SessionController extends Controller with Logging with ApplicationConfigur
     }
   }
 
-  def validateSession(sessionId: String): Action[AnyContent] = Action { implicit request =>
+  def validateSession(sessionId: String): Action[AnyContent] = action { implicit request =>
     logger.info(s"[validateSession] - request was sent from ${request.headers("Referer")}")
     if(request.session("cookieId").equals(sessionId)) Redirect(SERVICE_DIRECTOR) else InternalServerError
   }

@@ -2,7 +2,7 @@
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 
-@(teacherDetails: TeacherInformation, schoolName: String)(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(teacherDetails: TeacherInformation, schoolName: String)(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @colourSwitcher(random : Int) = {
     @random match {
@@ -32,7 +32,7 @@
     }
 }
 
-@MainTemplate(title = messagesApi("pages.confirm-teacher.title"), links, navBarRoutes) {
+@MainTemplate(title = messages("pages.confirm-teacher.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -50,11 +50,11 @@
                 </div>
 
                 <div class="col-md-8" id="school-selector">
-                    <h1>@messagesApi("pages.confirm-teacher.heading")</h1>
+                    <h1>@messages("pages.confirm-teacher.heading")</h1>
 
                     <ul class="list-bullet">
                         <li><p>@teacherDetails.title @teacherDetails.lastName</p></li>
-                        <li><p>@messagesApi("pages.confirm-teacher.teaching-location", schoolName, teacherDetails.room)</p></li>
+                        <li><p>@messages("pages.confirm-teacher.teaching-location", schoolName, teacherDetails.room)</p></li>
                     </ul>
 
                     <div class="alert alert-warning" role="alert">
@@ -64,8 +64,8 @@
                     <form method="get" action="@routes.EnrolmentController.enrolmentConfirmation()">
                         <div class="form-group">
                             <div class="btn-group btn-group-lg" role="group" aria-label="...">
-                                <a href="javascript:history.back()" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> @messagesApi("app.common.back")</a>
-                                <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                                <a href="javascript:history.back()" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> @messages("app.common.back")</a>
+                                <button type="submit" class="btn btn-primary btn-lg">@messages("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </form>

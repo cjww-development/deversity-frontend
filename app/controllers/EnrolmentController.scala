@@ -15,27 +15,24 @@
  */
 package controllers
 
-import javax.inject.Inject
-
 import com.cjwwdev.auth.connectors.AuthConnector
 import common.FrontendController
 import connectors.SessionStoreConnector
 import forms._
+import javax.inject.Inject
 import models.SessionUpdateSet
-import play.api.Logger
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.{EnrolmentService, SchoolDetailsService}
 import views.html.enrolment._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EnrolmentControllerImpl @Inject()(val schoolDetailsService: SchoolDetailsService,
-                                        val sessionStoreConnector: SessionStoreConnector,
-                                        val authConnector: AuthConnector,
-                                        val enrolmentService: EnrolmentService,
-                                        implicit val messagesApi: MessagesApi) extends EnrolmentController
+class DefaultEnrolmentController @Inject()(val schoolDetailsService: SchoolDetailsService,
+                                           val sessionStoreConnector: SessionStoreConnector,
+                                           val authConnector: AuthConnector,
+                                           val controllerComponents: ControllerComponents,
+                                           val enrolmentService: EnrolmentService) extends EnrolmentController
 
 trait EnrolmentController extends FrontendController {
   val schoolDetailsService: SchoolDetailsService
