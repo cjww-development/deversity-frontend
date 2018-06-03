@@ -2,4 +2,4 @@
 
 ->      /deversity                  app.Routes
 ->      /deversity/private          internal.Routes
-GET     /admin/metrics              com.cjwwdev.metrics.MetricsController.metricsToJson
+->      /                           health.Routes

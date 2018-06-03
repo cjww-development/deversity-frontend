@@ -15,23 +15,21 @@
  */
 package controllers
 
-import javax.inject.Inject
-
 import com.cjwwdev.auth.connectors.AuthConnector
 import common.FrontendController
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import javax.inject.Inject
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.EnrolmentService
 import views.html.index
 
 import scala.concurrent.Future
 
-class HomeControllerImpl @Inject()(val enrolmentService: EnrolmentService,
-                                   val authConnector: AuthConnector,
-                                   implicit val messagesApi: MessagesApi) extends HomeController
+class DefaultHomeController @Inject()(val enrolmentService: EnrolmentService,
+                                      val authConnector: AuthConnector,
+                                      val controllerComponents: ControllerComponents) extends HomeController
 
 trait HomeController extends FrontendController {
-  def showHome: Action[AnyContent] = Action.async {
+  def showHome: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Ok(index()))
   }

@@ -33,7 +33,7 @@ sealed trait ValidOrg
 case object Valid extends ValidOrg
 case object Invalid extends ValidOrg
 
-class AccountsMicroserviceConnectorImpl @Inject()(val http: Http) extends AccountsMicroserviceConnector with ApplicationConfiguration
+class DefaultAccountsMicroserviceConnector @Inject()(val http: Http) extends AccountsMicroserviceConnector with ApplicationConfiguration
 
 trait AccountsMicroserviceConnector extends DefaultFormat with WsResponseHelpers {
   val http: Http

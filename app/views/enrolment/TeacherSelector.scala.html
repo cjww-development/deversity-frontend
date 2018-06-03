@@ -1,11 +1,12 @@
 @import models.forms.TeacherRegCode
+@import helper._
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 @import com.cjwwdev.views.html.helpers.textInput
 
-@(teacher: Form[TeacherRegCode])(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(teacher: Form[TeacherRegCode])(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
-@MainTemplate(title = messagesApi("pages.teacher-selector.title"), links, navBarRoutes) {
+@MainTemplate(title = messages("pages.teacher-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -14,25 +15,26 @@
                 </div>
 
                 <div class="col-md-8" id="school-selector">
-                    <h1>@messagesApi("pages.teacher-selector.heading")</h1>
-                    <p>@messagesApi("pages.teacher-selector.body")</p>
+                    <h1>@messages("pages.teacher-selector.heading")</h1>
+                    <p>@messages("pages.teacher-selector.body")</p>
 
                     <form action="@routes.EnrolmentController.validateTeacher()" method="post">
+                        @CSRF.formField
 
                         @textInput(
                             teacher("userName"),
                             false,
                             '_sassClass   -> "cjww-input-group-addon",
-                            '_label       -> messagesApi("pages.teacher-selector.text-entry.label"),
+                            '_label       -> messages("pages.teacher-selector.text-entry.label"),
                             '_inputType   -> "text",
-                            '_placeholder -> messagesApi("pages.teacher-selector.text-entry.placeholder"),
+                            '_placeholder -> messages("pages.teacher-selector.text-entry.placeholder"),
                             '_fieldName   -> "regCode",
                             '_spanId      -> "user-name-span"
                         )
 
                         <div class="form-group">
                             <div class="input-group">
-                                <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                                <button type="submit" class="btn btn-primary btn-lg">@messages("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </form>

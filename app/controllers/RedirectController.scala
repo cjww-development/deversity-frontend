@@ -15,33 +15,31 @@
  */
 package controllers
 
-import javax.inject.Inject
-
 import com.cjwwdev.auth.connectors.AuthConnector
 import common.FrontendController
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import javax.inject.Inject
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.EnrolmentService
 import views.html.misc.ServiceUnavailableView
 
 import scala.concurrent.Future
 
-class RedirectControllerImpl @Inject()(val authConnector: AuthConnector,
-                                       val enrolmentService: EnrolmentService,
-                                       implicit val messagesApi: MessagesApi) extends RedirectController
+class DefaultRedirectController @Inject()(val authConnector: AuthConnector,
+                                          val controllerComponents: ControllerComponents,
+                                          val enrolmentService: EnrolmentService) extends RedirectController
 
 trait RedirectController extends FrontendController {
-  def redirectToUserRegister: Action[AnyContent] = Action.async {
+  def redirectToUserRegister: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(USER_REGISTER))
   }
 
-  def redirectToOrgRegister: Action[AnyContent] = Action.async {
+  def redirectToOrgRegister: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(ORG_REGISTER))
   }
 
-  def redirectToLogin: Action[AnyContent] = Action.async {
+  def redirectToLogin: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(USER_LOGIN))
   }
@@ -58,22 +56,22 @@ trait RedirectController extends FrontendController {
         Future.successful(Redirect(SIGN_OUT))
   }
 
-  def redirectToDeversity: Action[AnyContent] = Action.async {
+  def redirectToDeversity: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(deversityFrontend))
   }
 
-  def redirectToDiagnostics: Action[AnyContent] = Action.async {
+  def redirectToDiagnostics: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(diagnosticsFrontend))
   }
 
-  def redirectToHub: Action[AnyContent] = Action.async {
+  def redirectToHub: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(hubFrontend))
   }
 
-  def redirectToServiceOutage: Action[AnyContent] = Action.async {
+  def redirectToServiceOutage: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(ServiceUnavailable(ServiceUnavailableView()))
   }

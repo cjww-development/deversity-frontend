@@ -20,9 +20,9 @@ import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException, Serve
 import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.session.SessionUtils
 import com.cjwwdev.http.verbs.Http
-import com.google.inject.Inject
 import common.ApplicationConfiguration
 import enums.SessionCache
+import javax.inject.Inject
 import models.SessionUpdateSet
 import play.api.libs.json._
 import play.api.mvc.Request
@@ -30,15 +30,15 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SessionStoreConnectorImpl @Inject()(val http : Http) extends SessionStoreConnector with ApplicationConfiguration
+class DefaultSessionStoreConnector @Inject()(val http : Http) extends SessionStoreConnector with ApplicationConfiguration
 
 trait SessionStoreConnector extends SessionUtils with WsResponseHelpers {
   val http: Http
 
   val sessionStore: String
 
-  implicit val jsValueReads: Reads[JsValue] = new Reads[JsValue] {
-    def reads(json: JsValue): JsResult[JsValue] = JsSuccess(json)
+  implicit val jsValueReads: Reads[JsValue] = Reads[JsValue] {
+    JsSuccess(_)
   }
 
   def getDataElement(key : String)(implicit request: Request[_]) : Future[Option[String]] = {

@@ -22,22 +22,20 @@ object AppDependencies {
 }
 
 private object CompileDependencies {
-  private val httpVerbsVersion     = "2.19.0"
-  private val authorisationVersion = "3.4.0"
-  private val appUtilsVersion      = "3.2.0"
-  private val frontendUIVersion    = "1.5.0"
-  private val metricsVersion       = "0.7.0"
+  private val httpVerbsVersion     = "3.1.0"
+  private val authorisationVersion = "4.1.0"
+  private val appUtilsVersion      = "4.1.0"
+  private val frontendUIVersion    = "2.1.1"
+  private val serviceHealthVersion = "0.2.0"
 
-  private val playImports: Seq[ModuleID] = Seq(
-    filters
-  )
+  private val playImports: Seq[ModuleID] = Seq(filters, guice)
 
   private val compileDependencies: Seq[ModuleID] = Seq(
-    "com.cjww-dev.libs" % "http-verbs_2.11"            % httpVerbsVersion,
-    "com.cjww-dev.libs" % "authorisation_2.11"         % authorisationVersion,
-    "com.cjww-dev.libs" % "application-utilities_2.11" % appUtilsVersion,
-    "com.cjww-dev.libs" % "frontend-ui_2.11"           % frontendUIVersion,
-    "com.cjww-dev.libs" % "metrics-reporter_2.11"      % metricsVersion
+    "com.cjww-dev.libs" % "http-verbs_2.12"            % httpVerbsVersion,
+    "com.cjww-dev.libs" % "authorisation_2.12"         % authorisationVersion,
+    "com.cjww-dev.libs" % "application-utilities_2.12" % appUtilsVersion,
+    "com.cjww-dev.libs" % "frontend-ui_2.12"           % frontendUIVersion,
+    "com.cjww-dev.libs" % "service-health_2.12"        % serviceHealthVersion
   )
 
   def apply(): Seq[ModuleID] = compileDependencies ++ playImports
@@ -51,7 +49,7 @@ private trait TestDependencies {
 private object UnitTestDependencies extends TestDependencies {
   override val scope: Configuration = Test
   override val testDependencies: Seq[ModuleID] = Seq(
-    "com.cjww-dev.libs" % "testing-framework_2.11" % "0.1.0" % scope
+    "com.cjww-dev.libs" % "testing-framework_2.12" % "3.2.0" % scope
   )
 
   def apply(): Seq[ModuleID] = testDependencies
@@ -60,7 +58,7 @@ private object UnitTestDependencies extends TestDependencies {
 private object IntegrationTestDependencies extends TestDependencies {
   override val scope: Configuration = IntegrationTest
   override val testDependencies: Seq[ModuleID] = Seq(
-    "com.cjww-dev.libs" % "testing-framework_2.11" % "0.1.0" % scope
+    "com.cjww-dev.libs" % "testing-framework_2.12" % "3.2.0" % scope
   )
 
   def apply(): Seq[ModuleID] = testDependencies

@@ -15,16 +15,15 @@
  */
 package models
 
-import com.cjwwdev.security.encryption.DataSecurity
+import com.cjwwdev.implicits.ImplicitDataSecurity._
 import play.api.libs.json._
 
 case class SessionUpdateSet(key : String, data : String)
 
 object SessionUpdateSet extends {
-  implicit val sessionUpdateSetWrites: OWrites[SessionUpdateSet] = new OWrites[SessionUpdateSet] {
-    override def writes(o: SessionUpdateSet): JsObject = Json.obj(
-      s"${o.key}" -> s"${DataSecurity.encryptString(o.data)}"
-    )
+
+  implicit val sessionUpdateSetWrites: OWrites[SessionUpdateSet] = OWrites[SessionUpdateSet] {
+    set => Json.obj(set.key -> set.data.encrypt)
   }
 
   implicit val sessionUpdateSetReads: Reads[SessionUpdateSet] = Json.reads[SessionUpdateSet]

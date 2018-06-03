@@ -1,11 +1,12 @@
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 @import com.cjwwdev.views.html.helpers.textInput
+@import helper._
 @import models.forms.SchoolRegCode
 
-@(school: Form[SchoolRegCode])(implicit request: Request[_], messages: Messages, messagesApi: MessagesApi, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(school: Form[SchoolRegCode])(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
-@MainTemplate(title = messagesApi("pages.school-selector.title"), links, navBarRoutes) {
+@MainTemplate(title = messages("pages.school-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">
         <div class="container">
             <div class="row">
@@ -14,29 +15,30 @@
                 </div>
 
                 <div class="col-md-8" id="school-selector">
-                    <h1>@messagesApi("pages.school-selector.heading")</h1>
-                    <p>@messagesApi("pages.school-selector.body")</p>
+                    <h1>@messages("pages.school-selector.heading")</h1>
+                    <p>@messages("pages.school-selector.body")</p>
 
                     <div class="alert alert-info" role="alert">
-                        @Html(messagesApi("pages.school-selector.alert"))
+                        @Html(messages("pages.school-selector.alert"))
                     </div>
 
                     <form action="@routes.EnrolmentController.validateSchool" method="post">
+                        @CSRF.formField
 
                         @textInput(
                             school("schoolName"),
                             false,
                             '_sassClass   -> "cjww-input-group-addon",
-                            '_label       -> messagesApi("pages.school-selector.text-entry.label"),
+                            '_label       -> messages("pages.school-selector.text-entry.label"),
                             '_inputType   -> "text",
-                            '_placeholder -> messagesApi("pages.school-selector.text-entry.placeholder"),
+                            '_placeholder -> messages("pages.school-selector.text-entry.placeholder"),
                             '_fieldName   -> "regCode",
                             '_spanId      -> "school-name-span"
                         )
 
                         <div class="form-group">
                             <div class="input-group">
-                                <button type="submit" class="btn btn-primary btn-lg">@messagesApi("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                                <button type="submit" class="btn btn-primary btn-lg">@messages("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </form>
