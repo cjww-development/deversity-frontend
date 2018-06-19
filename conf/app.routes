@@ -27,6 +27,8 @@ POST    /select-teacher             controllers.EnrolmentController.validateTeac
 
 GET     /confirm-teacher            controllers.EnrolmentController.confirmTeacher
 
+GET     /check-your-answers         controllers.EnrolmentController.summary()
+
 GET     /confirmation               controllers.EnrolmentController.enrolmentConfirmation
 
 #External Routes

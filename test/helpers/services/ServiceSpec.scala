@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2018 CJWW Development
  *
@@ -15,18 +14,13 @@
  * limitations under the License.
  */
 
-package common
+package helpers.services
 
-import com.cjwwdev.filters.RequestLoggingFilter
-import filters.{HeadersFilter, IPWhitelistFilter}
-import javax.inject.Inject
-import play.api.http.DefaultHttpFilters
+import helpers.other.{Fixtures, FutureAsserts}
+import org.scalatestplus.play.PlaySpec
 
-class DeversityFilters @Inject()(requestLoggingFilter: RequestLoggingFilter,
-                                 iPWhitelistFilter: IPWhitelistFilter,
-                                 headersFilter: HeadersFilter)
-  extends DefaultHttpFilters(
-    requestLoggingFilter,
-    iPWhitelistFilter,
-    headersFilter
-  )
+trait ServiceSpec
+  extends PlaySpec
+    with FutureAsserts
+    with Fixtures
+    with MockDeversityConnector

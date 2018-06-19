@@ -84,3 +84,16 @@ pages.teacher-selector.body                         = Please enter your teachers
 pages.teacher-selector.text-entry.label             = Teacher ID
 pages.teacher-selector.text-entry.placeholder       = Your teachers ID
 
+#EnrolmentSummary
+pages.enrolment-summary.title                       = One last check
+pages.enrolment-summary.heading                     = One last check
+pages.enrolment-summary.alert.1                     = Just so you know
+pages.enrolment-summary.alert.2                     = you can click the entries above to change your answer.
+pages.enrolment-summary.school                      = Your school
+pages.enrolment-summary.role                        = Teacher or student?
+pages.enrolment-summary.teacher-details             = Your teacher details
+pages.enrolment-summary.teacher-details.title       = Your title is {0}
+pages.enrolment-summary.teacher-details.room        = Teaching in {0}
+pages.enrolment-summary.teacher                     = Your teacher
+
+

@@ -1,0 +1,172 @@
+@import models.forms.TeacherRegCode
+@import models.enrolmentFlow.EnrolmentSummary
+@import helper._
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.templates.MainTemplate
+@import com.cjwwdev.views.html.helpers.textInput
+
+@import com.cjwwdev.auth.models.CurrentUser
+@(summaryData: EnrolmentSummary)(implicit request: Request[_], user: CurrentUser,  messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
+@colourSwitcher(random : Int) = {
+    @random match {
+        case 0 => {
+            #0A5A95
+        }
+        case 1 => {
+            #F08B16
+        }
+        case 2 => {
+            #9A090C
+        }
+        case 3 => {
+            #57920B
+        }
+        case _ => {
+            #0A5A95
+        }
+    }
+}
+
+@getInitials(teacherName: String) = @{
+    val split = teacherName.split(" ")
+    s"${split.head.head}.${split.last.head}"
+}
+
+@MainTemplate(title = messages("pages.enrolment-summary.title"), links, navBarRoutes) {
+    <div class="top-block-single">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-8">
+                    <h1 class="page-header">@messages("pages.enrolment-summary.heading")</h1>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <object>
+                                <svg viewBox="0 0 140 140" preserveAspectRatio="xMinYMin meet">
+                                    <g>
+                                        <circle fill="@colourSwitcher(scala.util.Random.nextInt(4))" r="50%" cx="50%" cy="50%" class="circle-back" />
+                                        <text fill="#ffffff" font-size="30" font-family="Verdana" x="50%" y="57%">
+                                            <tspan text-anchor="middle">@summaryData.schoolInitials</tspan>
+                                        </text>
+                                    </g>
+                                </svg>
+                            </object>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="media">
+                                <div class="media-body">
+                                    <h2 class="media-heading">@messages("pages.enrolment-summary.school")</h2>
+                                    <p>@summaryData.schoolName</p>
+                                </div>
+
+                                <div class="media-left media-middle">
+                                    <a class="summary-link" href="@routes.EnrolmentController.selectSchool()">Change</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img width="100%" src="@routes.Assets.versioned(s"images/${summaryData.role}.png")" alt="">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="media">
+                                <div class="media-body">
+                                    <h2 class="media-heading">@messages("pages.enrolment-summary.role")</h2>
+                                    <p>@summaryData.role.capitalize</p>
+                                </div>
+
+                                <div class="media-left media-middle">
+                                    <a class="summary-link" href="@routes.EnrolmentController.roleSelection()">Change</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(summaryData.teacherInfo.isDefined) {
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <object>
+                                    <svg viewBox="0 0 140 140" preserveAspectRatio="xMinYMin meet">
+                                        <g>
+                                            <circle fill="@colourSwitcher(scala.util.Random.nextInt(4))" r="50%" cx="50%" cy="50%" class="circle-back" />
+                                            <text fill="#ffffff" font-size="30" font-family="Verdana" x="50%" y="57%">
+                                                <tspan text-anchor="middle">@summaryData.teacherInfo.get.title.head.@user.lastName.get.head</tspan>
+                                            </text>
+                                        </g>
+                                    </svg>
+                                </object>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h2 class="media-heading">@messages("pages.enrolment-summary.teacher-details")</h2>
+                                        <p>@messages("pages.enrolment-summary.teacher-details.title", summaryData.teacherInfo.get.title)</p>
+                                        <p>@messages("pages.enrolment-summary.teacher-details.room", summaryData.teacherInfo.get.room)</p>
+                                    </div>
+
+                                    <div class="media-left media-middle">
+                                        <a href="@routes.EnrolmentController.confirmAsTeacher()">Change</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if(summaryData.teacherName.isDefined) {
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <object>
+                                    <svg viewBox="0 0 140 140" preserveAspectRatio="xMinYMin meet">
+                                        <g>
+                                            <circle fill="@colourSwitcher(scala.util.Random.nextInt(4))" r="50%" cx="50%" cy="50%" class="circle-back" />
+                                            <text fill="#ffffff" font-size="30" font-family="Verdana" x="50%" y="57%">
+                                                <tspan text-anchor="middle">@getInitials(summaryData.teacherName.get)</tspan>
+                                            </text>
+                                        </g>
+                                    </svg>
+                                </object>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h2 class="media-heading">@messages("pages.enrolment-summary.teacher")</h2>
+                                        <p>@summaryData.teacherName.get</p>
+                                    </div>
+
+                                    <div class="media-left media-middle">
+                                        <a href="@routes.EnrolmentController.confirmAsStudent()">Change</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <hr>
+
+                    <div class="alert alert-info" role="alert">
+                        <strong>@messages("pages.enrolment-summary.alert.1")</strong> @messages("pages.enrolment-summary.alert.2")
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <a href="@routes.EnrolmentController.enrolmentConfirmation()" type="submit" class="btn btn-primary btn-lg">@messages("app.common.next") <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+                    </div>
+                </div>
+
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </div>
+}

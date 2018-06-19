@@ -16,6 +16,7 @@
 package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
+import com.cjwwdev.config.ConfigurationLoader
 import common.FrontendController
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -26,9 +27,19 @@ import scala.concurrent.Future
 
 class DefaultRedirectController @Inject()(val authConnector: AuthConnector,
                                           val controllerComponents: ControllerComponents,
-                                          val enrolmentService: EnrolmentService) extends RedirectController
+                                          val configurationLoader: ConfigurationLoader,
+                                          val enrolmentService: EnrolmentService) extends RedirectController {
+  override val deversityFrontend: String   = configurationLoader.buildServiceUrl("deversity-frontend")
+  override val diagnosticsFrontend: String = configurationLoader.buildServiceUrl("diagnostics-frontend")
+  override val hubFrontend: String         = configurationLoader.buildServiceUrl("hub-frontend")
+}
 
 trait RedirectController extends FrontendController {
+
+  val deversityFrontend: String
+  val diagnosticsFrontend: String
+  val hubFrontend: String
+
   def redirectToUserRegister: Action[AnyContent] = action.async {
     implicit request =>
       Future.successful(Redirect(USER_REGISTER))

@@ -12,11 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package mocks
+package helpers.other
 
 import com.cjwwdev.auth.models.CurrentUser
+import models._
+import models.forms.TeacherDetails
+import models.http.TeacherInformation
 import play.api.libs.json.Json
 
 trait Fixtures extends TestDataGenerator {
@@ -34,7 +36,7 @@ trait Fixtures extends TestDataGenerator {
     enrolments      = None
   )
 
-  implicit val testCurrentUser = CurrentUser(
+  val testCurrentUser = CurrentUser(
     contextId       = generateTestSystemId(CONTEXT),
     id              = generateTestSystemId(USER),
     orgDeversityId  = Some(generateTestSystemId(DEVERSITY)),
@@ -46,5 +48,43 @@ trait Fixtures extends TestDataGenerator {
     enrolments      = Some(Json.obj(
       "deversityId" -> generateTestSystemId(DEVERSITY)
     ))
+  )
+
+  def testTeacherEnrolment: DeversityEnrolment = {
+    DeversityEnrolment(
+      schoolDevId = testOrgDevId,
+      role        = "teacher",
+      title       = Some("testTitle"),
+      room        = Some("testRoom"),
+      teacher     = None
+    )
+  }
+
+  def testStudentEnrolment: DeversityEnrolment = {
+    DeversityEnrolment(
+      schoolDevId = testOrgDevId,
+      role        = "student",
+      title       = None,
+      room        = None,
+      teacher     = Some(createTestUserName)
+    )
+  }
+
+  def testEnrolments: Enrolments = Enrolments(
+    hubId       = None,
+    deversityId = Some(generateTestSystemId(DEVERSITY)),
+    diagId      = None
+  )
+
+  def testTeacherDetails: TeacherInformation = TeacherInformation(
+    title     = "testTitle",
+    lastName  = "testName",
+    room      = "testRoom"
+  )
+
+  val testSchoolDetails: SchoolDetails = SchoolDetails(
+    orgName  = "testOrgName",
+    initials = "testInitials",
+    location = "testLocation"
   )
 }

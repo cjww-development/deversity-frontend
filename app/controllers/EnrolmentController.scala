@@ -122,7 +122,7 @@ trait EnrolmentController extends FrontendController {
         TeacherDetailsForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(TeacherDetailsEntry(errors))),
           valid => enrolmentService.cacheTeacherDetails(valid) map {
-            _ => Redirect(routes.EnrolmentController.enrolmentConfirmation())
+            _ => Redirect(routes.EnrolmentController.summary())
           }
         )
   }
@@ -158,6 +158,14 @@ trait EnrolmentController extends FrontendController {
           Some(details)       <- enrolmentService.getTeacherDetails
           Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
         } yield Ok(ConfirmTeacher(details, schoolDetails.orgName))
+  }
+
+  def summary(): Action[AnyContent] = isAuthorised {
+    implicit request =>
+      implicit user =>
+        enrolmentService.buildSummaryData map { summaryData =>
+          Ok(EnrolmentSummary(summaryData))
+        }
   }
 
   def enrolmentConfirmation: Action[AnyContent] = isAuthorised {

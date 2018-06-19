@@ -24,13 +24,6 @@ trait ApplicationConfiguration {
   private def buildServiceUrl(service: String): String = ConfigFactory.load.getString(s"microservice.external-services.$service.domain")
 
   val authService               = buildServiceUrl("auth-service")
-  val accountsMicroservice      = buildServiceUrl("accounts-microservice")
-  val authMicroservice          = buildServiceUrl("auth-microservice")
-  val sessionStore              = buildServiceUrl("session-store")
-  val diagnosticsFrontend       = buildServiceUrl("diagnostics-frontend")
-  val deversityFrontend         = buildServiceUrl("deversity-frontend")
-  val deversityMicroservice     = buildServiceUrl("deversity")
-  val hubFrontend               = buildServiceUrl("hub-frontend")
 
   val USER_LOGIN                = s"$authService/login?redirect=deversity"
   val SERVICE_DIRECTOR          = s"$authService/where-do-you-want-to-go"

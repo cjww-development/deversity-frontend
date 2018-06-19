@@ -16,11 +16,11 @@
 
 package connectors
 
+import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException, ServerErrorException}
 import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.session.SessionUtils
 import com.cjwwdev.http.verbs.Http
-import common.ApplicationConfiguration
 import enums.SessionCache
 import javax.inject.Inject
 import models.SessionUpdateSet
@@ -30,16 +30,14 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DefaultSessionStoreConnector @Inject()(val http : Http) extends SessionStoreConnector with ApplicationConfiguration
+class DefaultSessionStoreConnector @Inject()(val http : Http, configurationLoader: ConfigurationLoader) extends SessionStoreConnector {
+  override val sessionStore: String = configurationLoader.buildServiceUrl("session-store")
+}
 
 trait SessionStoreConnector extends SessionUtils with WsResponseHelpers {
   val http: Http
 
   val sessionStore: String
-
-  implicit val jsValueReads: Reads[JsValue] = Reads[JsValue] {
-    JsSuccess(_)
-  }
 
   def getDataElement(key : String)(implicit request: Request[_]) : Future[Option[String]] = {
     http.get(s"$sessionStore/session/$getCookieId/data?key=$key") map { resp =>

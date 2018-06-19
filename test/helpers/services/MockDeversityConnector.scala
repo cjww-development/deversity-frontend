@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package mocks
+package helpers.services
 
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import connectors.DeversityConnector
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
+import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers
 
-import scala.concurrent.{Await, Awaitable}
-import scala.concurrent.duration._
+trait MockDeversityConnector extends BeforeAndAfterEach with MockitoSugar {
+  self: PlaySpec =>
 
-trait CJWWSpec extends PlaySpec with GuiceOneAppPerSuite with AuthBuilder with ComponentMocks {
+  val mockDeversityConector = mock[DeversityConnector]
 
-  implicit val duration = 5.seconds
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockDeversityConector)
+  }
 
-  def await[T](future : Awaitable[T]) : T = Await.result(future, duration)
+
 }
-
