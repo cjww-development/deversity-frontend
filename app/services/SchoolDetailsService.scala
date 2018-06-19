@@ -18,16 +18,16 @@ package services
 
 import com.cjwwdev.auth.models.CurrentUser
 import javax.inject.Inject
-import connectors.DeversityMicroserviceConnector
+import connectors.DeversityConnector
 import models.SchoolDetails
 import play.api.mvc.Request
 
 import scala.concurrent.Future
 
-class DefaultSchoolDetailsService @Inject()(val deversityConnector: DeversityMicroserviceConnector) extends SchoolDetailsService
+class DefaultSchoolDetailsService @Inject()(val deversityConnector: DeversityConnector) extends SchoolDetailsService
 
 trait SchoolDetailsService{
-  val deversityConnector: DeversityMicroserviceConnector
+  val deversityConnector: DeversityConnector
 
   def validateSchool(regCode: String)(implicit request: Request[_]): Future[String] = {
     deversityConnector.validateSchool(regCode)

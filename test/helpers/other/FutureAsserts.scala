@@ -12,30 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package mocks
+package helpers.other
 
+import akka.util.Timeout
 import org.scalatest.Assertion
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.PlaySpec
-import play.api.mvc.{Action, Request, Result}
+import play.api.mvc.Result
+import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
-trait AuthBuilder extends PlaySpec with MockitoSugar with MockAuthConnector {
+trait FutureAsserts
+  extends FutureAwaits
+    with DefaultAwaitTimeout {
 
-  def runActionWithAuth[A](action: Action[A], request: Request[A], authorisedAs: String)(test: Future[Result] => Assertion): Assertion = {
-    authorisedAs match {
-      case "individual"   => mockGetIndCurrentUser(true)
-      case "organisation" => mockGetOrgCurrentUser(true)
-    }
+  override implicit def defaultAwaitTimeout: Timeout = 5.seconds
 
-    test(action(request))
+  def awaitAndAssert[T](methodUnderTest: => Future[T])(assertions: T => Assertion): Assertion = {
+    assertions(await(methodUnderTest))
   }
 
-  def runActionWithoutAuth[A](action: Action[A], request: Request[A])(test: Future[Result] => Assertion): Assertion = {
-    test(action(request))
+  def assertResult[T](methodUnderTest: => Future[Result])(assertions: Future[Result] => Assertion): Assertion = {
+    assertions(methodUnderTest)
   }
 }

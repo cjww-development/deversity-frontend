@@ -16,11 +16,11 @@
 package connectors
 
 import com.cjwwdev.auth.models.CurrentUser
+import com.cjwwdev.config.ConfigurationLoader
 import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.implicits.ImplicitDataSecurity._
-import common.ApplicationConfiguration
 import javax.inject.Inject
 import models.http.TeacherInformation
 import models.{DeversityEnrolment, SchoolDetails}
@@ -31,18 +31,17 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DefaultDeversityMicroserviceConnector @Inject()(val http: Http) extends DeversityMicroserviceConnector with ApplicationConfiguration
+class DefaultDeversityConnector @Inject()(val http: Http, configurationLoader: ConfigurationLoader) extends DeversityConnector {
+  override val deversityUrl: String = configurationLoader.buildServiceUrl("deversity")
+}
 
-trait DeversityMicroserviceConnector extends DefaultFormat with WsResponseHelpers {
+trait DeversityConnector extends DefaultFormat with WsResponseHelpers {
   val http: Http
 
-  val deversityMicroservice: String
-
-  case class JS(value: Option[String] = None)
-  implicit val format: OFormat[JS] = Json.format[JS]
+  val deversityUrl: String
 
   def getDeversityUserInfo(implicit user: CurrentUser, request: Request[_]): Future[Option[DeversityEnrolment]] = {
-    http.get(s"$deversityMicroservice/user/${user.id}/enrolment") map { resp =>
+    http.get(s"$deversityUrl/user/${user.id}/enrolment") map { resp =>
       resp.status match {
         case OK         => Some(resp.toDataType[DeversityEnrolment](needsDecrypt = true))
         case NO_CONTENT => None
@@ -53,7 +52,7 @@ trait DeversityMicroserviceConnector extends DefaultFormat with WsResponseHelper
   }
 
   def getTeacherDetails(teacherDevId: String, schoolDevId: String)(implicit user: CurrentUser, request: Request[_]): Future[Option[TeacherInformation]] = {
-    http.get(s"$deversityMicroservice/user/${user.id}/teacher/${teacherDevId.encrypt}/school/${schoolDevId.encrypt}/details") map { resp =>
+    http.get(s"$deversityUrl/user/${user.id}/teacher/${teacherDevId.encrypt}/school/${schoolDevId.encrypt}/details") map { resp =>
       Some(resp.toDataType[TeacherInformation](needsDecrypt = true))
     } recover {
       case _: NotFoundException => None
@@ -61,38 +60,32 @@ trait DeversityMicroserviceConnector extends DefaultFormat with WsResponseHelper
   }
 
   def createDeversityId(implicit user: CurrentUser, request: Request[_]): Future[String] = {
-    http.patch[JS](s"$deversityMicroservice/user/${user.id}/create-deversity-id", JS()) map {
+    http.patchString(s"$deversityUrl/user/${user.id}/create-deversity-id", "") map {
       _.toResponseString(needsDecrypt = true)
     }
   }
 
   def initialiseDeversityEnrolment(deversityEnrolment: DeversityEnrolment)(implicit user: CurrentUser, request: Request[_]): Future[Int] = {
-    http.patch[DeversityEnrolment](s"$deversityMicroservice/user/${user.id}/enrolment", deversityEnrolment) map(_.status)
+    http.patch[DeversityEnrolment](s"$deversityUrl/user/${user.id}/enrolment", deversityEnrolment) map(_.status)
   }
 
   def validateSchool(regCode: String)(implicit request: Request[_]): Future[String] = {
-    http.get(s"$deversityMicroservice/validation/school/${regCode.encrypt}") map {
+    http.get(s"$deversityUrl/validation/school/${regCode.encrypt}") map {
       _.toResponseString(needsDecrypt = true)
     }
   }
 
   def validateTeacher(regCode: String, schoolDevId: String)(implicit request: Request[_]): Future[String] = {
-    http.get(s"$deversityMicroservice/validation/teacher/${regCode.encrypt}/school/${schoolDevId.encrypt}") map {
+    http.get(s"$deversityUrl/validation/teacher/${regCode.encrypt}/school/${schoolDevId.encrypt}") map {
       _.toResponseString(needsDecrypt = true)
     }
   }
 
   def getSchoolDetails(orgDevId: String)(implicit user: CurrentUser, request: Request[_]): Future[Option[SchoolDetails]] = {
-    http.get(s"$deversityMicroservice/user/${user.id}/school/${orgDevId.encrypt}/details") map { resp =>
+    http.get(s"$deversityUrl/user/${user.id}/school/${orgDevId.encrypt}/details") map { resp =>
       Some(resp.toDataType[SchoolDetails](needsDecrypt = true))
     } recover {
       case _: NotFoundException => None
-    }
-  }
-
-  def lookupRegistrationCode(regCode: String)(implicit user: CurrentUser, request: Request[_]): Future[String] = {
-    http.get(s"$deversityMicroservice/user/${user.id}/lookup/$regCode/lookup-reg-code") map {
-      _.body.decrypt
     }
   }
 }

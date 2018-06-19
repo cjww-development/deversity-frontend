@@ -30,8 +30,8 @@ class ServiceBindings extends Module {
     bindOther() ++ bindConnectors() ++ bindServices() ++ bindControllers()
 
   private def bindConnectors(): Seq[Binding[_]] = Seq(
-    bind(classOf[AccountsMicroserviceConnector]).to(classOf[DefaultAccountsMicroserviceConnector]).eagerly(),
-    bind(classOf[DeversityMicroserviceConnector]).to(classOf[DefaultDeversityMicroserviceConnector]).eagerly(),
+    bind(classOf[AccountsConnector]).to(classOf[DefaultAccountsConnector]).eagerly(),
+    bind(classOf[DeversityConnector]).to(classOf[DefaultDeversityConnector]).eagerly(),
     bind(classOf[SessionStoreConnector]).to(classOf[DefaultSessionStoreConnector]).eagerly()
   )
 

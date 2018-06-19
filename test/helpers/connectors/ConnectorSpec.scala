@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package mocks
+package helpers.connectors
 
+import helpers.other.{Fixtures, FutureAsserts}
+import org.scalatestplus.play.PlaySpec
 import play.api.test.FakeRequest
 
-trait SessionBuild {
+trait ConnectorSpec
+  extends PlaySpec
+    with FutureAsserts
+    with MockHttp
+    with Fixtures {
 
-  def appendSession(request : FakeRequest[_]) : FakeRequest[_] = {
-    request.withSession(
-      "cookieId"  -> s"session-0987654321",
-      "contextId" -> s"context-1234567890",
-      "firstName" -> "firstName",
-      "lastName"  -> "lastName"
-    )
-  }
-
-  def buildRequestWithSession: FakeRequest[_] = {
-    FakeRequest().withSession(
-      "cookieId"  -> s"session-0987654321",
-      "contextId" -> s"context-1234567890",
-      "firstName" -> "firstName",
-      "lastName"  -> "lastName",
-      "credentialType" -> "individual"
-    )
-  }
+  val request = FakeRequest()
 }

@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package mocks
+package models.enrolmentFlow
 
-import com.cjwwdev.config.ConfigurationLoader
-import com.cjwwdev.http.verbs.Http
-import org.mockito.Mockito.reset
-import org.scalatest.mockito.MockitoSugar
-import play.api.i18n.MessagesApi
-import services.EnrolmentService
+case class EnrolmentSummary(schoolName: String,
+                            schoolInitials: String,
+                            role: String,
+                            teacherInfo: Option[TeacherInfo],
+                            teacherName: Option[String])
 
-trait ComponentMocks {
-  this: MockitoSugar =>
+case class TeacherInfo(title: String,
+                       room: String)
 
-  val mockHttp              = mock[Http]
-  val mockEnrolmentsService = mock[EnrolmentService]
-  val mockConfig            = mock[ConfigurationLoader]
-  val mockMessagesApi       = mock[MessagesApi]
 
-  def resetMocks() : Unit = {
-    reset(mockHttp)
-    reset(mockEnrolmentsService)
-    reset(mockMessagesApi)
-  }
-}

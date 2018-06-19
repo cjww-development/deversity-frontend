@@ -18,9 +18,10 @@ package services
 
 import com.cjwwdev.auth.models.CurrentUser
 import common.{DeversityCurrentEnrolmentResponse, InvalidEnrolments, ValidEnrolments}
-import connectors.{AccountsMicroserviceConnector, DeversityMicroserviceConnector, SessionStoreConnector}
+import connectors.{AccountsConnector, DeversityConnector, SessionStoreConnector}
 import enums.SessionCache
 import javax.inject.Inject
+import models.enrolmentFlow.{EnrolmentSummary, TeacherInfo}
 import models.forms.TeacherDetails
 import models.http.TeacherInformation
 import models.{DeversityEnrolment, SchoolDetails, SessionUpdateSet}
@@ -29,13 +30,13 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DefaultEnrolmentService @Inject()(val accountsConnector: AccountsMicroserviceConnector,
-                                        val deversityConnector: DeversityMicroserviceConnector,
+class DefaultEnrolmentService @Inject()(val accountsConnector: AccountsConnector,
+                                        val deversityConnector: DeversityConnector,
                                         val sessionStoreConnector: SessionStoreConnector) extends EnrolmentService
 
 trait EnrolmentService {
-  val accountsConnector: AccountsMicroserviceConnector
-  val deversityConnector: DeversityMicroserviceConnector
+  val accountsConnector: AccountsConnector
+  val deversityConnector: DeversityConnector
   val sessionStoreConnector: SessionStoreConnector
 
   def validateCurrentEnrolments(implicit user: CurrentUser, request: Request[_]): Future[DeversityCurrentEnrolmentResponse] = {
@@ -75,6 +76,30 @@ trait EnrolmentService {
       Some(teacherDevId)  <- sessionStoreConnector.getDataElement("teacherDevId")
       details             <- deversityConnector.getTeacherDetails(teacherDevId, schoolDevId)
     } yield details
+  }
+
+  def buildSummaryData(implicit request: Request[_], currentUser: CurrentUser): Future[EnrolmentSummary] = {
+    for {
+      Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
+      Some(schoolDetails) <- deversityConnector.getSchoolDetails(schoolDevId)
+      Some(role)          <- sessionStoreConnector.getDataElement("role")
+      teacher <- role match {
+        case "teacher" => for {
+          Some(title) <- sessionStoreConnector.getDataElement("title")
+          Some(room)  <- sessionStoreConnector.getDataElement("room")
+        } yield Left(TeacherInfo(title, room))
+        case "student" => for {
+          Some(teacherDevId) <- sessionStoreConnector.getDataElement("teacherDevId")
+          Some(teacherName)  <- deversityConnector.getTeacherDetails(teacherDevId, schoolDevId) map(_.map(x => s"${x.title} ${x.lastName}"))
+        } yield Right(teacherName)
+      }
+    } yield EnrolmentSummary(
+      schoolName     = schoolDetails.orgName,
+      schoolInitials = schoolDetails.initials,
+      role           = role,
+      teacherInfo    = teacher.fold(right => Some(right), _ => None),
+      teacherName    = teacher.fold(_ => None, left => Some(left))
+    )
   }
 
   def fetchAndSubmitTeacherEnrolment(implicit user: CurrentUser, request: Request[_]): Future[SchoolDetails] = {
