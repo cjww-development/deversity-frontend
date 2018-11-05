@@ -33,8 +33,9 @@ sealed trait ValidOrg
 case object Valid extends ValidOrg
 case object Invalid extends ValidOrg
 
-class DefaultAccountsConnector @Inject()(val http: Http, configurationLoader: ConfigurationLoader) extends AccountsConnector {
-  override val accountsUrl: String = configurationLoader.buildServiceUrl("accounts-microservice")
+class DefaultAccountsConnector @Inject()(val http: Http,
+                                         val config: ConfigurationLoader) extends AccountsConnector {
+  override val accountsUrl: String = config.getServiceUrl("accounts-microservice")
 }
 
 trait AccountsConnector extends DefaultFormat with WsResponseHelpers {

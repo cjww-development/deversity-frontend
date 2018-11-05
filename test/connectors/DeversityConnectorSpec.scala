@@ -21,6 +21,7 @@ import com.cjwwdev.http.verbs.Http
 import helpers.connectors.ConnectorSpec
 import play.api.test.Helpers._
 import com.cjwwdev.implicits.ImplicitDataSecurity._
+import com.cjwwdev.security.obfuscation.Obfuscation._
 
 class DeversityConnectorSpec extends ConnectorSpec {
 
@@ -32,7 +33,7 @@ class DeversityConnectorSpec extends ConnectorSpec {
   "getDeversityUserInfo" should {
     "return a deversity enrolment" when {
       "the response is Ok" in {
-        mockGet(statusCode = OK, body = testStudentEnrolment.encryptType)
+        mockGet(statusCode = OK, body = testStudentEnrolment.encrypt)
 
         awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request)) {
           _ mustBe Some(testStudentEnrolment)
@@ -61,7 +62,7 @@ class DeversityConnectorSpec extends ConnectorSpec {
 
   "getTeacherDetails" should {
     "return a teacher details" in {
-      mockGet(statusCode = OK, body = testTeacherDetails.encryptType)
+      mockGet(statusCode = OK, body = testTeacherDetails.encrypt)
 
       awaitAndAssert(testConnector.getTeacherDetails("testId", "testId")(testCurrentUser, request)) {
         _ mustBe Some(testTeacherDetails)
@@ -119,7 +120,7 @@ class DeversityConnectorSpec extends ConnectorSpec {
 
   "getSchoolDetails" should {
     "return a school details" in {
-      mockGet(statusCode = OK, body = testSchoolDetails.encryptType)
+      mockGet(statusCode = OK, body = testSchoolDetails.encrypt)
 
       awaitAndAssert(testConnector.getSchoolDetails("testOrgId")(testCurrentUser, request)) {
         _ mustBe Some(testSchoolDetails)

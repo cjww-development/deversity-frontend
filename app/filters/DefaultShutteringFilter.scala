@@ -13,35 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package common
 
+package filters
+
+import akka.stream.Materializer
 import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
-import com.typesafe.config.ConfigFactory
+import com.cjwwdev.shuttering.filters.FrontendShutteringFilter
 import controllers.routes
+import javax.inject.Inject
+import play.api.i18n.{Langs, MessagesApi}
 import play.api.mvc.{Call, RequestHeader}
 
-trait ApplicationConfiguration {
-  private def buildServiceUrl(service: String): String = ConfigFactory.load.getString(s"microservice.external-services.$service.domain")
-
-  val authService               = buildServiceUrl("auth-service")
-
-  val USER_LOGIN                = s"$authService/login?redirect=deversity"
-  val SERVICE_DIRECTOR          = s"$authService/where-do-you-want-to-go"
-  val USER_REGISTER             = s"$authService/create-an-account"
-  val ORG_REGISTER              = s"$authService/create-an-organisation-account"
-  val DASHBOARD                 = s"$authService/dashboard"
-  val SIGN_OUT                  = s"$authService/goodbye"
-
-  val USER_LOGIN_CALL           = Call("GET", USER_LOGIN)
-
-  implicit def serviceLinks(implicit rh: RequestHeader): Seq[NavBarLinkBuilder] = Seq(
+class DefaultShutteringFilter @Inject()(implicit val mat: Materializer,
+                                        val langs: Langs,
+                                        implicit val messages: MessagesApi) extends FrontendShutteringFilter {
+  override implicit def pageLinks(implicit rh: RequestHeader): Seq[NavBarLinkBuilder] = Seq(
     NavBarLinkBuilder("/", "glyphicon-home", "Home", "home"),
-    NavBarLinkBuilder(routes.RedirectController.redirectToDiagnostics().absoluteURL(), "glyphicon-wrench", "Diagnostics", "diagnostics"),
-    NavBarLinkBuilder(routes.RedirectController.redirectToDeversity().absoluteURL(), "glyphicon-education", "Deversity", "deversity"),
+    NavBarLinkBuilder(routes.RedirectController.redirectToDiagnostics().url, "glyphicon-wrench", "Diagnostics", "diagnostics"),
+    NavBarLinkBuilder(routes.RedirectController.redirectToDeversity().url, "glyphicon-education", "Deversity", "deversity"),
     NavBarLinkBuilder("/", "glyphicon-asterisk", "Hub", "the-hub")
   )
 
-  implicit def standardNavBarRoutes(implicit rh: RequestHeader): Map[String, Call] = Map(
+  override implicit def navBarRoutes(implicit rh: RequestHeader): Map[String, Call]   = Map(
     "navBarLogo"    -> routes.Assets.versioned("images/logo.png"),
     "globalAssets"  -> routes.Assets.versioned("stylesheets/global-assets.css"),
     "favicon"       -> routes.Assets.versioned("images/favicon.ico"),

@@ -21,6 +21,7 @@ import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.implicits.ImplicitDataSecurity._
+import com.cjwwdev.security.obfuscation.Obfuscation._
 import javax.inject.Inject
 import models.http.TeacherInformation
 import models.{DeversityEnrolment, SchoolDetails}
@@ -31,8 +32,9 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DefaultDeversityConnector @Inject()(val http: Http, configurationLoader: ConfigurationLoader) extends DeversityConnector {
-  override val deversityUrl: String = configurationLoader.buildServiceUrl("deversity")
+class DefaultDeversityConnector @Inject()(val http: Http,
+                                          val config: ConfigurationLoader) extends DeversityConnector {
+  override val deversityUrl: String = config.getServiceUrl("deversity")
 }
 
 trait DeversityConnector extends DefaultFormat with WsResponseHelpers {

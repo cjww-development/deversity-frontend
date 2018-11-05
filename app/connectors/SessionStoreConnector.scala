@@ -30,8 +30,9 @@ import play.api.mvc.Request
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DefaultSessionStoreConnector @Inject()(val http : Http, configurationLoader: ConfigurationLoader) extends SessionStoreConnector {
-  override val sessionStore: String = configurationLoader.buildServiceUrl("session-store")
+class DefaultSessionStoreConnector @Inject()(val http : Http,
+                                             val config: ConfigurationLoader) extends SessionStoreConnector {
+  override val sessionStore: String = config.getServiceUrl("session-store")
 }
 
 trait SessionStoreConnector extends SessionUtils with WsResponseHelpers {

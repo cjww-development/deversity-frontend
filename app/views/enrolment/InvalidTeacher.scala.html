@@ -1,7 +1,7 @@
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 
-@()(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@()(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @MainTemplate(title = messages("pages.invalid-teacher.title"), links, navBarRoutes) {
     <div class="top-block-single">

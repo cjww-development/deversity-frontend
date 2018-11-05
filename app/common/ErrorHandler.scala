@@ -16,14 +16,15 @@
 
 package common
 
-import java.util.Locale
-
+import com.cjwwdev.http.exceptions.ForbiddenException
+import com.cjwwdev.logging.Logging
+import com.cjwwdev.request.RequestBuilder
 import com.cjwwdev.views.html.templates.errors.{NotFoundView, ServerErrorView, StandardErrorView}
 import javax.inject.{Inject, Provider, Singleton}
 import play.api.{Environment, OptionalSourceMapper}
 import play.api.http.HttpErrorHandler
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
+import play.api.i18n._
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.mvc.Results.{InternalServerError, NotFound, Redirect, Status}
 import play.api.routing.Router
@@ -34,13 +35,13 @@ import scala.concurrent.Future
 class ErrorHandler @Inject()(env: Environment,
                              sm: OptionalSourceMapper,
                              router: Provider[Router],
-                             messagesApi: MessagesApi) extends HttpErrorHandler with RequestBuilder with ApplicationConfiguration with Logging {
-
-  implicit val messages: Messages = MessagesImpl(Lang(Locale.ENGLISH), messagesApi)
+                             langs: Langs,
+                             implicit val messages: MessagesApi) extends HttpErrorHandler with ApplicationConfiguration with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+    implicit val lang: Lang = langs.preferred(request.acceptLanguages)
     logger.error(s"[ErrorHandler] - [onClientError] - Url: ${request.uri}, status code: $statusCode")
-    implicit val req: Request[String] = buildNewRequest[String](request, "")
+    implicit val req: Request[String] = RequestBuilder.buildRequest[String](request, "")
     statusCode match {
       case NOT_FOUND  => Future.successful(NotFound(NotFoundView()))
       case FORBIDDEN  => Future.successful(Redirect(USER_LOGIN_CALL))
@@ -49,9 +50,13 @@ class ErrorHandler @Inject()(env: Environment,
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    implicit val lang: Lang = langs.preferred(request.acceptLanguages)
     logger.error(s"[ErrorHandler] - [onServerError] - exception : $exception")
     exception.printStackTrace()
-    implicit val req = buildNewRequest[String](request, "")
-    Future.successful(InternalServerError(ServerErrorView()))
+    implicit val req: Request[String] = RequestBuilder.buildRequest[String](request, "")
+    exception match {
+      case _: ForbiddenException => Future.successful(Redirect(USER_LOGIN_CALL).withNewSession)
+      case _                     => Future.successful(InternalServerError(ServerErrorView()))
+    }
   }
 }

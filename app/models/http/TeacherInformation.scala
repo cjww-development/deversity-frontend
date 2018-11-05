@@ -15,6 +15,7 @@
  */
 package models.http
 
+import com.cjwwdev.security.deobfuscation.{DeObfuscation, DeObfuscator, DecryptionError}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
@@ -26,4 +27,10 @@ object TeacherInformation {
     (__ \ "lastName").format[String] and
     (__ \ "room").format[String]
   )(TeacherInformation.apply, unlift(TeacherInformation.unapply))
+
+  implicit val deObfuscator: DeObfuscator[TeacherInformation] = new DeObfuscator[TeacherInformation] {
+    override def decrypt(value: String): Either[TeacherInformation, DecryptionError] = {
+      DeObfuscation.deObfuscate[TeacherInformation](value)
+    }
+  }
 }

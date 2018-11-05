@@ -16,10 +16,14 @@
 package common
 
 import com.cjwwdev.config.{ConfigurationLoader, DefaultConfigurationLoader}
+import com.cjwwdev.filters.IpWhitelistFilter
 import com.cjwwdev.health.{DefaultHealthController, HealthController}
+import com.cjwwdev.http.headers.filters.{DefaultHeadersFilter, HeadersFilter}
+import com.cjwwdev.shuttering.filters.FrontendShutteringFilter
 import connectors._
 import controllers._
 import controllers.internal._
+import filters.{DefaultIpWhitelistFilter, DefaultShutteringFilter}
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
 import services._
@@ -50,6 +54,9 @@ class ServiceBindings extends Module {
   )
 
   private def bindOther(): Seq[Binding[_]] = Seq(
-    bind(classOf[ConfigurationLoader]).to(classOf[DefaultConfigurationLoader]).eagerly()
+    bind(classOf[ConfigurationLoader]).to(classOf[DefaultConfigurationLoader]).eagerly(),
+    bind(classOf[HeadersFilter]).to(classOf[DefaultHeadersFilter]).eagerly(),
+    bind(classOf[IpWhitelistFilter]).to(classOf[DefaultIpWhitelistFilter]).eagerly(),
+    bind(classOf[FrontendShutteringFilter]).to(classOf[DefaultShutteringFilter]).eagerly()
   )
 }

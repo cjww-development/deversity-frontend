@@ -4,7 +4,7 @@
 @import com.cjwwdev.views.html.templates.MainTemplate
 @import com.cjwwdev.views.html.helpers.textInput
 
-@(teacher: Form[TeacherRegCode])(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(teacher: Form[TeacherRegCode])(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @MainTemplate(title = messages("pages.teacher-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">

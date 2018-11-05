@@ -3,3 +3,4 @@
 ->      /deversity                  app.Routes
 ->      /deversity/private          internal.Routes
 ->      /                           health.Routes
+->      /private                    shuttering.Routes

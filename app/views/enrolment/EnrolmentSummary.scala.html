@@ -6,7 +6,7 @@
 @import com.cjwwdev.views.html.helpers.textInput
 
 @import com.cjwwdev.auth.models.CurrentUser
-@(summaryData: EnrolmentSummary)(implicit request: Request[_], user: CurrentUser,  messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(summaryData: EnrolmentSummary)(implicit request: Request[_], user: CurrentUser, messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @colourSwitcher(random : Int) = {
     @random match {

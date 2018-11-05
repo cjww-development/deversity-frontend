@@ -17,12 +17,12 @@
 package enums
 
 object SessionCache extends Enumeration {
-  val cached                      = Value
-  val cacheFailure                = Value
+  val cached                  = Value
+  val cacheFailure            = Value
 
-  val cacheUpdated                = Value
-  val cacheUpdateFailure          = Value
+  val cacheUpdated            = Value
+  val cacheUpdateFailure      = Value
 
-  val cacheDestroyed              = Value
-  val cacheDestructionFailure     = Value
+  val cacheDestroyed          = Value
+  val cacheDestructionFailure = Value
 }

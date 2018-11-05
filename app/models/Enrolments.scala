@@ -15,6 +15,7 @@
  */
 package models
 
+import com.cjwwdev.security.deobfuscation.{DeObfuscation, DeObfuscator, DecryptionError}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -28,4 +29,10 @@ object Enrolments{
     (__ \ "diagId").formatNullable[String] and
     (__ \ "deversityId").formatNullable[String]
   )(Enrolments.apply, unlift(Enrolments.unapply))
+
+  implicit val deObfuscator: DeObfuscator[Enrolments] = new DeObfuscator[Enrolments] {
+    override def decrypt(value: String): Either[Enrolments, DecryptionError] = {
+      DeObfuscation.deObfuscate[Enrolments](value)
+    }
+  }
 }

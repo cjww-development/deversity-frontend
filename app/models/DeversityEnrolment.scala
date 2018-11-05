@@ -16,6 +16,8 @@
 
 package models
 
+import com.cjwwdev.security.deobfuscation.{DeObfuscation, DeObfuscator, DecryptionError}
+import com.cjwwdev.security.obfuscation.{Obfuscation, Obfuscator}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -33,4 +35,15 @@ object DeversityEnrolment {
     (__ \ "room").formatNullable[String] and
     (__ \ "teacher").formatNullable[String]
   )(DeversityEnrolment.apply, unlift(DeversityEnrolment.unapply))
+
+  implicit val deObfuscator: DeObfuscator[DeversityEnrolment] = new DeObfuscator[DeversityEnrolment] {
+    override def decrypt(value: String): Either[DeversityEnrolment, DecryptionError] = {
+      DeObfuscation.deObfuscate[DeversityEnrolment](value)
+    }
+  }
+
+  implicit val obfuscator: Obfuscator[DeversityEnrolment] = new Obfuscator[DeversityEnrolment] {
+    override def encrypt(value: DeversityEnrolment): String = Obfuscation.obfuscateJson(Json.toJson(value))
+  }
+
 }

@@ -31,7 +31,7 @@ class AccountsConnectorSpec extends ConnectorSpec {
 
   "getEnrolments" should {
     "return an Enrolment" in {
-      mockGet(statusCode = OK, body = testEnrolments.encryptType)
+      mockGet(statusCode = OK, body = testEnrolments.encrypt)
 
       awaitAndAssert(testConnector.getEnrolments(testCurrentUser, request)) {
         _ mustBe Some(testEnrolments)

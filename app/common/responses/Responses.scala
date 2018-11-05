@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package common
+package common.responses
 
 import scala.util.control.NoStackTrace
 

@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package filters
 
 import akka.stream.Materializer
 import com.cjwwdev.config.ConfigurationLoader
-import com.cjwwdev.http.headers.HeaderPackage
-import com.cjwwdev.implicits.ImplicitDataSecurity._
+import com.cjwwdev.filters.IpWhitelistFilter
+import controllers.routes
 import javax.inject.Inject
-import play.api.mvc.{Filter, Headers, RequestHeader, Result}
+import play.api.mvc.Call
 
-import scala.concurrent.Future
-
-class HeadersFilter @Inject()(implicit val mat: Materializer, configLoader: ConfigurationLoader) extends Filter {
-  def initialiseHeaderPackage(rh: RequestHeader): (String, String) = {
-    "cjww-headers" -> HeaderPackage(
-      configLoader.getApplicationId("auth-service"),
-      rh.session.data.getOrElse("cookieId", "")).encryptType
-  }
-
-  override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
-    f(rh.withHeaders(rh.headers.add(initialiseHeaderPackage(rh))))
-  }
+class DefaultIpWhitelistFilter @Inject()(implicit val mat: Materializer,
+                                         val config: ConfigurationLoader) extends IpWhitelistFilter {
+  override val enabled: Boolean      = config.get[Boolean]("whitelist.enabled")
+  override lazy val whitelistIps: String  = config.get[String]("whitelist.ip")
+  override lazy val excludedPaths: String = config.get[String]("whitelist.excluded")
+  override lazy val baseAppUri: String    = config.getServiceUrl(config.get[String]("appName"))
+  override lazy val serviceOutage: Call   = routes.RedirectController.redirectToServiceOutage()
 }
