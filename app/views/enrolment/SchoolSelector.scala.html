@@ -4,7 +4,7 @@
 @import helper._
 @import models.forms.SchoolRegCode
 
-@(school: Form[SchoolRegCode])(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(school: Form[SchoolRegCode])(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @MainTemplate(title = messages("pages.school-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">

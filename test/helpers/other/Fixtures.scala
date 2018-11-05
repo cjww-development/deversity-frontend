@@ -16,8 +16,8 @@
 package helpers.other
 
 import com.cjwwdev.auth.models.CurrentUser
+import com.cjwwdev.security.obfuscation.{Obfuscation, Obfuscator}
 import models._
-import models.forms.TeacherDetails
 import models.http.TeacherInformation
 import play.api.libs.json.Json
 
@@ -87,4 +87,16 @@ trait Fixtures extends TestDataGenerator {
     initials = "testInitials",
     location = "testLocation"
   )
+
+  implicit val enrolmentObfuscator: Obfuscator[Enrolments] = new Obfuscator[Enrolments] {
+    override def encrypt(value: Enrolments): String = Obfuscation.obfuscateJson(Json.toJson(value))
+  }
+
+  implicit val teacherDetailsObfuscator: Obfuscator[TeacherInformation] = new Obfuscator[TeacherInformation] {
+    override def encrypt(value: TeacherInformation): String = Obfuscation.obfuscateJson(Json.toJson(value))
+  }
+
+  implicit val schoolDetailsObfuscator: Obfuscator[SchoolDetails] = new Obfuscator[SchoolDetails] {
+    override def encrypt(value: SchoolDetails): String = Obfuscation.obfuscateJson(Json.toJson(value))
+  }
 }

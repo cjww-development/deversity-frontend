@@ -1,7 +1,7 @@
 @import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
 @import com.cjwwdev.views.html.templates.MainTemplate
 
-@(schoolDetails: SchoolDetails)(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(schoolDetails: SchoolDetails)(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @colourSwitcher(random : Int) = {
     @random match {
@@ -73,3 +73,4 @@
         </div>
     </div>
 }
+    

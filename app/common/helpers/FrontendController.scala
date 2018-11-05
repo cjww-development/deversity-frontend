@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package common
 
-import org.slf4j.{Logger, LoggerFactory}
+package common.helpers
 
-trait Logging {
-  val logger: Logger = LoggerFactory.getLogger(getClass)
+import com.cjwwdev.logging.Logging
+import common.ApplicationConfiguration
+import play.api.i18n.{I18nSupport, Lang}
+import play.api.mvc.{BaseController, Request}
+
+trait FrontendController
+  extends BaseController
+    with ApplicationConfiguration
+    with I18nSupport
+    with Logging {
+
+  implicit def getLang(implicit request: Request[_]): Lang = supportedLangs.preferred(request.acceptLanguages)
 }

@@ -4,7 +4,7 @@
 @import com.cjwwdev.views.html.helpers.textInput
 @import helper._
 
-@(details: Form[TeacherDetails])(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(details: Form[TeacherDetails])(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 
 @colourSwitcher(random : Int) = {

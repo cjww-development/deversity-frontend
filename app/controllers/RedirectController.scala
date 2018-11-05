@@ -17,7 +17,7 @@ package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
 import com.cjwwdev.config.ConfigurationLoader
-import common.FrontendController
+import common.helpers.AuthController
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.EnrolmentService
@@ -27,30 +27,30 @@ import scala.concurrent.Future
 
 class DefaultRedirectController @Inject()(val authConnector: AuthConnector,
                                           val controllerComponents: ControllerComponents,
-                                          val configurationLoader: ConfigurationLoader,
+                                          val config: ConfigurationLoader,
                                           val enrolmentService: EnrolmentService) extends RedirectController {
-  override val deversityFrontend: String   = configurationLoader.buildServiceUrl("deversity-frontend")
-  override val diagnosticsFrontend: String = configurationLoader.buildServiceUrl("diagnostics-frontend")
-  override val hubFrontend: String         = configurationLoader.buildServiceUrl("hub-frontend")
+  override val deversityFrontend: String   = config.getServiceUrl("deversity-frontend")
+  override val diagnosticsFrontend: String = config.getServiceUrl("diagnostics-frontend")
+  override val hubFrontend: String         = config.getServiceUrl("hub-frontend")
 }
 
-trait RedirectController extends FrontendController {
+trait RedirectController extends AuthController {
 
   val deversityFrontend: String
   val diagnosticsFrontend: String
   val hubFrontend: String
 
-  def redirectToUserRegister: Action[AnyContent] = action.async {
+  def redirectToUserRegister: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(USER_REGISTER))
   }
 
-  def redirectToOrgRegister: Action[AnyContent] = action.async {
+  def redirectToOrgRegister: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(ORG_REGISTER))
   }
 
-  def redirectToLogin: Action[AnyContent] = action.async {
+  def redirectToLogin: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(USER_LOGIN))
   }
@@ -67,22 +67,22 @@ trait RedirectController extends FrontendController {
         Future.successful(Redirect(SIGN_OUT))
   }
 
-  def redirectToDeversity: Action[AnyContent] = action.async {
+  def redirectToDeversity: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(deversityFrontend))
   }
 
-  def redirectToDiagnostics: Action[AnyContent] = action.async {
+  def redirectToDiagnostics: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(diagnosticsFrontend))
   }
 
-  def redirectToHub: Action[AnyContent] = action.async {
+  def redirectToHub: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(hubFrontend))
   }
 
-  def redirectToServiceOutage: Action[AnyContent] = action.async {
+  def redirectToServiceOutage: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(ServiceUnavailable(ServiceUnavailableView()))
   }

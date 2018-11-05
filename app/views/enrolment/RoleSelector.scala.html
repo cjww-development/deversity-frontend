@@ -4,7 +4,7 @@
 @import models.forms.Role
 @import helper._
 
-@(role: Form[Role], schoolDetails: SchoolDetails)(implicit request: Request[_], messages: Messages, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+@(role: Form[Role], schoolDetails: SchoolDetails)(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
 
 @MainTemplate(title = messages("pages.role-selector.title"), links, navBarRoutes) {
     <div class="top-block-single">

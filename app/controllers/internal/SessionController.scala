@@ -16,9 +16,8 @@
 
 package controllers.internal
 
+import common.helpers.FrontendController
 import javax.inject.Inject
-
-import common.{ApplicationConfiguration, Logging}
 import play.api.mvc._
 import services.SessionService
 
@@ -27,12 +26,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class DefaultSessionController @Inject()(val sessionService: SessionService,
                                          val controllerComponents: ControllerComponents) extends SessionController
 
-trait SessionController extends BaseController with Logging with ApplicationConfiguration {
+trait SessionController extends FrontendController {
   val sessionService: SessionService
 
-  private val action: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
-
-  def buildSession(sessionId: String): Action[AnyContent] = action.async { implicit request =>
+  def buildSession(sessionId: String): Action[AnyContent] = Action.async { implicit request =>
     logger.info(s"[buildSession] - request was sent from ${request.headers("Referer")}")
     logger.info(s"[buildSession] - attempting to build session")
     sessionService.fetchAuthContext(sessionId) map {
@@ -43,7 +40,7 @@ trait SessionController extends BaseController with Logging with ApplicationConf
     }
   }
 
-  def validateSession(sessionId: String): Action[AnyContent] = action { implicit request =>
+  def validateSession(sessionId: String): Action[AnyContent] = Action { implicit request =>
     logger.info(s"[validateSession] - request was sent from ${request.headers("Referer")}")
     if(request.session("cookieId").equals(sessionId)) Redirect(SERVICE_DIRECTOR) else InternalServerError
   }

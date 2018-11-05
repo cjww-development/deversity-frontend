@@ -16,7 +16,7 @@
 package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
-import common.FrontendController
+import common.helpers.{AuthController, FrontendController}
 import connectors.SessionStoreConnector
 import forms._
 import javax.inject.Inject
@@ -34,7 +34,7 @@ class DefaultEnrolmentController @Inject()(val schoolDetailsService: SchoolDetai
                                            val controllerComponents: ControllerComponents,
                                            val enrolmentService: EnrolmentService) extends EnrolmentController
 
-trait EnrolmentController extends FrontendController {
+trait EnrolmentController extends AuthController {
   val schoolDetailsService: SchoolDetailsService
   val sessionStoreConnector: SessionStoreConnector
 

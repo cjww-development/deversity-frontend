@@ -21,7 +21,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import org.mockito.Mockito.{reset, when}
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.OK
@@ -40,22 +40,22 @@ trait MockHttp extends BeforeAndAfterEach with MockitoSugar with MockResponse {
   }
 
   def mockGet(statusCode: Int, body: String): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.get(ArgumentMatchers.any())(ArgumentMatchers.any()))
+    when(mockHttp.get(any(), any())(any()))
       .thenReturn(Future(FakeResponse(statusCode, body)))
   }
 
   def mockFailedGet(exception: Exception): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.get(ArgumentMatchers.any())(ArgumentMatchers.any()))
+    when(mockHttp.get(any(), any())(any()))
       .thenReturn(Future.failed(exception))
   }
 
   def mockPatch(statusCode: Int): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.patch(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockHttp.patch(any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(Future(FakeResponse(statusCode)))
   }
 
   def mockPatchString(body: String): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.patchString(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+    when(mockHttp.patchString(any(), any(), any(), any())(any()))
       .thenReturn(Future(FakeResponse(OK, body)))
   }
 }

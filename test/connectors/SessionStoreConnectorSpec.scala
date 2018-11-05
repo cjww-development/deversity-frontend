@@ -19,6 +19,7 @@ package connectors
 import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException}
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.implicits.ImplicitDataSecurity._
+import com.cjwwdev.security.obfuscation.Obfuscation._
 import helpers.connectors.ConnectorSpec
 import play.api.test.Helpers._
 

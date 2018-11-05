@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-package common
-
-import java.util.Locale
+package common.helpers
 
 import com.cjwwdev.auth.frontend.AuthorisedAction
 import com.cjwwdev.auth.models.CurrentUser
+import com.cjwwdev.logging.Logging
+import common.ApplicationConfiguration
+import common.responses.{DevIdGetOrGenerationException, InvalidEnrolments, ValidEnrolments}
 import controllers.routes
-import play.api.i18n._
-import play.api.mvc._
+import play.api.i18n.Lang
+import play.api.mvc.{BaseController, Call, Request, Result}
 import services.EnrolmentService
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait FrontendController
+trait AuthController
   extends BaseController
     with ApplicationConfiguration
-    with I18nSupport
-    with AuthorisedAction {
+    with AuthorisedAction
+    with Logging {
 
-  override def unauthorisedRedirect: Call = USER_LOGIN_CALL
+  implicit def getLang(implicit request: Request[_]): Lang = supportedLangs.preferred(request.acceptLanguages)
 
-  implicit val messages: Messages = MessagesImpl(Lang(Locale.ENGLISH), controllerComponents.messagesApi)
-
-  protected val action: ActionBuilder[Request, AnyContent] = controllerComponents.actionBuilder
+  override protected def unauthorisedRedirect: Call = USER_LOGIN_CALL
 
   val enrolmentService: EnrolmentService
 

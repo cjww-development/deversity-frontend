@@ -17,7 +17,7 @@
 package services
 
 import com.cjwwdev.auth.models.CurrentUser
-import common.{DeversityCurrentEnrolmentResponse, InvalidEnrolments, ValidEnrolments}
+import common.responses.{DeversityCurrentEnrolmentResponse, InvalidEnrolments, ValidEnrolments}
 import connectors.{AccountsConnector, DeversityConnector, SessionStoreConnector}
 import enums.SessionCache
 import javax.inject.Inject
