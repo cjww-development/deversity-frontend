@@ -18,7 +18,7 @@ package services
 
 import com.cjwwdev.auth.models.CurrentUser
 import com.cjwwdev.config.ConfigurationLoader
-import com.cjwwdev.http.exceptions.{ClientErrorException, NotFoundException}
+import com.cjwwdev.http.responses.EvaluateResponse._
 import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.verbs.Http
 import javax.inject.Inject
@@ -58,21 +58,20 @@ trait SessionService extends WsResponseHelpers {
 
   def fetchAuthContext(sessionId: String)(implicit request: Request[_]): Future[Option[CurrentUser]] = for {
     contextId <- getContextId(sessionId)
-    context   <- getAuthContext(contextId)
+    context   <- contextId.fold[Future[Option[CurrentUser]]](Future.successful(None))(getAuthContext(_))
   } yield context
 
-  private def getContextId(sessionId: String)(implicit request: Request[_]): Future[String] = {
+  private def getContextId(sessionId: String)(implicit request: Request[_]): Future[Option[String]] = {
     http.get(s"$sessionStore/session/$sessionId/data?key=contextId") map {
-      _.toResponseString(needsDecrypt = true)
+      case SuccessResponse(resp) => resp.toResponseString(needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
   private def getAuthContext(contextId: String)(implicit request: Request[_]): Future[Option[CurrentUser]] = {
-    http.get(s"$authMicroservice/get-current-user/$contextId") map { resp =>
-      Some(resp.toDataType[CurrentUser](needsDecrypt = true))
-    } recover {
-      case _: NotFoundException    => None
-      case _: ClientErrorException => None
+    http.get(s"$authMicroservice/get-current-user/$contextId") map {
+      case SuccessResponse(resp) => resp.toDataType[CurrentUser](needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 }

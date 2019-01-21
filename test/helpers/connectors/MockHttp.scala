@@ -17,6 +17,7 @@
 package helpers.connectors
 
 import com.cjwwdev.http.verbs.Http
+import com.cjwwdev.http.responses.EvaluateResponse._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
@@ -27,35 +28,45 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.OK
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 trait MockHttp extends BeforeAndAfterEach with MockitoSugar with MockResponse {
   self: PlaySpec =>
 
   val mockHttp: Http = mock[Http]
 
+  implicit class IntOps(int: Int) {
+    def isBetween(range: Range): Boolean = range contains int
+  }
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockHttp)
   }
 
-  def mockGet(statusCode: Int, body: String): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.get(any(), any())(any()))
-      .thenReturn(Future(FakeResponse(statusCode, body)))
+  def mockGet(statusCode: Int, body: String): OngoingStubbing[Future[ConnectorResponse]] = {
+    val result = if(statusCode.isBetween(200 to 299)) {
+      SuccessResponse(FakeResponse(statusCode, body))
+    } else {
+      ErrorResponse(FakeResponse(statusCode, body))
+    }
+
+    when(mockHttp.get(any(), any())(any(), any()))
+      .thenReturn(Future.successful(result))
   }
 
-  def mockFailedGet(exception: Exception): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.get(any(), any())(any()))
-      .thenReturn(Future.failed(exception))
+  def mockPatch(statusCode: Int): OngoingStubbing[Future[ConnectorResponse]] = {
+    val result = if(statusCode.isBetween(200 to 299)) {
+      SuccessResponse(FakeResponse(statusCode))
+    } else {
+      ErrorResponse(FakeResponse(statusCode))
+    }
+
+    when(mockHttp.patch(any(), any(), any(), any())(any(), any(), any(), any()))
+      .thenReturn(Future.successful(result))
   }
 
-  def mockPatch(statusCode: Int): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.patch(any(), any(), any(), any())(any(), any(), any()))
-      .thenReturn(Future(FakeResponse(statusCode)))
-  }
-
-  def mockPatchString(body: String): OngoingStubbing[Future[WSResponse]] = {
-    when(mockHttp.patchString(any(), any(), any(), any())(any()))
-      .thenReturn(Future(FakeResponse(OK, body)))
+  def mockPatchString(body: String): OngoingStubbing[Future[ConnectorResponse]] = {
+    when(mockHttp.patchString(any(), any(), any(), any())(any(), any()))
+      .thenReturn(Future.successful(SuccessResponse(FakeResponse(OK, body))))
   }
 }

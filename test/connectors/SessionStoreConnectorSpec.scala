@@ -16,12 +16,13 @@
 
 package connectors
 
-import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException}
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.implicits.ImplicitDataSecurity._
 import com.cjwwdev.security.obfuscation.Obfuscation._
 import helpers.connectors.ConnectorSpec
 import play.api.test.Helpers._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SessionStoreConnectorSpec extends ConnectorSpec {
 
@@ -34,23 +35,17 @@ class SessionStoreConnectorSpec extends ConnectorSpec {
     "return testString" in {
       mockGet(statusCode = OK, body = "testString".encrypt)
 
-      awaitAndAssert(testConnector.getDataElement("testKey")(request)) {
+      awaitAndAssert(testConnector.getDataElement("testKey")(request, implicitly)) {
         _ mustBe Some("testString")
       }
     }
 
     "return no string" in {
-      mockFailedGet(exception = new NotFoundException("Data for key not found"))
+      mockGet(statusCode = NOT_FOUND, "Data for key not found")
 
-      awaitAndAssert(testConnector.getDataElement("testKey")(request)) {
+      awaitAndAssert(testConnector.getDataElement("testKey")(request, implicitly)) {
         _ mustBe None
       }
-    }
-
-    "throw a forbidden exception" in {
-      mockFailedGet(exception = new ForbiddenException("Data for key not found"))
-
-      intercept[ForbiddenException](await(testConnector.getDataElement("testKey")(request)))
     }
   }
 }

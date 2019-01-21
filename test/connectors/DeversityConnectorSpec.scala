@@ -16,12 +16,13 @@
 
 package connectors
 
-import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.verbs.Http
 import helpers.connectors.ConnectorSpec
 import play.api.test.Helpers._
 import com.cjwwdev.implicits.ImplicitDataSecurity._
 import com.cjwwdev.security.obfuscation.Obfuscation._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class DeversityConnectorSpec extends ConnectorSpec {
 
@@ -35,7 +36,7 @@ class DeversityConnectorSpec extends ConnectorSpec {
       "the response is Ok" in {
         mockGet(statusCode = OK, body = testStudentEnrolment.encrypt)
 
-        awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request)) {
+        awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request, implicitly)) {
           _ mustBe Some(testStudentEnrolment)
         }
       }
@@ -45,15 +46,15 @@ class DeversityConnectorSpec extends ConnectorSpec {
       "the response is No content" in {
         mockGet(statusCode = NO_CONTENT, body = "")
 
-        awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request)) {
+        awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request, implicitly)) {
           _ mustBe None
         }
       }
 
       "response is Not found" in {
-        mockFailedGet(exception = new NotFoundException("No enrolment"))
+        mockGet(statusCode = NOT_FOUND, "No enrolment")
 
-        awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request)) {
+        awaitAndAssert(testConnector.getDeversityUserInfo(testCurrentUser, request, implicitly)) {
           _ mustBe None
         }
       }
@@ -64,15 +65,15 @@ class DeversityConnectorSpec extends ConnectorSpec {
     "return a teacher details" in {
       mockGet(statusCode = OK, body = testTeacherDetails.encrypt)
 
-      awaitAndAssert(testConnector.getTeacherDetails("testId", "testId")(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.getTeacherDetails("testId", "testId")(testCurrentUser, request, implicitly)) {
         _ mustBe Some(testTeacherDetails)
       }
     }
 
     "return no teacher details" in {
-      mockFailedGet(exception = new NotFoundException("No teacher info"))
+      mockGet(statusCode = NOT_FOUND, "No teacher info")
 
-      awaitAndAssert(testConnector.getTeacherDetails("testId", "testId")(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.getTeacherDetails("testId", "testId")(testCurrentUser, request, implicitly)) {
         _ mustBe None
       }
     }
@@ -82,8 +83,8 @@ class DeversityConnectorSpec extends ConnectorSpec {
     "return a new deversity id" in {
       mockPatchString(body = generateTestSystemId(DEVERSITY).encrypt)
 
-      awaitAndAssert(testConnector.createDeversityId(testCurrentUser, request)) {
-        _ mustBe generateTestSystemId(DEVERSITY)
+      awaitAndAssert(testConnector.createDeversityId(testCurrentUser, request, implicitly)) {
+        _ mustBe Some(generateTestSystemId(DEVERSITY))
       }
     }
   }
@@ -92,7 +93,7 @@ class DeversityConnectorSpec extends ConnectorSpec {
     "return an Ok" in {
       mockPatch(statusCode = OK)
 
-      awaitAndAssert(testConnector.initialiseDeversityEnrolment(testStudentEnrolment)(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.initialiseDeversityEnrolment(testStudentEnrolment)(testCurrentUser, request, implicitly)) {
         _ mustBe OK
       }
     }
@@ -102,8 +103,8 @@ class DeversityConnectorSpec extends ConnectorSpec {
     "return a school name" in {
       mockGet(statusCode = OK, body = "testSchool".encrypt)
 
-      awaitAndAssert(testConnector.validateSchool("testRegCode")(request)) {
-        _ mustBe "testSchool"
+      awaitAndAssert(testConnector.validateSchool("testRegCode")(request, implicitly)) {
+        _ mustBe Some("testSchool")
       }
     }
   }
@@ -112,8 +113,8 @@ class DeversityConnectorSpec extends ConnectorSpec {
     "return a school name" in {
       mockGet(statusCode = OK, body = "testTeacher".encrypt)
 
-      awaitAndAssert(testConnector.validateTeacher("testRegCode", "testOrgId")(request)) {
-        _ mustBe "testTeacher"
+      awaitAndAssert(testConnector.validateTeacher("testRegCode", "testOrgId")(request, implicitly)) {
+        _ mustBe Some("testTeacher")
       }
     }
   }
@@ -122,15 +123,15 @@ class DeversityConnectorSpec extends ConnectorSpec {
     "return a school details" in {
       mockGet(statusCode = OK, body = testSchoolDetails.encrypt)
 
-      awaitAndAssert(testConnector.getSchoolDetails("testOrgId")(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.getSchoolDetails("testOrgId")(testCurrentUser, request, implicitly)) {
         _ mustBe Some(testSchoolDetails)
       }
     }
 
     "return no school details" in {
-      mockFailedGet(exception = new NotFoundException("No school details"))
+      mockGet(statusCode = NOT_FOUND, "No school details")
 
-      awaitAndAssert(testConnector.getSchoolDetails("testOrgId")(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.getSchoolDetails("testOrgId")(testCurrentUser, request, implicitly)) {
         _ mustBe None
       }
     }

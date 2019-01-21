@@ -17,20 +17,18 @@ package connectors
 
 import com.cjwwdev.auth.models.CurrentUser
 import com.cjwwdev.config.ConfigurationLoader
-import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.responses.WsResponseHelpers
+import com.cjwwdev.http.responses.EvaluateResponse._
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.implicits.ImplicitDataSecurity._
 import com.cjwwdev.security.obfuscation.Obfuscation._
 import javax.inject.Inject
 import models.http.TeacherInformation
 import models.{DeversityEnrolment, SchoolDetails}
-import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.Request
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext => ExC, Future}
 
 class DefaultDeversityConnector @Inject()(val http: Http,
                                           val config: ConfigurationLoader) extends DeversityConnector {
@@ -42,52 +40,53 @@ trait DeversityConnector extends DefaultFormat with WsResponseHelpers {
 
   val deversityUrl: String
 
-  def getDeversityUserInfo(implicit user: CurrentUser, request: Request[_]): Future[Option[DeversityEnrolment]] = {
-    http.get(s"$deversityUrl/user/${user.id}/enrolment") map { resp =>
-      resp.status match {
-        case OK         => Some(resp.toDataType[DeversityEnrolment](needsDecrypt = true))
-        case NO_CONTENT => None
-      }
-    } recover {
-      case _: NotFoundException => None
+  def getDeversityUserInfo(implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Option[DeversityEnrolment]] = {
+    http.get(s"$deversityUrl/user/${user.id}/enrolment") map {
+      case SuccessResponse(resp) => resp.toDataType[DeversityEnrolment](needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
-  def getTeacherDetails(teacherDevId: String, schoolDevId: String)(implicit user: CurrentUser, request: Request[_]): Future[Option[TeacherInformation]] = {
-    http.get(s"$deversityUrl/user/${user.id}/teacher/${teacherDevId.encrypt}/school/${schoolDevId.encrypt}/details") map { resp =>
-      Some(resp.toDataType[TeacherInformation](needsDecrypt = true))
-    } recover {
-      case _: NotFoundException => None
+  def getTeacherDetails(teacherDevId: String, schoolDevId: String)
+                       (implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Option[TeacherInformation]] = {
+    http.get(s"$deversityUrl/user/${user.id}/teacher/${teacherDevId.encrypt}/school/${schoolDevId.encrypt}/details") map {
+      case SuccessResponse(resp) => resp.toDataType[TeacherInformation](needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
-  def createDeversityId(implicit user: CurrentUser, request: Request[_]): Future[String] = {
-    http.patchString(s"$deversityUrl/user/${user.id}/create-deversity-id", "") map {
-      _.toResponseString(needsDecrypt = true)
+  def createDeversityId(implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Option[String]] = {
+    http.patchString(s"$deversityUrl/user/${user.id}/create-deversity-id", "") collect {
+      case SuccessResponse(resp) => resp.toResponseString(needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
-  def initialiseDeversityEnrolment(deversityEnrolment: DeversityEnrolment)(implicit user: CurrentUser, request: Request[_]): Future[Int] = {
-    http.patch[DeversityEnrolment](s"$deversityUrl/user/${user.id}/enrolment", deversityEnrolment) map(_.status)
+  def initialiseDeversityEnrolment(devEnrolment: DeversityEnrolment)(implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Int] = {
+    http.patch[DeversityEnrolment](s"$deversityUrl/user/${user.id}/enrolment", devEnrolment) map {
+      case SuccessResponse(resp) => resp.status
+      case ErrorResponse(resp)   => resp.status
+    }
   }
 
-  def validateSchool(regCode: String)(implicit request: Request[_]): Future[String] = {
+  def validateSchool(regCode: String)(implicit request: Request[_], ec: ExC): Future[Option[String]] = {
     http.get(s"$deversityUrl/validation/school/${regCode.encrypt}") map {
-      _.toResponseString(needsDecrypt = true)
+      case SuccessResponse(resp) => resp.toResponseString(needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
-  def validateTeacher(regCode: String, schoolDevId: String)(implicit request: Request[_]): Future[String] = {
+  def validateTeacher(regCode: String, schoolDevId: String)(implicit request: Request[_], ec: ExC): Future[Option[String]] = {
     http.get(s"$deversityUrl/validation/teacher/${regCode.encrypt}/school/${schoolDevId.encrypt}") map {
-      _.toResponseString(needsDecrypt = true)
+      case SuccessResponse(resp) => resp.toResponseString(needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
-  def getSchoolDetails(orgDevId: String)(implicit user: CurrentUser, request: Request[_]): Future[Option[SchoolDetails]] = {
-    http.get(s"$deversityUrl/user/${user.id}/school/${orgDevId.encrypt}/details") map { resp =>
-      Some(resp.toDataType[SchoolDetails](needsDecrypt = true))
-    } recover {
-      case _: NotFoundException => None
+  def getSchoolDetails(orgDevId: String)(implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Option[SchoolDetails]] = {
+    http.get(s"$deversityUrl/user/${user.id}/school/${orgDevId.encrypt}/details") map {
+      case SuccessResponse(resp) => resp.toDataType[SchoolDetails](needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 }

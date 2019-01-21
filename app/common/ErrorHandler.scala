@@ -16,7 +16,6 @@
 
 package common
 
-import com.cjwwdev.http.exceptions.ForbiddenException
 import com.cjwwdev.logging.Logging
 import com.cjwwdev.request.RequestBuilder
 import com.cjwwdev.views.html.templates.errors.{NotFoundView, ServerErrorView, StandardErrorView}
@@ -51,12 +50,8 @@ class ErrorHandler @Inject()(env: Environment,
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     implicit val lang: Lang = langs.preferred(request.acceptLanguages)
-    logger.error(s"[ErrorHandler] - [onServerError] - exception : $exception")
-    exception.printStackTrace()
+    logger.error(s"[ErrorHandler] - [onServerError] - exception", exception)
     implicit val req: Request[String] = RequestBuilder.buildRequest[String](request, "")
-    exception match {
-      case _: ForbiddenException => Future.successful(Redirect(USER_LOGIN_CALL).withNewSession)
-      case _                     => Future.successful(InternalServerError(ServerErrorView()))
-    }
+    Future.successful(InternalServerError(ServerErrorView()))
   }
 }

@@ -26,8 +26,7 @@ import play.api.i18n.Lang
 import play.api.mvc.{BaseController, Call, Request, Result}
 import services.EnrolmentService
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext => ExC, Future}
 
 trait AuthController
   extends BaseController
@@ -35,20 +34,22 @@ trait AuthController
     with AuthorisedAction
     with Logging {
 
+  implicit val ec: ExC
+
   implicit def getLang(implicit request: Request[_]): Lang = supportedLangs.preferred(request.acceptLanguages)
 
   override protected def unauthorisedRedirect: Call = USER_LOGIN_CALL
 
   val enrolmentService: EnrolmentService
 
-  def checkDeversityEnrolment(f: => Future[Result])(implicit user: CurrentUser, request: Request[_]): Future[Result] = {
+  def checkDeversityEnrolment(f: => Future[Result])(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[Result] = {
     enrolmentService.validateCurrentEnrolments flatMap {
       case ValidEnrolments    => f
       case InvalidEnrolments  => validateDevId
     }
   }
 
-  private def validateDevId(implicit user: CurrentUser, request: Request[_]): Future[Result] = {
+  private def validateDevId(implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Result] = {
     request.session.get("devId") match {
       case Some(_) => Future.successful(Redirect(routes.EnrolmentController.enrolmentWelcome()))
       case None    => enrolmentService.getOrGenerateDeversityId map {

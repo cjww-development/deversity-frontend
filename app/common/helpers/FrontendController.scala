@@ -21,11 +21,15 @@ import common.ApplicationConfiguration
 import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc.{BaseController, Request}
 
+import scala.concurrent.ExecutionContext
+
 trait FrontendController
   extends BaseController
     with ApplicationConfiguration
     with I18nSupport
     with Logging {
+
+  implicit val ec: ExecutionContext
 
   implicit def getLang(implicit request: Request[_]): Lang = supportedLangs.preferred(request.acceptLanguages)
 }

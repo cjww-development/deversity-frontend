@@ -22,11 +22,12 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.EnrolmentService
 import views.html.index
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DefaultHomeController @Inject()(val enrolmentService: EnrolmentService,
                                       val authConnector: AuthConnector,
-                                      val controllerComponents: ControllerComponents) extends HomeController
+                                      val controllerComponents: ControllerComponents,
+                                      implicit val ec: ExecutionContext) extends HomeController
 
 trait HomeController extends FrontendController {
 

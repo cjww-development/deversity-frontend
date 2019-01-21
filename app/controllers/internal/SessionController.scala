@@ -21,10 +21,11 @@ import javax.inject.Inject
 import play.api.mvc._
 import services.SessionService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class DefaultSessionController @Inject()(val sessionService: SessionService,
-                                         val controllerComponents: ControllerComponents) extends SessionController
+                                         val controllerComponents: ControllerComponents,
+                                         implicit val ec: ExecutionContext) extends SessionController
 
 trait SessionController extends FrontendController {
   val sessionService: SessionService

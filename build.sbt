@@ -43,7 +43,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     version                                       :=  btVersion,
-    scalaVersion                                  :=  "2.12.7",
+    scalaVersion                                  :=  "2.12.8",
     organization                                  :=  "com.cjww-dev.apps",
     resolvers                                     ++= Seq(
       "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",

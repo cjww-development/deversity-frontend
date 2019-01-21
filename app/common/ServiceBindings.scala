@@ -20,6 +20,7 @@ import com.cjwwdev.featuremanagement.models.Features
 import com.cjwwdev.filters.IpWhitelistFilter
 import com.cjwwdev.health.{DefaultHealthController, HealthController}
 import com.cjwwdev.http.headers.filters.{DefaultHeadersFilter, HeadersFilter}
+import com.cjwwdev.logging.filters.{DefaultRequestLoggingFilter, RequestLoggingFilter}
 import com.cjwwdev.shuttering.filters.FrontendShutteringFilter
 import connectors._
 import controllers._
@@ -59,6 +60,7 @@ class ServiceBindings extends Module {
     bind(classOf[HeadersFilter]).to(classOf[DefaultHeadersFilter]).eagerly(),
     bind(classOf[IpWhitelistFilter]).to(classOf[DefaultIpWhitelistFilter]).eagerly(),
     bind(classOf[FrontendShutteringFilter]).to(classOf[DefaultShutteringFilter]).eagerly(),
-    bind(classOf[Features]).to(classOf[FeatureDef]).eagerly()
+    bind(classOf[Features]).to(classOf[FeatureDef]).eagerly(),
+    bind(classOf[RequestLoggingFilter]).to(classOf[DefaultRequestLoggingFilter]).eagerly()
   )
 }
