@@ -23,12 +23,13 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.EnrolmentService
 import views.html.misc.ServiceUnavailableView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DefaultRedirectController @Inject()(val authConnector: AuthConnector,
                                           val controllerComponents: ControllerComponents,
                                           val config: ConfigurationLoader,
-                                          val enrolmentService: EnrolmentService) extends RedirectController {
+                                          val enrolmentService: EnrolmentService,
+                                          implicit val ec: ExecutionContext) extends RedirectController {
   override val deversityFrontend: String   = config.getServiceUrl("deversity-frontend")
   override val diagnosticsFrontend: String = config.getServiceUrl("diagnostics-frontend")
   override val hubFrontend: String         = config.getServiceUrl("hub-frontend")

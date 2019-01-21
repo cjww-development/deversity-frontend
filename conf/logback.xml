@@ -1,18 +1,24 @@
 <!-- https://www.playframework.com/documentation/latest/SettingsLogger -->
 <configuration debug="false">
-  <conversionRule conversionWord="coloredLevel" converterClass="com.cjwwdev.logging.converters.ColouredLoggerLevel" />
+  <conversionRule conversionWord="coloredLevel" converterClass="com.cjwwdev.logging.converters.ColouredLogLevelConversion" />
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>${application.home:-.}/logs/deversity-frontend.log</file>
-    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%level timestamp=[%date{ISO8601}] thread=[%thread] logger=[%logger] %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
-    </encoder>
+    <file>${user.home}/logs/application-json.log</file>
+    <encoder class="com.cjwwdev.logging.encoders.JsonLoggingEncoding" />
   </appender>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <pattern>%coloredLevel timestamp=[%date{ISO8601}] thread=[%thread] locale=[%logger] %message %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
     </encoder>
+  </appender>
+
+  <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="FILE" />
+  </appender>
+
+  <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="STDOUT" />
   </appender>
 
   <logger name="play"           level="INFO" />
@@ -29,8 +35,7 @@
   <logger name="com.gargoylesoftware.htmlunit.javascript"            level="OFF" />
 
   <root level="INFO">
-    <appender-ref ref="FILE"   />
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="ASYNCFILE"   />
+    <appender-ref ref="ASYNCSTDOUT" />
   </root>
-
 </configuration>

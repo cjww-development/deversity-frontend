@@ -16,11 +16,12 @@
 
 package connectors
 
-import com.cjwwdev.http.exceptions.NotFoundException
 import com.cjwwdev.http.verbs.Http
 import com.cjwwdev.implicits.ImplicitDataSecurity._
 import helpers.connectors.ConnectorSpec
 import play.api.test.Helpers._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AccountsConnectorSpec extends ConnectorSpec {
 
@@ -33,15 +34,15 @@ class AccountsConnectorSpec extends ConnectorSpec {
     "return an Enrolment" in {
       mockGet(statusCode = OK, body = testEnrolments.encrypt)
 
-      awaitAndAssert(testConnector.getEnrolments(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.getEnrolments(testCurrentUser, request, implicitly)) {
         _ mustBe Some(testEnrolments)
       }
     }
 
     "return no enrolment" in {
-      mockFailedGet(exception = new NotFoundException("Enrolments not found"))
+      mockGet(statusCode = NOT_FOUND, "Enrolment not found")
 
-      awaitAndAssert(testConnector.getEnrolments(testCurrentUser, request)) {
+      awaitAndAssert(testConnector.getEnrolments(testCurrentUser, request, implicitly)) {
         _ mustBe None
       }
     }

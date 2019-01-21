@@ -17,18 +17,16 @@
 package connectors
 
 import com.cjwwdev.config.ConfigurationLoader
-import com.cjwwdev.http.exceptions.{ForbiddenException, NotFoundException, ServerErrorException}
 import com.cjwwdev.http.responses.WsResponseHelpers
+import com.cjwwdev.http.responses.EvaluateResponse._
 import com.cjwwdev.http.session.SessionUtils
 import com.cjwwdev.http.verbs.Http
 import enums.SessionCache
 import javax.inject.Inject
 import models.SessionUpdateSet
-import play.api.libs.json._
 import play.api.mvc.Request
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext => ExC, Future}
 
 class DefaultSessionStoreConnector @Inject()(val http : Http,
                                              val config: ConfigurationLoader) extends SessionStoreConnector {
@@ -40,20 +38,17 @@ trait SessionStoreConnector extends SessionUtils with WsResponseHelpers {
 
   val sessionStore: String
 
-  def getDataElement(key : String)(implicit request: Request[_]) : Future[Option[String]] = {
-    http.get(s"$sessionStore/session/$getCookieId/data?key=$key") map { resp =>
-      Some(resp.toResponseString(needsDecrypt = true))
-    } recover {
-      case _: NotFoundException   => None
-      case e: ForbiddenException  => throw e
+  def getDataElement(key : String)(implicit request: Request[_], ec: ExC) : Future[Option[String]] = {
+    http.get(s"$sessionStore/session/$getCookieId/data?key=$key") map {
+      case SuccessResponse(resp) => resp.toResponseString(needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 
-  def updateSession(updateSet : SessionUpdateSet)(implicit format: OFormat[SessionUpdateSet], request: Request[_]) : Future[SessionCache.Value] = {
+  def updateSession(updateSet : SessionUpdateSet)(implicit request: Request[_], ec: ExC): Future[SessionCache.Value] = {
     http.patch[SessionUpdateSet](s"$sessionStore/session/$getCookieId", updateSet, secure = false) map {
-      _ => SessionCache.cacheUpdated
-    } recover {
-      case _: ServerErrorException => SessionCache.cacheUpdateFailure
+      case SuccessResponse(_) => SessionCache.cacheUpdated
+      case ErrorResponse(_)   => SessionCache.cacheUpdateFailure
     }
   }
 }

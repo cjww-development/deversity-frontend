@@ -22,18 +22,18 @@ import connectors.DeversityConnector
 import models.SchoolDetails
 import play.api.mvc.Request
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext => ExC, Future}
 
 class DefaultSchoolDetailsService @Inject()(val deversityConnector: DeversityConnector) extends SchoolDetailsService
 
 trait SchoolDetailsService{
   val deversityConnector: DeversityConnector
 
-  def validateSchool(regCode: String)(implicit request: Request[_]): Future[String] = {
+  def validateSchool(regCode: String)(implicit req: Request[_], ec: ExC): Future[Option[String]] = {
     deversityConnector.validateSchool(regCode)
   }
 
-  def getSchoolDetails(orgName: String)(implicit user: CurrentUser, request: Request[_]): Future[Option[SchoolDetails]] = {
+  def getSchoolDetails(orgName: String)(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[Option[SchoolDetails]] = {
     deversityConnector.getSchoolDetails(orgName)
   }
 }

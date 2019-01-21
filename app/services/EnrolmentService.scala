@@ -27,8 +27,7 @@ import models.http.TeacherInformation
 import models.{DeversityEnrolment, SchoolDetails, SessionUpdateSet}
 import play.api.mvc.Request
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext => ExC, Future}
 
 class DefaultEnrolmentService @Inject()(val accountsConnector: AccountsConnector,
                                         val deversityConnector: DeversityConnector,
@@ -39,38 +38,32 @@ trait EnrolmentService {
   val deversityConnector: DeversityConnector
   val sessionStoreConnector: SessionStoreConnector
 
-  def validateCurrentEnrolments(implicit user: CurrentUser, request: Request[_]): Future[DeversityCurrentEnrolmentResponse] = {
-    deversityConnector.getDeversityUserInfo map {
-      _.fold[DeversityCurrentEnrolmentResponse](InvalidEnrolments)(_ => ValidEnrolments)
-    }
+  def validateCurrentEnrolments(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[DeversityCurrentEnrolmentResponse] = {
+    deversityConnector.getDeversityUserInfo map(_.fold[DeversityCurrentEnrolmentResponse](InvalidEnrolments)(_ => ValidEnrolments))
   }
 
-  def getOrGenerateDeversityId(implicit user: CurrentUser, request: Request[_]): Future[Option[String]] = {
+  def getOrGenerateDeversityId(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[Option[String]] = {
     accountsConnector.getEnrolments flatMap {
       case Some(enrolments) => Future.successful(enrolments.deversityId)
-      case None => deversityConnector.createDeversityId map {
-        Some(_)
-      } recover {
-        case _ => None
-      }
+      case None             => deversityConnector.createDeversityId
     }
   }
 
-  def cacheTeacherDetails(teacherDetails: TeacherDetails)(implicit request: Request[_]): Future[SessionCache.Value] = {
+  def cacheTeacherDetails(teacherDetails: TeacherDetails)(implicit req: Request[_], ec: ExC): Future[SessionCache.Value] = {
     for {
       _           <- sessionStoreConnector.updateSession(SessionUpdateSet("title", teacherDetails.title))
       roomCache   <- sessionStoreConnector.updateSession(SessionUpdateSet("room", teacherDetails.room))
     } yield roomCache
   }
 
-  def validateTeacher(regCode: String)(implicit request: Request[_]): Future[String] = {
+  def validateTeacher(regCode: String)(implicit req: Request[_], ec: ExC): Future[Option[String]] = {
     for {
       Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
       validationResponse    <- deversityConnector.validateTeacher(regCode, schoolDevId)
     } yield validationResponse
   }
 
-  def getTeacherDetails(implicit user: CurrentUser, request: Request[_]): Future[Option[TeacherInformation]] = {
+  def getTeacherDetails(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[Option[TeacherInformation]] = {
     for {
       Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
       Some(teacherDevId)  <- sessionStoreConnector.getDataElement("teacherDevId")
@@ -78,7 +71,7 @@ trait EnrolmentService {
     } yield details
   }
 
-  def buildSummaryData(implicit request: Request[_], currentUser: CurrentUser): Future[EnrolmentSummary] = {
+  def buildSummaryData(implicit req: Request[_], currentUser: CurrentUser, ec: ExC): Future[EnrolmentSummary] = {
     for {
       Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
       Some(schoolDetails) <- deversityConnector.getSchoolDetails(schoolDevId)
@@ -102,7 +95,7 @@ trait EnrolmentService {
     )
   }
 
-  def fetchAndSubmitTeacherEnrolment(implicit user: CurrentUser, request: Request[_]): Future[SchoolDetails] = {
+  def fetchAndSubmitTeacherEnrolment(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[SchoolDetails] = {
     for {
       Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
       title                 <- sessionStoreConnector.getDataElement("title")
@@ -114,7 +107,7 @@ trait EnrolmentService {
     } yield schoolDetails
   }
 
-  def fetchAndSubmitStudentEnrolment(implicit user: CurrentUser, request: Request[_]): Future[SchoolDetails] = {
+  def fetchAndSubmitStudentEnrolment(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[SchoolDetails] = {
     for {
       Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
       Some(teacherDevId)    <- sessionStoreConnector.getDataElement("teacherDevId")

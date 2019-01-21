@@ -18,7 +18,7 @@ package connectors
 
 import com.cjwwdev.auth.models.CurrentUser
 import com.cjwwdev.config.ConfigurationLoader
-import com.cjwwdev.http.exceptions.NotFoundException
+import com.cjwwdev.http.responses.EvaluateResponse._
 import com.cjwwdev.http.responses.WsResponseHelpers
 import com.cjwwdev.http.verbs.Http
 import javax.inject.Inject
@@ -26,8 +26,7 @@ import models.Enrolments
 import play.api.libs.json._
 import play.api.mvc.Request
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext => ExC, Future}
 
 sealed trait ValidOrg
 case object Valid extends ValidOrg
@@ -42,11 +41,10 @@ trait AccountsConnector extends DefaultFormat with WsResponseHelpers {
   val http: Http
   val accountsUrl: String
 
-  def getEnrolments(implicit user: CurrentUser, request: Request[_]): Future[Option[Enrolments]] = {
-    http.get(s"$accountsUrl/account/${user.id}/enrolments") map { resp =>
-      Some(resp.toDataType[Enrolments](needsDecrypt = true))
-    } recover {
-      case _: NotFoundException => None
+  def getEnrolments(implicit user: CurrentUser, request: Request[_], ec: ExC): Future[Option[Enrolments]] = {
+    http.get(s"$accountsUrl/account/${user.id}/enrolments") map {
+      case SuccessResponse(resp) => resp.toDataType[Enrolments](needsDecrypt = true).fold(Some(_), _ => None)
+      case ErrorResponse(_)      => None
     }
   }
 }

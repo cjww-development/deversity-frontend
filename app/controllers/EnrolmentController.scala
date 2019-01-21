@@ -16,7 +16,7 @@
 package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
-import common.helpers.{AuthController, FrontendController}
+import common.helpers.AuthController
 import connectors.SessionStoreConnector
 import forms._
 import javax.inject.Inject
@@ -25,14 +25,14 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.{EnrolmentService, SchoolDetailsService}
 import views.html.enrolment._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DefaultEnrolmentController @Inject()(val schoolDetailsService: SchoolDetailsService,
                                            val sessionStoreConnector: SessionStoreConnector,
                                            val authConnector: AuthConnector,
                                            val controllerComponents: ControllerComponents,
-                                           val enrolmentService: EnrolmentService) extends EnrolmentController
+                                           val enrolmentService: EnrolmentService,
+                                           implicit val ec: ExecutionContext) extends EnrolmentController
 
 trait EnrolmentController extends AuthController {
   val schoolDetailsService: SchoolDetailsService
@@ -63,12 +63,11 @@ trait EnrolmentController extends AuthController {
       implicit user =>
         SchoolRegCodeForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(SchoolSelector(errors))),
-          valid  => schoolDetailsService.validateSchool(valid.regCode) flatMap { schoolDevId =>
-            sessionStoreConnector.updateSession(SessionUpdateSet("schoolDevId", schoolDevId)) map {
+          valid  => schoolDetailsService.validateSchool(valid.regCode) flatMap {
+            case Some(schoolDevId) => sessionStoreConnector.updateSession(SessionUpdateSet("schoolDevId", schoolDevId)) map {
               _ => Redirect(routes.EnrolmentController.confirmSchool())
             }
-          } recover {
-            case _ => Ok(InvalidSchool())
+            case None => Future.successful(Ok(InvalidSchool()))
           }
         )
   }
@@ -138,14 +137,11 @@ trait EnrolmentController extends AuthController {
       implicit user =>
         TeacherRegCodeForm.form.bindFromRequest.fold(
           errors => Future.successful(BadRequest(TeacherSelector(errors))),
-          valid  => enrolmentService.validateTeacher(valid.regCode) flatMap { teacherDevId =>
-            sessionStoreConnector.updateSession(SessionUpdateSet("teacherDevId", teacherDevId)) map {
+          valid  => enrolmentService.validateTeacher(valid.regCode) flatMap {
+            case Some(teacherDevId) => sessionStoreConnector.updateSession(SessionUpdateSet("teacherDevId", teacherDevId)) map {
               _ => Redirect(routes.EnrolmentController.confirmTeacher())
             }
-          } recover {
-            case e =>
-              e.printStackTrace()
-              Ok(InvalidTeacher())
+            case None => Future.successful(Ok(InvalidTeacher()))
           }
         )
   }
