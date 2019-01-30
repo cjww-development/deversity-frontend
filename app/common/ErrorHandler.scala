@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import com.cjwwdev.logging.Logging
 import com.cjwwdev.request.RequestBuilder
 import com.cjwwdev.views.html.templates.errors.{NotFoundView, ServerErrorView, StandardErrorView}
 import javax.inject.{Inject, Provider, Singleton}
-import play.api.{Environment, OptionalSourceMapper}
 import play.api.http.HttpErrorHandler
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.i18n._
-import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.mvc.Results.{InternalServerError, NotFound, Redirect, Status}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.routing.Router
+import play.api.{Environment, OptionalSourceMapper}
 
 import scala.concurrent.Future
 
@@ -35,7 +35,7 @@ class ErrorHandler @Inject()(env: Environment,
                              sm: OptionalSourceMapper,
                              router: Provider[Router],
                              langs: Langs,
-                             implicit val messages: MessagesApi) extends HttpErrorHandler with ApplicationConfiguration with Logging {
+                             implicit val messages: MessagesApi) extends HttpErrorHandler with ViewConfiguration with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     implicit val lang: Lang = langs.preferred(request.acceptLanguages)
@@ -43,7 +43,7 @@ class ErrorHandler @Inject()(env: Environment,
     implicit val req: Request[String] = RequestBuilder.buildRequest[String](request, "")
     statusCode match {
       case NOT_FOUND  => Future.successful(NotFound(NotFoundView()))
-      case FORBIDDEN  => Future.successful(Redirect(USER_LOGIN_CALL))
+      case FORBIDDEN  => Future.successful(Redirect(controllers.routes.RedirectController.redirectToLogin()))
       case _          => Future.successful(Status(statusCode)(StandardErrorView(messages("errors.standard-error.message"))))
     }
   }

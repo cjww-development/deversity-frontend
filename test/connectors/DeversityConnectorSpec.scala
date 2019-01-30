@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,32 @@
 package connectors
 
 import com.cjwwdev.http.verbs.Http
-import helpers.connectors.ConnectorSpec
-import play.api.test.Helpers._
 import com.cjwwdev.implicits.ImplicitDataSecurity._
 import com.cjwwdev.security.obfuscation.Obfuscation._
+import com.cjwwdev.security.obfuscation.{Obfuscation, Obfuscator}
+import enums.HttpResponse
+import helpers.connectors.ConnectorSpec
+import helpers.other.MockRequest
+import models.{ClassRoom, RegistrationCode}
+import org.joda.time.DateTime
+import play.api.libs.json.{JsObject, Json, OWrites}
+import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DeversityConnectorSpec extends ConnectorSpec {
+class DeversityConnectorSpec extends ConnectorSpec with MockRequest {
 
   val testConnector = new DeversityConnector {
     override val http: Http           = mockHttp
     override val deversityUrl: String = "/test/url"
+  }
+
+  implicit val classSeqObs: Obfuscator[Seq[ClassRoom]] = new Obfuscator[Seq[ClassRoom]] {
+    override def encrypt(value: Seq[ClassRoom]): String = Obfuscation.obfuscateJson(Json.toJson(value))
+  }
+
+  implicit val classObs: Obfuscator[ClassRoom] = new Obfuscator[ClassRoom] {
+    override def encrypt(value: ClassRoom): String = Obfuscation.obfuscateJson(Json.toJson(value))
   }
 
   "getDeversityUserInfo" should {
@@ -133,6 +147,108 @@ class DeversityConnectorSpec extends ConnectorSpec {
 
       awaitAndAssert(testConnector.getSchoolDetails("testOrgId")(testCurrentUser, request, implicitly)) {
         _ mustBe None
+      }
+    }
+  }
+
+  "getRegistrationCode" should {
+    "return a registration code" in {
+      implicit val obfuscator: Obfuscator[RegistrationCode] = new Obfuscator[RegistrationCode] {
+        override def encrypt(value: RegistrationCode): String = {
+          Obfuscation.obfuscateJson(Json.toJson(value))
+        }
+      }
+
+      val regCode = RegistrationCode(
+        identifier = "testId",
+        code       = "testRegCode",
+        createdAt  = DateTime.now()
+      )
+
+      mockGet(OK, regCode.encrypt)
+
+      awaitAndAssert(testConnector.getRegistrationCode(testCurrentUser, request, implicitly)) {
+        _.code mustBe "testRegCode"
+      }
+    }
+  }
+
+  "generateRegistrationCode" should {
+    "return a success" when {
+      "a code has been generated" in {
+        mockHead(response = fakeHttpResponse(OK))
+
+        awaitAndAssert(testConnector.generateRegistrationCode(testCurrentUser, request, implicitly)) {
+          _ mustBe HttpResponse.success
+        }
+      }
+    }
+  }
+
+  "createClassroom" should {
+    "return the name of the created classroom" in {
+      mockHttpPostString(response = fakeHttpResponse(OK))
+
+      awaitAndAssert(testConnector.createClassroom("testClassRoom")(testCurrentUser, request, implicitly)) {
+        _ mustBe "testClassRoom"
+      }
+    }
+  }
+
+  "getClassrooms" should {
+    "return a seq of class rooms" in {
+      implicit val classRoomWrites: OWrites[ClassRoom] = new OWrites[ClassRoom] {
+        override def writes(classRoom: ClassRoom): JsObject = Json.obj(
+          "classId"      -> classRoom.classId,
+          "schooldevId"  -> classRoom.schoolDevId,
+          "teacherDevId" -> classRoom.teacherDevId,
+          "name"         -> classRoom.name
+        )
+      }
+
+      val classList = Json.toJson(List(Json.toJson(testClassroom), Json.toJson(testClassroom2)))
+
+      mockGet(OK, classList.encrypt)
+
+      awaitAndAssert(testConnector.getClassrooms(testCurrentUser, request, implicitly)) {
+        _ mustBe testClassSeq
+      }
+    }
+
+    "return an empty seq" in {
+      mockGet(NO_CONTENT, "")
+
+      awaitAndAssert(testConnector.getClassrooms(testCurrentUser, request, implicitly)) {
+        _ mustBe Seq.empty[ClassRoom]
+      }
+    }
+  }
+
+  "getClassroom" should {
+    "return a classroom" in {
+      implicit val classRoomWrites: OWrites[ClassRoom] = new OWrites[ClassRoom] {
+        override def writes(classRoom: ClassRoom): JsObject = Json.obj(
+          "classId"      -> classRoom.classId,
+          "schooldevId"  -> classRoom.schoolDevId,
+          "teacherDevId" -> classRoom.teacherDevId,
+          "name"         -> classRoom.name
+        )
+      }
+
+      mockGet(OK, Json.toJson(testClassroom).encrypt)
+
+      awaitAndAssert(testConnector.getClassroom(generateTestSystemId("class"))(testCurrentUser, request, implicitly)) {
+        _ mustBe testClassroom
+      }
+    }
+  }
+
+  "deleteClassroom" should {
+    "return a HttpSuccess" in {
+      mockHttpDelete(response = fakeHttpResponse(OK))
+
+      awaitAndAssert(testConnector.deleteClassroom(generateTestSystemId("class"))(testCurrentUser, request, implicitly)) {
+        _ mustBe HttpResponse.success
       }
     }
   }

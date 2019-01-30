@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ case object ValidId extends DeversityIdResponse
 case object InvalidId extends DeversityIdResponse
 case object NoIdPresent extends DeversityIdResponse
 
-sealed trait DeversityCurrentEnrolmentResponse
-case object ValidEnrolments extends DeversityCurrentEnrolmentResponse
-case object InvalidEnrolments extends DeversityCurrentEnrolmentResponse
+sealed trait CurrentEnrolmentResponse
+case object ValidEnrolments extends CurrentEnrolmentResponse
+case object InvalidEnrolments extends CurrentEnrolmentResponse
 
 class NoEnrolmentsException(msg: String) extends NoStackTrace
 class ExistingDeversityIdException(msg: String) extends NoStackTrace

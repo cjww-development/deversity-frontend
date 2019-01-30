@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package services
 
 import com.cjwwdev.auth.models.CurrentUser
-import common.responses.{DeversityCurrentEnrolmentResponse, InvalidEnrolments, ValidEnrolments}
+import common.responses.{CurrentEnrolmentResponse, InvalidEnrolments, ValidEnrolments}
 import connectors.{AccountsConnector, DeversityConnector, SessionStoreConnector}
 import enums.SessionCache
 import javax.inject.Inject
@@ -38,8 +38,8 @@ trait EnrolmentService {
   val deversityConnector: DeversityConnector
   val sessionStoreConnector: SessionStoreConnector
 
-  def validateCurrentEnrolments(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[DeversityCurrentEnrolmentResponse] = {
-    deversityConnector.getDeversityUserInfo map(_.fold[DeversityCurrentEnrolmentResponse](InvalidEnrolments)(_ => ValidEnrolments))
+  def validateCurrentEnrolments(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[CurrentEnrolmentResponse] = {
+    deversityConnector.getDeversityUserInfo map(_.fold[CurrentEnrolmentResponse](InvalidEnrolments)(_ => ValidEnrolments))
   }
 
   def getOrGenerateDeversityId(implicit user: CurrentUser, req: Request[_], ec: ExC): Future[Option[String]] = {

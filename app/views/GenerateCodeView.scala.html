@@ -1,0 +1,57 @@
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.templates.MainTemplate
+
+@import com.cjwwdev.auth.models.CurrentUser
+@(regCode: RegistrationCode)(implicit request: Request[_], user: CurrentUser, messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
+@MainTemplate(title = messages("pages.generate-code.title"), links, navBarRoutes) {
+<script>
+    var userRegCodeCreatedAt = new Date(@regCode.createdAt.getMillis).getTime();
+
+    var x = setInterval(function() {
+        var now      = new Date().getTime();
+        var distance = now - userRegCodeCreatedAt;
+        var minutes  = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds  = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("reg-code-countdown").innerHTML = minutes + " minutes " + seconds + " seconds";
+
+        if((userRegCodeCreatedAt + 900000) < now) {
+            clearInterval(x);
+            document.getElementById("reg-code-countdown").innerHTML = "<div class='registration-code-expired'>EXPIRED</div>";
+        }
+    }, 1000);
+</script>
+
+<div class="top-block-single">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+
+            <div class="col-md-8">
+                <div class="generated-registration-code-well">
+                    <h1 class="text-center">@regCode.code</h1>
+                </div>
+
+                <div class="form-group">
+                    <p class="text-center">@messages(s"pages.generate-code.body.${user.credentialType}")</p>
+                </div>
+
+                <hr>
+
+                <div class="form-group">
+                    <div id="reg-code-countdown" class="h2 text-center"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <a id="generate-code-button" href="@controllers.routes.GenerateCodeController.generateRegistrationCode()" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span> @messages("pages.generate-code.button")</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+</div>
+}

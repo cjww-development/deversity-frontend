@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
 import com.cjwwdev.config.ConfigurationLoader
+import com.cjwwdev.featuremanagement.services.FeatureService
+import common.ViewConfiguration
 import common.helpers.AuthController
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -28,63 +30,67 @@ import scala.concurrent.{ExecutionContext, Future}
 class DefaultRedirectController @Inject()(val authConnector: AuthConnector,
                                           val controllerComponents: ControllerComponents,
                                           val config: ConfigurationLoader,
+                                          val featureService: FeatureService,
                                           val enrolmentService: EnrolmentService,
                                           implicit val ec: ExecutionContext) extends RedirectController {
   override val deversityFrontend: String   = config.getServiceUrl("deversity-frontend")
   override val diagnosticsFrontend: String = config.getServiceUrl("diagnostics-frontend")
   override val hubFrontend: String         = config.getServiceUrl("hub-frontend")
+
+  private val authService: String          = config.getServiceUrl("auth-service")
+
+  override val userRegister: String        = s"$authService/create-an-account"
+  override val orgRegister: String         = s"$authService/create-an-organisation-account"
+  override val userLogin: String           = s"$authService/login?redirect=deversity"
+  override val dashboard: String           = s"$authService/dashboard"
+  override val signOut: String             = s"$authService/goodbye"
 }
 
-trait RedirectController extends AuthController {
+trait RedirectController extends AuthController with ViewConfiguration {
 
   val deversityFrontend: String
   val diagnosticsFrontend: String
   val hubFrontend: String
 
-  def redirectToUserRegister: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Redirect(USER_REGISTER))
+  val userRegister: String
+  val orgRegister: String
+  val userLogin: String
+  val dashboard: String
+  val signOut: String
+
+  def redirectToUserRegister: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Redirect(userRegister))
   }
 
-  def redirectToOrgRegister: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Redirect(ORG_REGISTER))
+  def redirectToOrgRegister: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Redirect(orgRegister))
   }
 
-  def redirectToLogin: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Redirect(USER_LOGIN))
+  def redirectToLogin: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Redirect(userLogin))
   }
 
-  def redirectToUserDashboard: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        Future.successful(Redirect(DASHBOARD))
+  def redirectToUserDashboard: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    Future.successful(Redirect(dashboard))
   }
 
-  def redirectToSignOut: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        Future.successful(Redirect(SIGN_OUT))
+  def redirectToSignOut: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    Future.successful(Redirect(signOut))
   }
 
-  def redirectToDeversity: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Redirect(deversityFrontend))
+  def redirectToDeversity: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Redirect(deversityFrontend))
   }
 
-  def redirectToDiagnostics: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Redirect(diagnosticsFrontend))
+  def redirectToDiagnostics: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Redirect(diagnosticsFrontend))
   }
 
-  def redirectToHub: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Redirect(hubFrontend))
+  def redirectToHub: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Redirect(hubFrontend))
   }
 
-  def redirectToServiceOutage: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(ServiceUnavailable(ServiceUnavailableView()))
+  def redirectToServiceOutage: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(ServiceUnavailable(ServiceUnavailableView()))
   }
 }

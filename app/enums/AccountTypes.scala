@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-package helpers.services
+package enums
 
-import connectors.DeversityConnector
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.PlaySpec
-import org.mockito.Mockito.{reset, when}
-import org.mockito.ArgumentMatchers
-
-trait MockDeversityConnector extends BeforeAndAfterEach with MockitoSugar {
-  self: PlaySpec =>
-
-  val mockDeversityConector = mock[DeversityConnector]
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockDeversityConector)
-  }
-
-
+object AccountTypes {
+  val ORGANISATION = "organisation"
+  val INDIVIDUAL   = "individual"
 }
