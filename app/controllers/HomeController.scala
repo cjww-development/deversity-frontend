@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
+import common.ViewConfiguration
 import common.helpers.FrontendController
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -29,10 +30,9 @@ class DefaultHomeController @Inject()(val enrolmentService: EnrolmentService,
                                       val controllerComponents: ControllerComponents,
                                       implicit val ec: ExecutionContext) extends HomeController
 
-trait HomeController extends FrontendController {
+trait HomeController extends FrontendController with ViewConfiguration {
 
-  def showHome: Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Ok(index()))
+  def showHome: Action[AnyContent] = Action.async { implicit req =>
+    Future.successful(Ok(index()))
   }
 }

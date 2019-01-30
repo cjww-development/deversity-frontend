@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,17 @@
 
 package helpers.services
 
+import helpers.connectors.MockDeversityConnector
 import helpers.other.{Fixtures, FutureAsserts}
 import org.scalatestplus.play.PlaySpec
+import play.api.test.FakeRequest
 
 trait ServiceSpec
   extends PlaySpec
     with FutureAsserts
     with Fixtures
-    with MockDeversityConnector
+    with MockDeversityConnector {
+
+  val request = FakeRequest()
+
+}

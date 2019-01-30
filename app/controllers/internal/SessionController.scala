@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package controllers.internal
 
+import com.cjwwdev.config.ConfigurationLoader
 import common.helpers.FrontendController
 import javax.inject.Inject
 import play.api.mvc._
@@ -25,13 +26,19 @@ import scala.concurrent.ExecutionContext
 
 class DefaultSessionController @Inject()(val sessionService: SessionService,
                                          val controllerComponents: ControllerComponents,
-                                         implicit val ec: ExecutionContext) extends SessionController
+                                         val config: ConfigurationLoader,
+                                         implicit val ec: ExecutionContext) extends SessionController {
+  private val authService: String      = config.getServiceUrl("auth-service")
+  override val serviceDirector: String = s"$authService/where-do-you-want-to-go"
+}
 
 trait SessionController extends FrontendController {
   val sessionService: SessionService
 
-  def buildSession(sessionId: String): Action[AnyContent] = Action.async { implicit request =>
-    logger.info(s"[buildSession] - request was sent from ${request.headers("Referer")}")
+  val serviceDirector: String
+
+  def buildSession(sessionId: String): Action[AnyContent] = Action.async { implicit req =>
+    logger.info(s"[buildSession] - request was sent from ${req.headers("Referer")}")
     logger.info(s"[buildSession] - attempting to build session")
     sessionService.fetchAuthContext(sessionId) map {
       _.fold(forbiddenResponse(sessionId))({ context =>
@@ -41,9 +48,9 @@ trait SessionController extends FrontendController {
     }
   }
 
-  def validateSession(sessionId: String): Action[AnyContent] = Action { implicit request =>
-    logger.info(s"[validateSession] - request was sent from ${request.headers("Referer")}")
-    if(request.session("cookieId").equals(sessionId)) Redirect(SERVICE_DIRECTOR) else InternalServerError
+  def validateSession(sessionId: String): Action[AnyContent] = Action { implicit req =>
+    logger.info(s"[validateSession] - request was sent from ${req.headers("Referer")}")
+    if(req.session("cookieId").equals(sessionId)) Redirect(serviceDirector) else InternalServerError
   }
 
   private def forbiddenResponse(sessionId: String): Result = {

@@ -1,0 +1,60 @@
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.helpers.{errorPanel, textInput}
+@import com.cjwwdev.views.html.templates.MainTemplate
+@import helper._
+@import models.ClassRoom
+@import views.html.helpers.ClassroomThumbnail
+@(createClassroomForm: Form[String], classList: Seq[ClassRoom])(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
+@MainTemplate(title = messages("pages.manage-classrooms.title"), links, navBarRoutes) {
+    <div class="cjww-jumbo">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h1 id="page-title">@messages("pages.manage-classrooms.heading")</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    @errorPanel(createClassroomForm)
+
+                    <form action="@routes.ClassRoomController.createClassRoom()" method="post">
+                        @CSRF.formField
+
+                        @textInput(
+                            createClassroomForm("classRoomName"),
+                            false,
+                            '_sassClass   -> "input-group-addon",
+                            '_label       -> messages("pages.manage-classrooms.create-classroom.label"),
+                            '_inputType   -> "text",
+                            '_placeholder -> messages("pages.manage-classrooms.create-classroom.placeholder"),
+                            '_fieldName   -> "classRoomName",
+                            '_spanId      -> "class-room-name-span"
+                        )
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <button id="create-classroom-submit" type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> @messages("pages.manage-classrooms.create-classroom")</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="row">
+                        @if(classList.isEmpty) {
+                            <p class="text-center">@messages("pages.manage-classrooms.no-classrooms")</p>
+                        } else {
+                            @for(classRoom <- classList) {
+                                @ClassroomThumbnail(classRoom)
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

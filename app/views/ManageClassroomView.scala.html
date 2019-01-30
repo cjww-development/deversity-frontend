@@ -1,0 +1,25 @@
+@import com.cjwwdev.frontendUI.builders.NavBarLinkBuilder
+@import com.cjwwdev.views.html.templates.MainTemplate
+@import models.ClassRoom
+
+@(classRoom: ClassRoom)(implicit request: Request[_], messages: MessagesApi, lang: Lang, links: Seq[NavBarLinkBuilder], navBarRoutes: Map[String, Call])
+
+@MainTemplate(title = messages("pages.manage-individual-classroom.title", classRoom.name), links, navBarRoutes) {
+    <div class="cjww-jumbo">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-header">
+                        <h1 id="page-title">@messages("pages.manage-individual.classroom.heading", classRoom.name)</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <h3>@messages("pages.manage-individual.classroom.details")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+}

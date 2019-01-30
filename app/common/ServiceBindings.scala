@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,9 @@ class ServiceBindings extends Module {
   private def bindServices(): Seq[Binding[_]] = Seq(
     bind(classOf[EnrolmentService]).to(classOf[DefaultEnrolmentService]).eagerly(),
     bind(classOf[SchoolDetailsService]).to(classOf[DefaultSchoolDetailsService]).eagerly(),
-    bind(classOf[SessionService]).to(classOf[DefaultSessionService]).eagerly()
+    bind(classOf[SessionService]).to(classOf[DefaultSessionService]).eagerly(),
+    bind(classOf[RegistrationCodeService]).to(classOf[DefaultRegistrationCodeService]).eagerly(),
+    bind(classOf[ClassRoomService]).to(classOf[DefaultClassRoomService]).eagerly()
   )
 
   private def bindControllers(): Seq[Binding[_]] = Seq(
@@ -52,7 +54,9 @@ class ServiceBindings extends Module {
     bind(classOf[HomeController]).to(classOf[DefaultHomeController]).eagerly(),
     bind(classOf[RedirectController]).to(classOf[DefaultRedirectController]).eagerly(),
     bind(classOf[SessionController]).to(classOf[DefaultSessionController]).eagerly(),
-    bind(classOf[HealthController]).to(classOf[DefaultHealthController]).eagerly()
+    bind(classOf[HealthController]).to(classOf[DefaultHealthController]).eagerly(),
+    bind(classOf[GenerateCodeController]).to(classOf[DefaultGenerateCodeController]).eagerly(),
+    bind(classOf[ClassRoomController]).to(classOf[DefaultClassRoomController]).eagerly()
   )
 
   private def bindOther(): Seq[Binding[_]] = Seq(

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -337,4 +337,23 @@ svg {
 
 .list-group > a:active {
   border-left: 5px solid #124AA0;
+}
+
+.status-badge {
+  border: solid;
+  border-radius: 10px;
+  padding: 5px 10px 5px 10px;
+  color: #ffffff;
+}
+
+.generated-registration-code-well {
+  @extend .well;
+  @extend .well-lg;
+  background-color: #000000;
+  color: #FFFFFF;
+}
+
+.registration-code-expired {
+  @extend .status-badge;
+  background-color: #9A090C;
 }

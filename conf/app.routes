@@ -2,45 +2,55 @@
 # This file defines all application app.routes (Higher priority app.routes first)
 # ~~~~
 
-GET     /                           controllers.HomeController.showHome()
+GET     /                                   controllers.HomeController.showHome()
 
-GET     /please-return-later        controllers.RedirectController.redirectToServiceOutage()
+GET     /please-return-later                controllers.RedirectController.redirectToServiceOutage()
 
-GET     /test                       controllers.EnrolmentController.testController()
+GET     /test                               controllers.EnrolmentController.testController()
 
 #Enrolment journey
-GET     /welcome                    controllers.EnrolmentController.enrolmentWelcome
+GET     /welcome                            controllers.EnrolmentController.enrolmentWelcome
 
-GET     /select-school              controllers.EnrolmentController.selectSchool
-POST    /select-school              controllers.EnrolmentController.validateSchool
+GET     /select-school                      controllers.EnrolmentController.selectSchool
+POST    /select-school                      controllers.EnrolmentController.validateSchool
 
-GET     /confirm-school             controllers.EnrolmentController.confirmSchool
+GET     /confirm-school                     controllers.EnrolmentController.confirmSchool
 
-GET     /role-selection             controllers.EnrolmentController.roleSelection
-POST    /role-selection             controllers.EnrolmentController.confirmRole
+GET     /role-selection                     controllers.EnrolmentController.roleSelection
+POST    /role-selection                     controllers.EnrolmentController.confirmRole
 
-GET     /teacher-details            controllers.EnrolmentController.confirmAsTeacher
-POST    /teacher-details            controllers.EnrolmentController.cacheTeacherDetails
+GET     /teacher-details                    controllers.EnrolmentController.confirmAsTeacher
+POST    /teacher-details                    controllers.EnrolmentController.cacheTeacherDetails
 
-GET     /select-teacher             controllers.EnrolmentController.confirmAsStudent
-POST    /select-teacher             controllers.EnrolmentController.validateTeacher
+GET     /select-teacher                     controllers.EnrolmentController.confirmAsStudent
+POST    /select-teacher                     controllers.EnrolmentController.validateTeacher
 
-GET     /confirm-teacher            controllers.EnrolmentController.confirmTeacher
+GET     /confirm-teacher                    controllers.EnrolmentController.confirmTeacher
 
-GET     /check-your-answers         controllers.EnrolmentController.summary()
+GET     /check-your-answers                 controllers.EnrolmentController.summary()
 
-GET     /confirmation               controllers.EnrolmentController.enrolmentConfirmation
+GET     /confirmation                       controllers.EnrolmentController.enrolmentConfirmation
+
+# Registration code
+GET     /registration-code                  controllers.GenerateCodeController.registrationCodeShow()
+GET     /generate-registration-code         controllers.GenerateCodeController.generateRegistrationCode()
+
+# Manage classroom
+GET     /manage-classrooms                  controllers.ClassRoomController.manageClassRooms
+POST    /create-classroom                   controllers.ClassRoomController.createClassRoom
+GET     /delete-classroom                   controllers.ClassRoomController.deleteClassRoom(classId: String ?= "")
+GET     /manage-classroom                   controllers.ClassRoomController.manageClassRoom(classId: String ?= "")
 
 #External Routes
-GET     /login                      controllers.RedirectController.redirectToLogin
-GET     /register                   controllers.RedirectController.redirectToUserRegister
-GET     /org-register               controllers.RedirectController.redirectToOrgRegister
-GET     /dashboard                  controllers.RedirectController.redirectToUserDashboard
-GET     /sign-out                   controllers.RedirectController.redirectToSignOut
-
-GET     /go-to-deversity            controllers.RedirectController.redirectToDeversity
-GET     /go-to-diagnostics          controllers.RedirectController.redirectToDiagnostics
-GET     /go-to-hub                  controllers.RedirectController.redirectToHub
+GET     /login                              controllers.RedirectController.redirectToLogin
+GET     /register                           controllers.RedirectController.redirectToUserRegister
+GET     /org-register                       controllers.RedirectController.redirectToOrgRegister
+GET     /dashboard                          controllers.RedirectController.redirectToUserDashboard
+GET     /sign-out                           controllers.RedirectController.redirectToSignOut
+                                            
+GET     /go-to-deversity                    controllers.RedirectController.redirectToDeversity
+GET     /go-to-diagnostics                  controllers.RedirectController.redirectToDiagnostics
+GET     /go-to-hub                          controllers.RedirectController.redirectToHub
 
 # Map static resources from the /public folderto the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                       controllers.Assets.versioned(path="/public", file: Asset)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,13 @@ trait MockHttp extends BeforeAndAfterEach with MockitoSugar with MockResponse {
 
   val mockHttp: Http = mock[Http]
 
-  implicit class IntOps(int: Int) {
-    def isBetween(range: Range): Boolean = range contains int
-  }
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockHttp)
   }
 
   def mockGet(statusCode: Int, body: String): OngoingStubbing[Future[ConnectorResponse]] = {
-    val result = if(statusCode.isBetween(200 to 299)) {
+    val result = if((200 to 299).contains(statusCode)) {
       SuccessResponse(FakeResponse(statusCode, body))
     } else {
       ErrorResponse(FakeResponse(statusCode, body))
@@ -54,8 +50,26 @@ trait MockHttp extends BeforeAndAfterEach with MockitoSugar with MockResponse {
       .thenReturn(Future.successful(result))
   }
 
+  def mockHttpPost(response: WSResponse): OngoingStubbing[Future[ConnectorResponse]] = {
+    when(mockHttp.post(any(), any(), any(),any())(any(), any(), any(), any()))
+      .thenReturn(if(response.status >= 200 && response.status <= 299) {
+        Future.successful(SuccessResponse(response))
+      } else {
+        Future.successful(ErrorResponse(response))
+      })
+  }
+
+  def mockHttpPostString(response: WSResponse): OngoingStubbing[Future[ConnectorResponse]] = {
+    when(mockHttp.postString(any(), any(), any(), any())(any(), any()))
+      .thenReturn(if(response.status >= 200 && response.status <= 299) {
+        Future.successful(SuccessResponse(response))
+      } else {
+        Future.successful(ErrorResponse(response))
+      })
+  }
+
   def mockPatch(statusCode: Int): OngoingStubbing[Future[ConnectorResponse]] = {
-    val result = if(statusCode.isBetween(200 to 299)) {
+    val result = if((200 to 299).contains(statusCode)) {
       SuccessResponse(FakeResponse(statusCode))
     } else {
       ErrorResponse(FakeResponse(statusCode))
@@ -68,5 +82,23 @@ trait MockHttp extends BeforeAndAfterEach with MockitoSugar with MockResponse {
   def mockPatchString(body: String): OngoingStubbing[Future[ConnectorResponse]] = {
     when(mockHttp.patchString(any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(SuccessResponse(FakeResponse(OK, body))))
+  }
+
+  def mockHead(response: WSResponse): OngoingStubbing[Future[ConnectorResponse]] = {
+    when(mockHttp.head(any(), any())(any(), any()))
+      .thenReturn(if(response.status >= 200 && response.status <= 299) {
+        Future.successful(SuccessResponse(response))
+      } else {
+        Future.successful(ErrorResponse(response))
+      })
+  }
+
+  def mockHttpDelete(response: WSResponse): OngoingStubbing[Future[ConnectorResponse]] = {
+    when(mockHttp.delete(any(), any())(any(), any()))
+      .thenReturn(if(response.status >= 200 && response.status <= 299) {
+        Future.successful(SuccessResponse(response))
+      } else {
+        Future.successful(ErrorResponse(response))
+      })
   }
 }

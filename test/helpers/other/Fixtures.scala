@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,28 @@ trait Fixtures extends TestDataGenerator {
     initials = "testInitials",
     location = "testLocation"
   )
+
+  val testRegistrationCode = RegistrationCode(
+    identifier = generateTestSystemId(USER),
+    code       = "testRegCode",
+    createdAt  = now
+  )
+
+  val testClassroom = ClassRoom(
+    classId      = generateTestSystemId("class"),
+    schoolDevId  = generateTestSystemId("deversity"),
+    teacherDevId = generateTestSystemId("deversity"),
+    name         = "testClassroomName"
+  )
+
+  val testClassroom2 = ClassRoom(
+    classId      = generateTestSystemId("class"),
+    schoolDevId  = generateTestSystemId("deversity"),
+    teacherDevId = generateTestSystemId("deversity"),
+    name         = "testClassroomName2"
+  )
+
+  val testClassSeq = Seq(testClassroom, testClassroom2)
 
   implicit val enrolmentObfuscator: Obfuscator[Enrolments] = new Obfuscator[Enrolments] {
     override def encrypt(value: Enrolments): String = Obfuscation.obfuscateJson(Json.toJson(value))

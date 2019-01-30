@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package common.helpers
 
 import com.cjwwdev.logging.Logging
-import common.ApplicationConfiguration
 import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc.{BaseController, Request}
 
@@ -25,7 +24,6 @@ import scala.concurrent.ExecutionContext
 
 trait FrontendController
   extends BaseController
-    with ApplicationConfiguration
     with I18nSupport
     with Logging {
 

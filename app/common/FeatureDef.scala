@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,5 +20,15 @@ import com.cjwwdev.featuremanagement.models.Features
 import javax.inject.Inject
 
 class FeatureDef @Inject extends Features {
-  override val allFeatures: List[String] = List()
+  override val allFeatures: List[String] = List(
+    Features.codeGeneration,
+    Features.classRoomManagement,
+    Features.enrolmentsReview
+  )
+}
+
+object Features {
+  val codeGeneration      = "code-generator"
+  val classRoomManagement = "classroom-management"
+  val enrolmentsReview    = "enrolments-review"
 }

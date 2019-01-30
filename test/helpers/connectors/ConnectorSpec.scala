@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package helpers.connectors
 
-import helpers.other.{Fixtures, FutureAsserts}
+import helpers.other.{Fixtures, FutureAsserts, MockRequest}
 import org.scalatestplus.play.PlaySpec
 import play.api.test.FakeRequest
 

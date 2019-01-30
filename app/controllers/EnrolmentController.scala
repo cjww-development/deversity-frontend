@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package controllers
 
 import com.cjwwdev.auth.connectors.AuthConnector
+import com.cjwwdev.featuremanagement.services.FeatureService
+import common.ViewConfiguration
 import common.helpers.AuthController
 import connectors.SessionStoreConnector
 import forms._
@@ -32,147 +35,120 @@ class DefaultEnrolmentController @Inject()(val schoolDetailsService: SchoolDetai
                                            val authConnector: AuthConnector,
                                            val controllerComponents: ControllerComponents,
                                            val enrolmentService: EnrolmentService,
+                                           val featureService: FeatureService,
                                            implicit val ec: ExecutionContext) extends EnrolmentController
 
-trait EnrolmentController extends AuthController {
+trait EnrolmentController extends AuthController with ViewConfiguration {
   val schoolDetailsService: SchoolDetailsService
   val sessionStoreConnector: SessionStoreConnector
 
-  def testController: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        checkDeversityEnrolment {
-          Future.successful(Ok("TEST ROUTE"))
+  def testController: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    checkDeversityEnrolment {
+      Future.successful(Ok("TEST ROUTE"))
+    }
+  }
+
+  def enrolmentWelcome: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    Future.successful(Ok(EnrolmentWelcome()))
+  }
+
+  def selectSchool: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    Future.successful(Ok(SchoolSelector(SchoolRegCodeForm.form)))
+  }
+
+  def validateSchool: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    SchoolRegCodeForm.form.bindFromRequest.fold(
+      errors => Future.successful(BadRequest(SchoolSelector(errors))),
+      valid  => schoolDetailsService.validateSchool(valid.regCode) flatMap {
+        case Some(schoolDevId) => sessionStoreConnector.updateSession(SessionUpdateSet("schoolDevId", schoolDevId)) map {
+          _ => Redirect(routes.EnrolmentController.confirmSchool())
         }
+        case None => Future.successful(Ok(InvalidSchool()))
+      }
+    )
   }
 
-  def enrolmentWelcome: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        Future.successful(Ok(EnrolmentWelcome()))
+  def confirmSchool: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    for {
+      Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
+      Some(schoolDetails)   <- schoolDetailsService.getSchoolDetails(schoolDevId)
+    } yield Ok(ConfirmSchool(schoolDetails))
   }
 
-  def selectSchool: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        Future.successful(Ok(SchoolSelector(SchoolRegCodeForm.form)))
+  def roleSelection: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    for {
+      Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
+      Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
+    } yield Ok(RoleSelector(RoleForm.form, schoolDetails))
   }
 
-  def validateSchool: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        SchoolRegCodeForm.form.bindFromRequest.fold(
-          errors => Future.successful(BadRequest(SchoolSelector(errors))),
-          valid  => schoolDetailsService.validateSchool(valid.regCode) flatMap {
-            case Some(schoolDevId) => sessionStoreConnector.updateSession(SessionUpdateSet("schoolDevId", schoolDevId)) map {
-              _ => Redirect(routes.EnrolmentController.confirmSchool())
-            }
-            case None => Future.successful(Ok(InvalidSchool()))
-          }
-        )
-  }
-
-  def confirmSchool: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        for {
-          Some(schoolDevId)     <- sessionStoreConnector.getDataElement("schoolDevId")
-          Some(schoolDetails)   <- schoolDetailsService.getSchoolDetails(schoolDevId)
-        } yield Ok(ConfirmSchool(schoolDetails))
-  }
-
-  def roleSelection: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
+  def confirmRole: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    RoleForm.form.bindFromRequest.fold(
+      errors => {
         for {
           Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
           Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
-        } yield Ok(RoleSelector(RoleForm.form, schoolDetails))
-  }
-
-  def confirmRole: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        RoleForm.form.bindFromRequest.fold(
-          errors => {
-            for {
-              Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
-              Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
-            } yield BadRequest(RoleSelector(errors, schoolDetails))
-          },
-          valid => sessionStoreConnector.updateSession(SessionUpdateSet("role", valid.role)) map {
-            _ => valid.role match {
-              case "teacher" => Redirect(routes.EnrolmentController.confirmAsTeacher())
-              case "student" => Redirect(routes.EnrolmentController.confirmAsStudent())
-            }
-          }
-        )
-  }
-
-  def confirmAsTeacher: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        Future.successful(Ok(TeacherDetailsEntry(TeacherDetailsForm.form)))
-  }
-
-  def cacheTeacherDetails: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        TeacherDetailsForm.form.bindFromRequest.fold(
-          errors => Future.successful(BadRequest(TeacherDetailsEntry(errors))),
-          valid => enrolmentService.cacheTeacherDetails(valid) map {
-            _ => Redirect(routes.EnrolmentController.summary())
-          }
-        )
-  }
-
-  def confirmAsStudent: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        Future.successful(Ok(TeacherSelector(TeacherRegCodeForm.form)))
-  }
-
-  def validateTeacher: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        TeacherRegCodeForm.form.bindFromRequest.fold(
-          errors => Future.successful(BadRequest(TeacherSelector(errors))),
-          valid  => enrolmentService.validateTeacher(valid.regCode) flatMap {
-            case Some(teacherDevId) => sessionStoreConnector.updateSession(SessionUpdateSet("teacherDevId", teacherDevId)) map {
-              _ => Redirect(routes.EnrolmentController.confirmTeacher())
-            }
-            case None => Future.successful(Ok(InvalidTeacher()))
-          }
-        )
-  }
-
-  def confirmTeacher: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        for {
-          Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
-          Some(details)       <- enrolmentService.getTeacherDetails
-          Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
-        } yield Ok(ConfirmTeacher(details, schoolDetails.orgName))
-  }
-
-  def summary(): Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        enrolmentService.buildSummaryData map { summaryData =>
-          Ok(EnrolmentSummary(summaryData))
+        } yield BadRequest(RoleSelector(errors, schoolDetails))
+      },
+      valid => sessionStoreConnector.updateSession(SessionUpdateSet("role", valid.role)) map {
+        _ => valid.role match {
+          case "teacher" => Redirect(routes.EnrolmentController.confirmAsTeacher())
+          case "student" => Redirect(routes.EnrolmentController.confirmAsStudent())
         }
+      }
+    )
   }
 
-  def enrolmentConfirmation: Action[AnyContent] = isAuthorised {
-    implicit request =>
-      implicit user =>
-        for {
-          Some(role)      <- sessionStoreConnector.getDataElement("role")
-          schoolDetails   <- role match {
-            case "teacher" => enrolmentService.fetchAndSubmitTeacherEnrolment
-            case "student" => enrolmentService.fetchAndSubmitStudentEnrolment
-          }
-        } yield Ok(EnrolmentConfirmation(schoolDetails, role))
+  def confirmAsTeacher: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    Future.successful(Ok(TeacherDetailsEntry(TeacherDetailsForm.form)))
+  }
+
+  def cacheTeacherDetails: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    TeacherDetailsForm.form.bindFromRequest.fold(
+      errors => Future.successful(BadRequest(TeacherDetailsEntry(errors))),
+      valid => enrolmentService.cacheTeacherDetails(valid) map {
+        _ => Redirect(routes.EnrolmentController.summary())
+      }
+    )
+  }
+
+  def confirmAsStudent: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    Future.successful(Ok(TeacherSelector(TeacherRegCodeForm.form)))
+  }
+
+  def validateTeacher: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    TeacherRegCodeForm.form.bindFromRequest.fold(
+      errors => Future.successful(BadRequest(TeacherSelector(errors))),
+      valid  => enrolmentService.validateTeacher(valid.regCode) flatMap {
+        case Some(teacherDevId) => sessionStoreConnector.updateSession(SessionUpdateSet("teacherDevId", teacherDevId)) map {
+          _ => Redirect(routes.EnrolmentController.confirmTeacher())
+        }
+        case None => Future.successful(Ok(InvalidTeacher()))
+      }
+    )
+  }
+
+  def confirmTeacher: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    for {
+      Some(schoolDevId)   <- sessionStoreConnector.getDataElement("schoolDevId")
+      Some(details)       <- enrolmentService.getTeacherDetails
+      Some(schoolDetails) <- schoolDetailsService.getSchoolDetails(schoolDevId)
+    } yield Ok(ConfirmTeacher(details, schoolDetails.orgName))
+  }
+
+  def summary(): Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    enrolmentService.buildSummaryData map { summaryData =>
+      Ok(EnrolmentSummary(summaryData))
+    }
+  }
+
+  def enrolmentConfirmation: Action[AnyContent] = isAuthorised { implicit req => implicit user =>
+    for {
+      Some(role)      <- sessionStoreConnector.getDataElement("role")
+      schoolDetails   <- role match {
+        case "teacher" => enrolmentService.fetchAndSubmitTeacherEnrolment
+        case "student" => enrolmentService.fetchAndSubmitStudentEnrolment
+      }
+    } yield Ok(EnrolmentConfirmation(schoolDetails, role))
   }
 }

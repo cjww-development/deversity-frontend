@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 CJWW Development
+ * Copyright 2019 CJWW Development
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import com.cjwwdev.security.deobfuscation.{DeObfuscation, DeObfuscator, DecryptionError}
+import com.cjwwdev.implicits.ImplicitJsValues._
+import play.api.libs.json._
 
 case class ClassRoom(classId: String,
                      schoolDevId: String,
@@ -23,5 +25,26 @@ case class ClassRoom(classId: String,
                      name: String)
 
 object ClassRoom {
-  implicit val format: OFormat[ClassRoom] = Json.format[ClassRoom]
+  implicit val writes: OWrites[ClassRoom] = Json.writes[ClassRoom]
+
+  implicit val reads: Reads[ClassRoom] = new Reads[ClassRoom] {
+    override def reads(json: JsValue): JsResult[ClassRoom] = JsSuccess(ClassRoom(
+      classId      = json.get[String]("classId"),
+      schoolDevId  = json.get[String]("schooldevId"),
+      teacherDevId = json.get[String]("teacherDevId"),
+      name         = json.get[String]("name")
+    ))
+  }
+
+  implicit val deObfuscator: DeObfuscator[ClassRoom] = new DeObfuscator[ClassRoom] {
+    override def decrypt(value: String): Either[ClassRoom, DecryptionError] = {
+      DeObfuscation.deObfuscate[ClassRoom](value)
+    }
+  }
+
+  implicit val deObfuscatorSeq: DeObfuscator[Seq[ClassRoom]] = new DeObfuscator[Seq[ClassRoom]] {
+    override def decrypt(value: String): Either[Seq[ClassRoom], DecryptionError] = {
+      DeObfuscation.deObfuscate[Seq[ClassRoom]](value)
+    }
+  }
 }

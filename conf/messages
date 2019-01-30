@@ -1,99 +1,126 @@
 #Common strings
-app.common.next                                     = Next
-app.common.back                                     = Back
-app.common.enrolment-warning                        = <strong>Please take note,</strong> you won''t be able to change this later!
-app.common.dashboard                                = Dashboard
-app.common.cancel                                   = Cancel
+app.common.next                                                  = Next
+app.common.back                                                  = Back
+app.common.enrolment-warning                                     = <strong>Please take note,</strong> you won''t be able to change this later!
+app.common.dashboard                                             = Dashboard
+app.common.cancel                                                = Cancel
 
 #StandardErrorView
-errors.standard-error.message                       = There was a problem, please try again later
+errors.standard-error.message                                    = There was a problem, please try again later
 
 #Service outage
-misc.unavailable.title                              = This service is unavailable
-misc.unavailable.heading                            = This service is currently not available
-misc.unavailable.body                               = Please try again later
+misc.unavailable.title                                           = This service is unavailable
+misc.unavailable.heading                                         = This service is currently not available
+misc.unavailable.body                                            = Please try again later
 
 #Index
-pages.index.title                                   = CJWW Deversity - Welcome
-pages.index.heading                                 = printf("Hello programmers!");
-pages.index.body                                    = Welcome to Deversity. Here you will hopefully learn about some programming concepts that will help you in your journey to become a developer!
+pages.index.title                                                = CJWW Deversity - Welcome
+pages.index.heading                                              = printf("Hello programmers!");
+pages.index.body                                                 = Welcome to Deversity. Here you will hopefully learn about some programming concepts that will help you in your journey to become a developer!
 
 #ConfirmSchool
-pages.confirm-school.title                          = Confirm your school
-pages.confirm-school.heading                        = Is this your school?
-pages.confirm-school.name                           = Your school is {0}
-pages.confirm-school.location                       = Located in {0}
+pages.confirm-school.title                                       = Confirm your school
+pages.confirm-school.heading                                     = Is this your school?
+pages.confirm-school.name                                        = Your school is {0}
+pages.confirm-school.location                                    = Located in {0}
 
 #ConfirmTeacher
-pages.confirm-teacher.title                         = Confirm your teacher
-pages.confirm-teacher.heading                       = Is this your teacher?
-pages.confirm-teacher.teaching-location             = Teaching at {0} in room {1}
+pages.confirm-teacher.title                                      = Confirm your teacher
+pages.confirm-teacher.heading                                    = Is this your teacher?
+pages.confirm-teacher.teaching-location                          = Teaching at {0} in room {1}
 
 #EnrolmentConfirmation
-pages.enrolment-confirmation.title                  = All done!
-pages.enrolment-confirmation.heading                = All done!
-pages.enrolment-confirmation.body                   = We have notified {0} you would like to be a {1}
-pages.enrolment-confirmation.alert                  = You can check whether you''ve been confirmed on your dashboard
+pages.enrolment-confirmation.title                               = All done!
+pages.enrolment-confirmation.heading                             = All done!
+pages.enrolment-confirmation.body                                = We have notified {0} you would like to be a {1}
+pages.enrolment-confirmation.alert                               = You can check whether you''ve been confirmed on your dashboard
 
 #EnrolmentWelcome
-pages.enrolment-welcome.title                       = Welcome to Deversity
-pages.enrolment-welcome.heading                     = Welcome to Deversity
-pages.enrolment-welcome.body.one                    = We have noticed that this is your first time using Deversity
-pages.enrolment-welcome.body.two                    = Let us set up a few things
+pages.enrolment-welcome.title                                    = Welcome to Deversity
+pages.enrolment-welcome.heading                                  = Welcome to Deversity
+pages.enrolment-welcome.body.one                                 = We have noticed that this is your first time using Deversity
+pages.enrolment-welcome.body.two                                 = Let us set up a few things
 
 #InvalidSchool
-pages.invalid-school.title                          = We couldn''t find your school
-pages.invalid-school.heading                        = We couldn''t find your school
-pages.invalid-school.body                           = Would you like to try again?
-pages.invalid-school.alert                          = You won''t be able to use Deversity until you have completed this setup
+pages.invalid-school.title                                       = We couldn''t find your school
+pages.invalid-school.heading                                     = We couldn''t find your school
+pages.invalid-school.body                                        = Would you like to try again?
+pages.invalid-school.alert                                       = You won''t be able to use Deversity until you have completed this setup
 
 #InvalidTeacher
-pages.invalid-teacher.title                         = We couldn''t find your teacher
-pages.invalid-teacher.heading                       = We couldn''t find your teacher
-pages.invalid-teacher.body                          = Would you like to try again?
-pages.invalid-teacher.alert                         = You won''t be able to use Deversity until you have completed this setup
+pages.invalid-teacher.title                                      = We couldn''t find your teacher
+pages.invalid-teacher.heading                                    = We couldn''t find your teacher
+pages.invalid-teacher.body                                       = Would you like to try again?
+pages.invalid-teacher.alert                                      = You won''t be able to use Deversity until you have completed this setup
 
 #RoleSelector
-pages.role-selector.title                           = Are you a teacher or a student?
-pages.role-selector.heading                         = Are you a teacher or a student?
-pages.role-selector.radio.label.teacher             = Teacher
-pages.role-selector.radio.label.student             = Student
-pages.role-selector.alert                           = <strong>Heads up!</strong> you''ll be confirmed as a teacher or a student by {0} so choose carefully...
+pages.role-selector.title                                        = Are you a teacher or a student?
+pages.role-selector.heading                                      = Are you a teacher or a student?
+pages.role-selector.radio.label.teacher                          = Teacher
+pages.role-selector.radio.label.student                          = Student
+pages.role-selector.alert                                        = <strong>Heads up!</strong> you''ll be confirmed as a teacher or a student by {0} so choose carefully...
 
 #SchoolSelector
-pages.school-selector.title                         = What school do you belong to?
-pages.school-selector.heading                       = What school do you belong to?
-pages.school-selector.body                          = Please enter your schools registration code
-pages.school-selector.alert                         = <strong>Hey!</strong> you can get your schools registration code from your teacher
-pages.school-selector.text-entry.label              = Code
-pages.school-selector.text-entry.placeholder        = Your schools registration code
+pages.school-selector.title                                      = What school do you belong to?
+pages.school-selector.heading                                    = What school do you belong to?
+pages.school-selector.body                                       = Please enter your schools registration code
+pages.school-selector.alert                                      = <strong>Hey!</strong> you can get your schools registration code from your teacher
+pages.school-selector.text-entry.label                           = Code
+pages.school-selector.text-entry.placeholder                     = Your schools registration code
 
 #TeacherDetailsEntry
-pages.teacher-details.title                         = Tell us some basic details
-pages.teacher-details.heading                       = Tell us some basic details
-pages.teacher-details.alert                         = This will make it easier for your students to find you when they are registering
-pages.teacher-details.text-entry.title.label        = Title
-pages.teacher-details.text-entry.title.placeholder  = Your preferred teacher title; Professor etc.
-pages.teacher-details.text-entry.room.label         = Room
-pages.teacher-details.text-entry.room.placeholder   = The room you work out of
+pages.teacher-details.title                                      = Tell us some basic details
+pages.teacher-details.heading                                    = Tell us some basic details
+pages.teacher-details.alert                                      = This will make it easier for your students to find you when they are registering
+pages.teacher-details.text-entry.title.label                     = Title
+pages.teacher-details.text-entry.title.placeholder               = Your preferred teacher title; Professor etc.
+pages.teacher-details.text-entry.room.label                      = Room
+pages.teacher-details.text-entry.room.placeholder                = The room you work out of
 
 #TeacherSelector
-pages.teacher-selector.title                        = Who is your teacher?
-pages.teacher-selector.heading                      = Who are you taught by?
-pages.teacher-selector.body                         = Please enter your teachers ID
-pages.teacher-selector.text-entry.label             = Teacher ID
-pages.teacher-selector.text-entry.placeholder       = Your teachers ID
+pages.teacher-selector.title                                     = Who is your teacher?
+pages.teacher-selector.heading                                   = Who are you taught by?
+pages.teacher-selector.body                                      = Please enter your teachers ID
+pages.teacher-selector.text-entry.label                          = Teacher ID
+pages.teacher-selector.text-entry.placeholder                    = Your teachers ID
 
 #EnrolmentSummary
-pages.enrolment-summary.title                       = One last check
-pages.enrolment-summary.heading                     = One last check
-pages.enrolment-summary.alert.1                     = Just so you know
-pages.enrolment-summary.alert.2                     = you can click the entries above to change your answer.
-pages.enrolment-summary.school                      = Your school
-pages.enrolment-summary.role                        = Teacher or student?
-pages.enrolment-summary.teacher-details             = Your teacher details
-pages.enrolment-summary.teacher-details.title       = Your title is {0}
-pages.enrolment-summary.teacher-details.room        = Teaching in {0}
-pages.enrolment-summary.teacher                     = Your teacher
+pages.enrolment-summary.title                                    = One last check
+pages.enrolment-summary.heading                                  = One last check
+pages.enrolment-summary.alert.1                                  = Just so you know
+pages.enrolment-summary.alert.2                                  = you can click the entries above to change your answer.
+pages.enrolment-summary.school                                   = Your school
+pages.enrolment-summary.role                                     = Teacher or student?
+pages.enrolment-summary.teacher-details                          = Your teacher details
+pages.enrolment-summary.teacher-details.title                    = Your title is {0}
+pages.enrolment-summary.teacher-details.room                     = Teaching in {0}
+pages.enrolment-summary.teacher                                  = Your teacher
+
+#Generate code
+pages.generate-code.title                                        = Generate a registration code
+pages.generate-code.body.organisation                            = Present this code to your teachers when they are registering, this code is valid for 15 minutes
+pages.generate-code.body.individual                              = Present this code to your students when they are registering, this code is valid for 15 minutes
+pages.generate-code.button                                       = Generate registration code
+pages.generate-code.teacher-org.heading                          = Your schools registration code
+pages.generate-code.teacher.heading                              = Your teachers registration code
+
+#Manage classrooms
+pages.manage-classrooms.title                                    = Manage your classrooms
+pages.manage-classrooms.heading                                  = Manage your classrooms
+pages.manage-classrooms.side-heading                             = Classroom links
+pages.manage-classrooms.no-classrooms                            = You haven''t created any classrooms for your students yet
+pages.manage-classrooms.delete-classroom                         = Delete
+pages.manage-classrooms.manage-classroom                         = Manage
+pages.manage-classrooms.create-classroom                         = Create classroom
+pages.manage-classrooms.create-classroom.label                   = Name
+pages.manage-classrooms.create-classroom.placeholder             = Classroom name
+pages.manage-classrooms.create-classroom.error.too-long          = Enter a classroom name using 20 characters or less
+pages.manage-classrooms.create-classroom.error.no-entry          = Enter a classroom name
+
+#Manage individual classroom
+pages.manage-individual-classroom.title                          = Manage {0}
+pages.manage-individual.classroom.heading                        = Manage {0}
+pages.manage-individual.classroom.details                        = Classroom details
+pages.manage-individual.classroom.enrolled-students              = Enrolled students
 
 
